@@ -1,0 +1,280 @@
+---
+name: ci
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  yamllint:
+    name: yamllint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@v1
+        with:
+          config_file: .yamllint.yml
+          strict: true
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: shellcheck
+        uses: fkautz/shell-linter@v1.0.1
+
+  build:
+    name: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+      - name: Build
+        run: go build -race ./...
+
+  golangci-lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    if: github.repository != 'networkservicemesh/cmd-template'
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.31
+
+  excludeFmtErrorf:
+    name: exclude fmt.Errorf
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Exclude fmt.Errorf
+        run: |
+          if grep -r --include=*.go --exclude=*.pb.go fmt.Errorf . ; then
+           echo "Please use errors.Errorf (or errors.New or errors.Wrap or errors.Wrapf) as appropriate rather than fmt.Errorf"
+           exit 1
+          fi
+
+  restrictNSMDeps:
+    name: Restrict dependencies on github.com/networkservicemesh/*
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restrict dependencies on github.com/networkservicemesh/*
+        env:
+          ALLOWED_REPOSITORIES: "sdk, api, sdk-k8s, sdk-vppagent, sdk-sriov"
+        run: |
+          for i in $(grep github.com/networkservicemesh/ go.mod | grep -v '^module' | sed 's;.*\(github.com\/networkservicemesh\/[^ ]*\).*;\1;g');do
+            if ! [ "$(echo ${ALLOWED_REPOSITORIES} | grep ${i#github.com/networkservicemesh/})" ]; then
+              echo Dependency on "${i}" is forbidden
+              exit 1
+            fi;
+          done
+
+  checkgomod:
+    name: check go.mod and go.sum
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+      - run: go mod tidy
+      - name: Check for changes in go.mod or go.sum
+        run: |
+          git diff --name-only --exit-code go.mod || ( echo "Run go tidy" && false )
+          git diff --name-only --exit-code go.sum || ( echo "Run go tidy" && false )
+
+  gogenerate:
+    name: Check generated files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: arduino/setup-protoc@master
+        with:
+          version: '3.8.0'
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+      - name: Install proto-gen-go
+        run: go get -u github.com/golang/protobuf/protoc-gen-go@v1.3.3
+      - name: Install proto-gen-go
+        run: go get github.com/searKing/golang/tools/cmd/go-syncmap
+      - name: Generate files
+        run: go generate ./...
+      - name: Check for changes in generated code
+        run: |
+          git diff -- '*.pb.go' || ( echo "Rerun go generate ./... locally and resubmit" && false )
+          git diff -- '*.gen.go' || ( echo "Rerun go generate ./... locally and resubmit" && false )
+
+  excludereplace:
+    name: Exclude Replace in go.mod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+      - name: Exclude replace in go.mod
+        run: |
+          grep ^replace go.mod || exit 0
+          exit 1
+
+  docker:
+    name: Docker Build & Test
+    runs-on: ubuntu-latest
+    if: github.repository != 'networkservicemesh/cmd-template'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+      - name: Build container
+        run: docker build .
+      - name: Run tests
+        run: docker run --privileged --rm $(docker build -q . --target test)
+      - name: Find merged PR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+        with:
+          github-token: ${{ github.token }}
+      - name: Publish Image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && success() && steps.findPr.outputs.number
+        uses: matootie/github-docker@v3.0.0
+        with:
+          accessToken: ${{ github.token }}
+          tag: |
+            pr-${{ steps.findPr.outputs.pr }}
+            commit-${{ github.sha }}
+            latest
+
+  pushImage:
+    name: Push docker image
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_USER: ${{ secrets.DOCKER_LOGIN }}
+      ORG: networkservicemeshci
+      CGO_ENABLED: 0
+      NAME: ${{ github.event.repository.name }}
+    needs:
+      - build
+      - docker
+    if: github.actor == 'nsmbot' && github.base_ref == 'master' && github.event_name == 'pull_request' && github.repository != 'networkservicemesh/cmd-template'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+      - name: Build ${NAME}:${GITHUB_SHA::8} image
+        run: docker build . -t "${ORG}/${NAME}:${GITHUB_SHA::8}" --target runtime
+      - name: Build ${NAME}:latest image
+        run: docker build . -t "${ORG}/${NAME}" --target runtime
+      - name: Push ${NAME} images
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          docker push "${ORG}/${NAME}:${GITHUB_SHA::8}"
+          docker image rm "${ORG}/${NAME}:${GITHUB_SHA::8}"
+          docker push "${ORG}/${NAME}"
+          docker image rm "${ORG}/${NAME}"
+
+  automerge:
+    name: automerge
+    runs-on: ubuntu-latest
+    needs:
+      - update-integration-k8s-kind
+    if: github.actor == 'nsmbot' && github.base_ref == 'master' && github.event_name == 'pull_request'
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+      - name: Fetch master
+        run: |
+          git remote -v
+          git fetch --depth=1 origin master
+      - name: NSMBot should update only config files
+        run: find . -type f ! -name 'go.mod' ! -name 'go.sum' ! -name '*.yaml' ! -name '*.yml' ! -name '*.txt' ! -name '*.md' ! -name '*.conf' -exec git diff --exit-code origin/master -- {} +
+      - name: Automerge nsmbot PR
+        uses: ridedott/merge-me-action@master
+        with:
+          GITHUB_LOGIN: nsmbot
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-integration-k8s-kind:
+    needs:
+      - pushImage
+    name: Update integration-k8s-kind
+    runs-on: ubuntu-latest
+    if: github.repository != 'networkservicemesh/cmd-template' && github.actor == 'nsmbot' && github.base_ref == 'master' && github.event_name == 'pull_request'
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v2
+        with:
+          path: ${{ github.repository }}
+          repository: ${{ github.repository }}
+          token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
+      - name: Create commit message
+        working-directory: ${{ github.repository }}
+        run: |
+          echo "Update application version to latest version from ${{ github.repository }}@master ${{ github.repository }}#${{ github.event.number }}" > /tmp/commit-message
+          echo "" >> /tmp/commit-message
+          echo "${{ github.repository }} PR link: https://github.com/${{ github.repository }}/pull/${{ github.event.number }}" >> /tmp/commit-message
+          echo "" >> /tmp/commit-message
+          echo "${{ github.repository }} commit message:" >> /tmp/commit-message
+          git log -1 >> /tmp/commit-message
+          echo "Commit Message:"
+          cat /tmp/commit-message
+      - name: Checkout networkservicemesh/integration-k8s-kind
+        uses: actions/checkout@v2
+        with:
+          path: networkservicemesh/integration-k8s-kind
+          repository: networkservicemesh/integration-k8s-kind
+          token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
+      - uses: benjlevesque/short-sha@v1.1
+        id: short-sha
+        with:
+          length: 8
+      - name: Find and Replace version
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "${{ github.event.repository.name }}:.*\n"
+          replace: "${{ github.event.repository.name }}:${{ steps.short-sha.outputs.sha }}\n"
+      - name: Push update to the integration-k8s-kind
+        working-directory: networkservicemesh/integration-k8s-kind
+        run: |
+          echo Starting to update repositotry integration-k8s-kind
+          git add -- .
+          if ! [ -n "$(git diff --cached --exit-code)" ]; then
+            echo Repository already up to date
+            exit 0;
+          fi
+          diff=$(git diff --name-only)
+          branchName="${{ github.event.repository.name }}"
+          if [[ $(grep "go.mod" <<< "${diff}") && $(grep "" -c <<< "${diff}") == 2 ]]; then
+            sdkPattern="github.com\/networkservicemesh\/sdk "
+            sdkVersion=$(grep --regexp "${sdkPattern}" go.mod)
+            branchName="${sdkVersion:${#sdkPattern}}"
+          else
+            {
+              git push origin --delete update/"${branchName}"
+            } || {
+              echo Branch update/"${branchName}" is already deleted
+            }
+          fi;
+          git config --global user.email "nsmbot@networkservicmesh.io"
+          git config --global user.name "NSMBot"
+          git commit -s -F /tmp/commit-message
+          git checkout -b update/"${branchName}"
+          while [ $(git push origin update/"${branchName}") ]; do
+            git fetch origin update/"${branchName}"
+            git rebase origin/update/"${branchName}"
+          done
