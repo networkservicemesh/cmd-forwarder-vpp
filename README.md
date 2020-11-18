@@ -73,3 +73,11 @@ docker run --privileged -e DLV_LISTEN_FORWARDER=:50000 -p 40000:40000 -p 50000:5
 
 Please note, the tests **start** the cmd, so until you connect to port 40000 with your debugger and walk the tests
 through to the point of running cmd, you will not be able to attach a debugger on port 50000 to the cmd.
+
+## A Note on Running golangci-lint
+
+Because cmd-forwarder-vppagent is only anticipated to run in Linux, you will need to run golangci-lint run with:
+
+```go
+GOOS=linux golangci-lint run
+```
