@@ -14,7 +14,7 @@ jobs:
           - cmd-nsc
           - cmd-registry-memory
           - cmd-nsmgr
-          - cmd-forwarder-vppagent
+          - cmd-forwarder-vpp
           - cmd-exclude-prefixes-k8s
           - cmd-forwarder-sriov
           - cmd-nse-icmp-responder

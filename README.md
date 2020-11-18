@@ -76,7 +76,7 @@ through to the point of running cmd, you will not be able to attach a debugger o
 
 ## A Note on Running golangci-lint
 
-Because cmd-forwarder-vppagent is only anticipated to run in Linux, you will need to run golangci-lint run with:
+Because cmd-forwarder-vpp is only anticipated to run in Linux, you will need to run golangci-lint run with:
 
 ```go
 GOOS=linux golangci-lint run
