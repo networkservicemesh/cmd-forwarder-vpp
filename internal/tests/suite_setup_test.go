@@ -26,6 +26,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"git.fd.io/govpp.git/binapi/vpe"
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/edwarnicke/exechelper"
 	"github.com/edwarnicke/grpcfd"
@@ -178,6 +179,15 @@ func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppCon
 	)
 	f.Require().Len(errCh, 0)
 	log.Entry(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)
+
+	now = time.Now()
+	version, err := vpe.NewServiceClient(vppConn).ShowVersion(ctx, &vpe.ShowVersion{})
+	f.Require().NoError(err)
+	log.Entry(ctx).
+		WithField("duration", time.Since(now)).
+		WithField("vppName", name).
+		WithField("version", version.Version).Info("complete")
+
 	return vppConn, vppRoot, errCh
 }
 
