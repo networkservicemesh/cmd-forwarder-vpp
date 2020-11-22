@@ -174,3 +174,11 @@ issues:
       linters:
         - funlen
       text: "Function 'main'"
+    - path: internal/tests/suite_combinatronics_test.go
+      linters:
+        - funlen
+      text: "Function 'TestCombinations'"
+    - path: internal/tests/suite_setup_test.go
+      linters:
+        - funlen
+      text: "Function 'SetupSuite'"
