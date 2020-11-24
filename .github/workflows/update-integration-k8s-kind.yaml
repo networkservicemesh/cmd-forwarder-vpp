@@ -34,7 +34,7 @@ jobs:
           path: networkservicemesh/integration-k8s-kind
           repository: networkservicemesh/integration-k8s-kind
           token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
-      - uses: benjlevesque/short-sha@v1.1
+      - uses: benjlevesque/short-sha@v1.2
         id: short-sha
         with:
           length: 8
