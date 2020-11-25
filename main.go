@@ -70,7 +70,6 @@ func main() {
 	// setup logging
 	// ********************************************************************************
 	logrus.SetFormatter(&nested.Formatter{})
-	logrus.SetLevel(logrus.TraceLevel)
 	ctx = log.WithField(ctx, "cmd", os.Args[0])
 
 	// ********************************************************************************
