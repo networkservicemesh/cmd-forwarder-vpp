@@ -161,6 +161,22 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	)
 	f.Require().NoError(err)
 
+	now := time.Now()
+	version, err := vpe.NewServiceClient(f.vppClientConn).ShowVersion(ctx, &vpe.ShowVersion{})
+	f.Require().NoError(err)
+	log.Entry(ctx).
+		WithField("duration", time.Since(now)).
+		WithField("vppName", "vpp-client").
+		WithField("version", version.Version).Info("complete")
+
+	now = time.Now()
+	version, err = vpe.NewServiceClient(f.vppServerConn).ShowVersion(ctx, &vpe.ShowVersion{})
+	f.Require().NoError(err)
+	log.Entry(ctx).
+		WithField("duration", time.Since(now)).
+		WithField("vppName", "vpp-server").
+		WithField("version", version.Version).Info("complete")
+
 	// ********************************************************************************
 	log.Entry(f.ctx).Infof("SetupSuite Complete (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
@@ -179,15 +195,6 @@ func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppCon
 	)
 	f.Require().Len(errCh, 0)
 	log.Entry(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)
-
-	now = time.Now()
-	version, err := vpe.NewServiceClient(vppConn).ShowVersion(ctx, &vpe.ShowVersion{})
-	f.Require().NoError(err)
-	log.Entry(ctx).
-		WithField("duration", time.Since(now)).
-		WithField("vppName", name).
-		WithField("version", version.Version).Info("complete")
-
 	return vppConn, vppRoot, errCh
 }
 

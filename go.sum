@@ -86,8 +86,8 @@ github.com/edwarnicke/serialize v0.0.0-20200705214914-ebc43080eecf h1:/lViRfaDxK
 github.com/edwarnicke/serialize v0.0.0-20200705214914-ebc43080eecf/go.mod h1:XvbCO/QGsl3X8RzjBMoRpkm54FIAZH5ChK2j+aox7pw=
 github.com/edwarnicke/signalctx v0.0.0-20201105214533-3a35840b3011 h1:rlA4xj11pzxP9w/qVP11qZkRN+7UfA8MiW6pPljW0CM=
 github.com/edwarnicke/signalctx v0.0.0-20201105214533-3a35840b3011/go.mod h1:Z9/3G9n/oPyXJzsF4ucVh8YOxTlTidDLqOeWlGV1JAw=
-github.com/edwarnicke/vpphelper v0.0.0-20201118000727-c5667bc2b1a4 h1:L6VFi6sm9SC41ivN/wBSJ9Mw2pQRu8clmHAyD+48PNI=
-github.com/edwarnicke/vpphelper v0.0.0-20201118000727-c5667bc2b1a4/go.mod h1:Vs6aWFIO9nTFhl0qsxEprx0iab0l5Swb5f6srxG2rLI=
+github.com/edwarnicke/vpphelper v0.0.0-20201125015206-ce96ab6dfb2e h1:NEcbmS+Oo8ZRr/DdU0xQ/szhAYgPBYaJYQ2w+hGWlm0=
+github.com/edwarnicke/vpphelper v0.0.0-20201125015206-ce96ab6dfb2e/go.mod h1:Vs6aWFIO9nTFhl0qsxEprx0iab0l5Swb5f6srxG2rLI=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
