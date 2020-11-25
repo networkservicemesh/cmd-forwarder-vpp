@@ -52,7 +52,6 @@ import (
 
 func (f *ForwarderTestSuite) SetupSuite() {
 	logrus.SetFormatter(&nested.Formatter{})
-	logrus.SetLevel(logrus.TraceLevel)
 	f.ctx, f.cancel = context.WithCancel(context.Background())
 
 	starttime := time.Now()
