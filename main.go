@@ -48,6 +48,8 @@ import (
 	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
+
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 )
 
 // Config - configuration for cmd-forwarder-vpp
@@ -155,6 +157,7 @@ func main() {
 		&config.ConnectTo,
 		vppConn,
 		memifSocketDir,
+		vppinit.Must(vppinit.LinkToAfPacket(ctx, vppConn, config.TunnelIP)),
 		grpc.WithTransportCredentials(grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
 	)
