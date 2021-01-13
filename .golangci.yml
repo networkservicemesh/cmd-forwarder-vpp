@@ -182,3 +182,7 @@ issues:
       linters:
         - funlen
       text: "Function 'SetupSuite'"
+    - path: internal/vppinit/vppinit.go
+      linters:
+        - gocritic
+      text: "each iteration copies 216 bytes"
