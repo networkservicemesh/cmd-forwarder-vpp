@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// +build !windows
+// +build linux
 
 // Package ns - simple NetworkServiceClient chain element that will change the nsNet of the client to ns before
 // calling the next chain element and return it to its original netNS before returning
