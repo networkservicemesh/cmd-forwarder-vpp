@@ -11,7 +11,7 @@ require (
 	github.com/edwarnicke/grpcfd v0.0.0-20201107002751-f220aed0c5c8
 	github.com/edwarnicke/log v1.0.0
 	github.com/edwarnicke/signalctx v0.0.0-20201105214533-3a35840b3011
-	github.com/edwarnicke/vpphelper v0.0.0-20201125015206-ce96ab6dfb2e
+	github.com/edwarnicke/vpphelper v0.0.0-20201229173204-87a3b197f1e1
 	github.com/golang/protobuf v1.4.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v0.0.0-20210112152104-45029fb10e27

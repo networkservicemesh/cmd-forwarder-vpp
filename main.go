@@ -113,9 +113,7 @@ func main() {
 	log.Entry(ctx).Infof("executing phase 2: run vpp and get a connection to it (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
-	vppCtx, vppCancel := context.WithTimeout(ctx, time.Second)
-	defer vppCancel()
-	vppConn, vppErrCh := vpphelper.StartAndDialContext(ctx, vpphelper.WithConnectContext(vppCtx))
+	vppConn, vppErrCh := vpphelper.StartAndDialContext(ctx)
 	exitOnErrCh(ctx, cancel, vppErrCh)
 	log.Entry(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 
