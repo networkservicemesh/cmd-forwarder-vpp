@@ -44,6 +44,9 @@ import (
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/xconnectns"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
+
+	registryinterpose "github.com/networkservicemesh/sdk/pkg/registry/common/interpose"
+	registryrefresh "github.com/networkservicemesh/sdk/pkg/registry/common/refresh"
 	registrysendfd "github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
 	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
@@ -72,6 +75,7 @@ func main() {
 	// setup logging
 	// ********************************************************************************
 	logrus.SetFormatter(&nested.Formatter{})
+	logrus.SetLevel(logrus.TraceLevel)
 	ctx = log.WithField(ctx, "cmd", os.Args[0])
 
 	// ********************************************************************************
@@ -189,7 +193,8 @@ func main() {
 	}
 
 	registryClient := registrychain.NewNetworkServiceEndpointRegistryClient(
-		// TODO - add refresh
+		registryinterpose.NewNetworkServiceEndpointRegistryClient(),
+		registryrefresh.NewNetworkServiceEndpointRegistryClient(),
 		registrysendfd.NewNetworkServiceEndpointRegistryClient(),
 		registryapi.NewNetworkServiceEndpointRegistryClient(registryCC),
 	)
