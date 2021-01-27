@@ -9,14 +9,13 @@ require (
 	github.com/edwarnicke/exechelper v1.0.3
 	github.com/edwarnicke/govpp v0.0.0-20201111163523-106f68b6ba26
 	github.com/edwarnicke/grpcfd v0.0.0-20201107002751-f220aed0c5c8
-	github.com/edwarnicke/log v1.0.0
 	github.com/edwarnicke/signalctx v0.0.0-20201105214533-3a35840b3011
 	github.com/edwarnicke/vpphelper v0.0.0-20201229173204-87a3b197f1e1
 	github.com/golang/protobuf v1.4.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v0.0.0-20210112152104-45029fb10e27
-	github.com/networkservicemesh/sdk v0.0.0-20210120064752-943735566550
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20210121234655-f04b8a0dac8b
+	github.com/networkservicemesh/sdk v0.0.0-20210126151042-d2a497d894ca
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20210126151646-853fbd0ad830
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.2

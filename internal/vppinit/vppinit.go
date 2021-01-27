@@ -35,7 +35,7 @@ import (
 	"github.com/vishvananda/netlink"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/tools/types"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/core/trace"
+	"github.com/networkservicemesh/sdk/pkg/tools/logger"
 )
 
 // Must - simple wrapper to panic in the event of an error
@@ -66,7 +66,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 	if err != nil {
 		return nil, err
 	}
-	trace.Log(ctx).
+	logger.Log(ctx).
 		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "AfPacketCreate").Debug("completed")
@@ -79,7 +79,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 	if err != nil {
 		return nil, err
 	}
-	trace.Log(ctx).
+	logger.Log(ctx).
 		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetFlags").Debug("completed")
@@ -98,7 +98,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 			if err != nil {
 				return nil, err
 			}
-			trace.Log(ctx).
+			logger.Log(ctx).
 				WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
 				WithField("prefix", addr.IPNet).
 				WithField("isAdd", true).
@@ -134,7 +134,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		if err != nil {
 			return nil, err
 		}
-		trace.Log(ctx).
+		logger.Log(ctx).
 			WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
 			WithField("prefix", ipRouteAddDel.Route.Prefix).
 			WithField("isAdd", true).
@@ -170,7 +170,7 @@ func defaultRouteLink(ctx context.Context) (netlink.Link, error) {
 		return nil, errors.Wrap(err, "unable to get routes")
 	}
 
-	trace.Log(ctx).
+	logger.Log(ctx).
 		WithField("duration", time.Since(now)).
 		WithField("netlink", "RouteList").Debug("completed")
 
