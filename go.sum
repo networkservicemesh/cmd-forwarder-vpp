@@ -77,6 +77,8 @@ github.com/edwarnicke/exechelper v1.0.3 h1:OY2ocGAITTqnEDvZk0dRQSeMIQvyH0SyL/4nc
 github.com/edwarnicke/exechelper v1.0.3/go.mod h1:R65OUPKns4bgeHkCmfSHbmqLBU8aHZxTgLmEyUBUk4U=
 github.com/edwarnicke/govpp v0.0.0-20201111163523-106f68b6ba26 h1:DBIEXF3iaF3RU337Yx+2oLKnW8xrQQUNDN7HMBIaH68=
 github.com/edwarnicke/govpp v0.0.0-20201111163523-106f68b6ba26/go.mod h1:wQua0G5mhpwGNG4HuudYCikLZviQI8g7CngtH9fJFCo=
+github.com/edwarnicke/govpp v0.0.0-20210130172618-d3c6251cbbe7 h1:u0dfb46QmY/30ujlNLFMHQbDJIwuLeVWosY8gC1kGAg=
+github.com/edwarnicke/govpp v0.0.0-20210130172618-d3c6251cbbe7/go.mod h1:wQua0G5mhpwGNG4HuudYCikLZviQI8g7CngtH9fJFCo=
 github.com/edwarnicke/grpcfd v0.0.0-20200920223154-d5b6e1f19bd0/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=
 github.com/edwarnicke/grpcfd v0.0.0-20201107002751-f220aed0c5c8 h1:q3GKkF8KIhwhfVa4NDzSpzuNRc7KlGjGpCEqgsGu1dU=
 github.com/edwarnicke/grpcfd v0.0.0-20201107002751-f220aed0c5c8/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=

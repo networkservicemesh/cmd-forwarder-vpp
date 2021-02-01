@@ -1,4 +1,5 @@
-FROM ghcr.io/edwarnicke/govpp/vpp:20.09 as go
+ARG VPP_VERSION=v20.09
+FROM ghcr.io/edwarnicke/govpp/vpp:${VPP_VERSION} as go
 COPY --from=golang:1.15.3-buster /usr/local/go/ /go
 ENV PATH ${PATH}:/go/bin
 ENV GO111MODULE=on
@@ -26,6 +27,6 @@ CMD go test -test.v ./...
 FROM test as debug
 CMD dlv -l :40000 --headless=true --api-version=2 test -test.v ./...
 
-FROM ghcr.io/edwarnicke/govpp/vpp:20.09 as runtime
+FROM ghcr.io/edwarnicke/govpp/vpp:${VPP_VERSION} as runtime
 COPY --from=build /bin/forwarder /bin/forwarder
 CMD /bin/forwarder
