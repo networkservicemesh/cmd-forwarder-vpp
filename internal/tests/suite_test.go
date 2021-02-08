@@ -55,16 +55,14 @@ type ForwarderTestSuite struct {
 	sutCC      grpc.ClientConnInterface
 
 	// vppServer stuff
-	vppServerConn         vpphelper.Connection
-	vppServerRoot         string
-	vppServerLastSocketID uint32
-	vppServerErrCh        <-chan error
+	vppServerConn  vpphelper.Connection
+	vppServerRoot  string
+	vppServerErrCh <-chan error
 
 	// vppClient stuff
-	vppClientConn         vpphelper.Connection
-	vppClientRoot         string
-	vppClientLastSocketID uint32
-	vppClientErrCh        <-chan error
+	vppClientConn  vpphelper.Connection
+	vppClientRoot  string
+	vppClientErrCh <-chan error
 }
 
 func TestForwarderTestSuite(t *testing.T) {

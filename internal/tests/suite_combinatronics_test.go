@@ -57,7 +57,6 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
 				f.vppServerRoot,
-				&f.vppServerLastSocketID,
 			)
 		},
 	}
@@ -73,7 +72,6 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.sutCC,
 				f.vppClientConn,
-				&f.vppClientLastSocketID,
 				f.vppClientRoot,
 			)
 		},

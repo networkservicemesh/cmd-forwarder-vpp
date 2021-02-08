@@ -148,11 +148,6 @@ func main() {
 		logrus.Fatalf("error creating tmpDir %+v", err)
 	}
 	defer func(tmpDir string) { _ = os.Remove(tmpDir) }(tmpDir)
-	memifSocketDir := filepath.Join(tmpDir, "memif")
-	err = os.Mkdir(memifSocketDir, 0700)
-	if err != nil {
-		logrus.Fatalf("error creating dir %s: %+v", memifSocketDir, err)
-	}
 
 	endpoint := xconnectns.NewServer(
 		ctx,
@@ -161,7 +156,6 @@ func main() {
 		spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime),
 		&config.ConnectTo,
 		vppConn,
-		memifSocketDir,
 		vppinit.Must(vppinit.LinkToAfPacket(ctx, vppConn, config.TunnelIP)),
 		grpc.WithTransportCredentials(grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),

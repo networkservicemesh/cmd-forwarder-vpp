@@ -22,7 +22,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"regexp"
@@ -62,12 +61,7 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 	tokenGenerator token.GeneratorFunc,
 	vppConn vpphelper.Connection,
 	vppRootDir string,
-	lastSocketID *uint32,
 ) verifiableEndpoint {
-	baseDir, err := ioutil.TempDir("", "forwarder.test-")
-	if err != nil {
-		panic(fmt.Sprintf("unable create TmpDir: %+v", err))
-	}
 	return &memifVerifiableEndpoint{
 		ctx:        ctx,
 		vppRootDir: vppRootDir,
@@ -80,7 +74,7 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 				memif.MECHANISM: chain.NewNetworkServiceServer(
 					metadata.NewServer(),
-					memif.NewServer(vppConn, baseDir, lastSocketID),
+					memif.NewServer(vppConn),
 					tag.NewServer(ctx, vppConn),
 					connectioncontext.NewServer(vppConn),
 					up.NewServer(ctx, vppConn),
@@ -110,7 +104,6 @@ func newMemifVerifiableClient(ctx context.Context,
 	tokenGenerator token.GeneratorFunc,
 	sutCC grpc.ClientConnInterface,
 	vppConn vpphelper.Connection,
-	lastSocketID *uint32,
 	vppRootDir string,
 ) verifiableClient {
 	rv := &memifVerifiableClient{
@@ -125,7 +118,7 @@ func newMemifVerifiableClient(ctx context.Context,
 			metadata.NewClient(),
 			up.NewClient(ctx, vppConn),
 			connectioncontext.NewClient(vppConn),
-			memif.NewClient(vppConn, lastSocketID),
+			memif.NewClient(vppConn),
 			recvfd.NewClient(),
 		),
 	}
