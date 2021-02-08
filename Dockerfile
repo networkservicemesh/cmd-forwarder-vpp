@@ -25,7 +25,8 @@ FROM build as test
 CMD go test -test.v ./...
 
 FROM test as debug
-CMD dlv -l :40000 --headless=true --api-version=2 test -test.v ./...
+WORKDIR /build/internal/tests/
+CMD dlv -l :40000 --headless=true --api-version=2 test -test.v .
 
 FROM ghcr.io/edwarnicke/govpp/vpp:${VPP_VERSION} as runtime
 COPY --from=build /bin/forwarder /bin/forwarder
