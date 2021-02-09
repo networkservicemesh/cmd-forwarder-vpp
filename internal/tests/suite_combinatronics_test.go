@@ -32,8 +32,8 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
-	"github.com/networkservicemesh/sdk/pkg/tools/logger"
-	"github.com/networkservicemesh/sdk/pkg/tools/logger/logruslogger"
+	"github.com/networkservicemesh/sdk/pkg/tools/log"
+	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 )
 
@@ -86,9 +86,8 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				// Create ctx for test
 				ctx, cancel := context.WithTimeout(f.ctx, contextTimeout)
 				defer cancel()
-				ctx, _ = logruslogger.New(
-					logger.WithFields(ctx, map[string]interface{}{"test": t.Name()}),
-				)
+				ctx = log.WithFields(ctx, map[string]interface{}{"test": t.Name()})
+				ctx = log.WithLog(ctx, logruslogger.New(ctx))
 				networkserviceName := "ns"
 				// Create testRequest
 				testRequest := &networkservice.NetworkServiceRequest{
@@ -97,7 +96,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 					},
 				}
 				// ********************************************************************************
-				logger.Log(f.ctx).Infof("Launching %s test server (time since start: %s)", t.Name(), time.Since(starttime))
+				log.FromContext(f.ctx).Infof("Launching %s test server (time since start: %s)", t.Name(), time.Since(starttime))
 				// ********************************************************************************
 				now := time.Now()
 				serverCreds := credentials.NewTLS(tlsconfig.MTLSServerConfig(f.x509source, f.x509bundle, tlsconfig.AuthorizeAny()))
@@ -107,49 +106,49 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				networkservice.RegisterNetworkServiceServer(server, ep)
 				networkservice.RegisterMonitorConnectionServer(server, ep)
 				serverErrCh := f.ListenAndServe(ctx, server)
-				logger.Log(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
+				log.FromContext(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
 
 				// ********************************************************************************
-				logger.Log(f.ctx).Infof("Sending Request to forwarder (time since start: %s)", time.Since(starttime))
+				log.FromContext(f.ctx).Infof("Sending Request to forwarder (time since start: %s)", time.Since(starttime))
 				// ********************************************************************************
 				now = time.Now()
 				client := clientFunc(ctx)
 				conn, err := client.Request(ctx, testRequest)
 				require.NoError(t, err)
 				require.NotNil(t, conn)
-				logger.Log(ctx).Infof("Sending Request to forwarder (took : %s)", time.Since(now))
+				log.FromContext(ctx).Infof("Sending Request to forwarder (took : %s)", time.Since(now))
 
 				// ********************************************************************************
-				logger.Log(f.ctx).Infof("Verifying Connection (time since start: %s)", time.Since(starttime))
+				log.FromContext(f.ctx).Infof("Verifying Connection (time since start: %s)", time.Since(starttime))
 				// ********************************************************************************
 				now = time.Now()
 				require.NoError(t, client.VerifyConnection(conn))
 				require.NoError(t, ep.VerifyConnection(conn))
-				logger.Log(ctx).Infof("Verifying Connection (took : %s)", time.Since(now))
+				log.FromContext(ctx).Infof("Verifying Connection (took : %s)", time.Since(now))
 
 				// ********************************************************************************
-				logger.Log(f.ctx).Infof("Sending Close to forwarder (time since start: %s)", time.Since(starttime))
+				log.FromContext(f.ctx).Infof("Sending Close to forwarder (time since start: %s)", time.Since(starttime))
 				// ********************************************************************************
 				now = time.Now()
 				_, err = client.Close(ctx, conn)
 				require.NoError(t, err)
-				logger.Log(ctx).Infof("Sending Close to forwarder (took : %s)", time.Since(now))
+				log.FromContext(ctx).Infof("Sending Close to forwarder (took : %s)", time.Since(now))
 
 				// ********************************************************************************
-				logger.Log(f.ctx).Infof("Verifying Connection Closed (time since start: %s)", time.Since(starttime))
+				log.FromContext(f.ctx).Infof("Verifying Connection Closed (time since start: %s)", time.Since(starttime))
 				// ********************************************************************************
 				now = time.Now()
 				require.NoError(t, client.VerifyClose(conn))
 				require.NoError(t, ep.VerifyClose(conn))
-				logger.Log(ctx).Infof("Verifying Connection Closed (took : %s)", time.Since(now))
+				log.FromContext(ctx).Infof("Verifying Connection Closed (took : %s)", time.Since(now))
 				// ********************************************************************************
-				logger.Log(f.ctx).Infof("Canceling ctx to end test (time since start: %s)", time.Since(starttime))
+				log.FromContext(f.ctx).Infof("Canceling ctx to end test (time since start: %s)", time.Since(starttime))
 				// ********************************************************************************
 				cancel()
 				err = <-serverErrCh
 				require.NoError(t, err)
 				// ********************************************************************************
-				logger.Log(f.ctx).Infof("%s completed (time since start: %s)", t.Name(), time.Since(starttime))
+				log.FromContext(f.ctx).Infof("%s completed (time since start: %s)", t.Name(), time.Since(starttime))
 				// ********************************************************************************
 			})
 		}

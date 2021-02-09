@@ -24,13 +24,13 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"github.com/networkservicemesh/sdk/pkg/tools/logger"
+	"github.com/networkservicemesh/sdk/pkg/tools/log"
 )
 
 func (f *ForwarderTestSuite) TestHealthCheck() {
 	ctx, cancel := context.WithTimeout(f.ctx, contextTimeout)
 	defer cancel()
-	ctx = logger.WithFields(ctx, map[string]interface{}{"test": f.T().Name()})
+	ctx = log.WithFields(ctx, map[string]interface{}{"test": f.T().Name()})
 	healthClient := grpc_health_v1.NewHealthClient(f.sutCC)
 	healthResponse, err := healthClient.Check(ctx,
 		&grpc_health_v1.HealthCheckRequest{
