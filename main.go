@@ -43,8 +43,8 @@ import (
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/xconnectns"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
-	"github.com/networkservicemesh/sdk/pkg/tools/logger"
-	"github.com/networkservicemesh/sdk/pkg/tools/logger/logruslogger"
+	"github.com/networkservicemesh/sdk/pkg/tools/log"
+	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 
 	registryinterpose "github.com/networkservicemesh/sdk/pkg/registry/common/interpose"
 	registryrefresh "github.com/networkservicemesh/sdk/pkg/registry/common/refresh"
@@ -76,33 +76,32 @@ func main() {
 	// setup logging
 	// ********************************************************************************
 	logrus.SetFormatter(&nested.Formatter{})
-	logger.EnableTracing(true)
-	ctx, _ = logruslogger.New(
-		logger.WithFields(ctx, map[string]interface{}{"cmd": os.Args[0]}),
-	)
+	log.EnableTracing(true)
+	ctx = log.WithFields(ctx, map[string]interface{}{"cmd": os.Args[0]})
+	ctx = log.WithLog(ctx, logruslogger.New(ctx))
 
 	// ********************************************************************************
 	// Debug self if necessary
 	// ********************************************************************************
 	if err := debug.Self(); err != nil {
-		logger.Log(ctx).Infof("%s", err)
+		log.FromContext(ctx).Infof("%s", err)
 	}
 
 	starttime := time.Now()
 
 	// enumerating phases
-	logger.Log(ctx).Infof("there are 6 phases which will be executed followed by a success message:")
-	logger.Log(ctx).Infof("the phases include:")
-	logger.Log(ctx).Infof("1: get config from environment")
-	logger.Log(ctx).Infof("2: run vpp and get a connection to it")
-	logger.Log(ctx).Infof("3: retrieve spiffe svid")
-	logger.Log(ctx).Infof("4: create xconnect network service endpoint")
-	logger.Log(ctx).Infof("5: create grpc server and register xconnect")
-	logger.Log(ctx).Infof("6: register xconnectns with the registry")
-	logger.Log(ctx).Infof("a final success message with start time duration")
+	log.FromContext(ctx).Infof("there are 6 phases which will be executed followed by a success message:")
+	log.FromContext(ctx).Infof("the phases include:")
+	log.FromContext(ctx).Infof("1: get config from environment")
+	log.FromContext(ctx).Infof("2: run vpp and get a connection to it")
+	log.FromContext(ctx).Infof("3: retrieve spiffe svid")
+	log.FromContext(ctx).Infof("4: create xconnect network service endpoint")
+	log.FromContext(ctx).Infof("5: create grpc server and register xconnect")
+	log.FromContext(ctx).Infof("6: register xconnectns with the registry")
+	log.FromContext(ctx).Infof("a final success message with start time duration")
 
 	// ********************************************************************************
-	logger.Log(ctx).Infof("executing phase 1: get config from environment (time since start: %s)", time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 1: get config from environment (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now := time.Now()
 	config := &Config{}
@@ -113,19 +112,19 @@ func main() {
 		logrus.Fatalf("error processing config from env: %+v", err)
 	}
 
-	logger.Log(ctx).Infof("Config: %#v", config)
-	logger.Log(ctx).WithField("duration", time.Since(now)).Infof("completed phase 1: get config from environment")
+	log.FromContext(ctx).Infof("Config: %#v", config)
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 1: get config from environment")
 
 	// ********************************************************************************
-	logger.Log(ctx).Infof("executing phase 2: run vpp and get a connection to it (time since start: %s)", time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 2: run vpp and get a connection to it (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
 	vppConn, vppErrCh := vpphelper.StartAndDialContext(ctx)
 	exitOnErrCh(ctx, cancel, vppErrCh)
-	logger.Log(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 
 	// ********************************************************************************
-	logger.Log(ctx).Infof("executing phase 3: retrieving svid, check spire agent logs if this is the last line you see (time since start: %s)", time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 3: retrieving svid, check spire agent logs if this is the last line you see (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
 	source, err := workloadapi.NewX509Source(ctx)
@@ -137,10 +136,10 @@ func main() {
 		logrus.Fatalf("error getting x509 svid: %+v", err)
 	}
 	logrus.Infof("SVID: %q", svid.ID)
-	logger.Log(ctx).WithField("duration", time.Since(now)).Info("completed phase 3: retrieving svid")
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 3: retrieving svid")
 
 	// ********************************************************************************
-	logger.Log(ctx).Infof("executing phase 4: create xconnect network service endpoint (time since start: %s)", time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 4: create xconnect network service endpoint (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
 	tmpDir, err := ioutil.TempDir("", "forwarder-")
@@ -160,10 +159,10 @@ func main() {
 		grpc.WithTransportCredentials(grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
 	)
-	logger.Log(ctx).WithField("duration", time.Since(now)).Info("completed phase 4: create xconnect network service endpoint")
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 4: create xconnect network service endpoint")
 
 	// ********************************************************************************
-	logger.Log(ctx).Infof("executing phase 5: create grpc server and register xconnect (time since start: %s)", time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 5: create grpc server and register xconnect (time since start: %s)", time.Since(starttime))
 	// TODO add serveroptions for tracing
 	// ********************************************************************************
 	now = time.Now()
@@ -172,10 +171,10 @@ func main() {
 	listenOn := &(url.URL{Scheme: "unix", Path: filepath.Join(tmpDir, "listen.on")})
 	srvErrCh := grpcutils.ListenAndServe(ctx, listenOn, server)
 	exitOnErrCh(ctx, cancel, srvErrCh)
-	logger.Log(ctx).WithField("duration", time.Since(now)).Info("completed phase 5: create grpc server and register xconnect")
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 5: create grpc server and register xconnect")
 
 	// ********************************************************************************
-	logger.Log(ctx).Infof("executing phase 6: register %s with the registry (time since start: %s)", config.NSName, time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 6: register %s with the registry (time since start: %s)", config.NSName, time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
 	registryCreds := credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny()))
@@ -186,7 +185,7 @@ func main() {
 		grpc.WithBlock(),
 	)
 	if err != nil {
-		logger.Log(ctx).Fatalf("failed to connect to registry: %+v", err)
+		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
 	}
 
 	registryClient := registrychain.NewNetworkServiceEndpointRegistryClient(
@@ -198,7 +197,7 @@ func main() {
 	// TODO - something smarter for expireTime
 	expireTime, err := ptypes.TimestampProto(time.Now().Add(config.MaxTokenLifetime))
 	if err != nil {
-		logger.Log(ctx).Fatalf("failed to connect to registry: %+v", err)
+		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
 	}
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name:                config.Name,
@@ -207,11 +206,11 @@ func main() {
 		ExpirationTime:      expireTime,
 	})
 	if err != nil {
-		logger.Log(ctx).Fatalf("failed to connect to registry: %+v", err)
+		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
 	}
-	logger.Log(ctx).WithField("duration", time.Since(now)).Infof("completed phase 6: register %s with the registry", config.NSName)
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 6: register %s with the registry", config.NSName)
 
-	logger.Log(ctx).Infof("Startup completed in %v", time.Since(starttime))
+	log.FromContext(ctx).Infof("Startup completed in %v", time.Since(starttime))
 
 	// TODO - cleaner shutdown across these three channels
 	<-ctx.Done()
@@ -223,13 +222,13 @@ func exitOnErrCh(ctx context.Context, cancel context.CancelFunc, errCh <-chan er
 	// If we already have an error, log it and exit
 	select {
 	case err := <-errCh:
-		logger.Log(ctx).Fatal(err)
+		log.FromContext(ctx).Fatal(err)
 	default:
 	}
 	// Otherwise wait for an error in the background to log and cancel
 	go func(ctx context.Context, errCh <-chan error) {
 		err := <-errCh
-		logger.Log(ctx).Error(err)
+		log.FromContext(ctx).Error(err)
 		cancel()
 	}(ctx, errCh)
 }

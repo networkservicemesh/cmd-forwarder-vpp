@@ -44,8 +44,8 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/registry/common/setid"
 	"github.com/networkservicemesh/sdk/pkg/registry/core/adapters"
 	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
-	"github.com/networkservicemesh/sdk/pkg/tools/logger"
-	"github.com/networkservicemesh/sdk/pkg/tools/logger/logruslogger"
+	"github.com/networkservicemesh/sdk/pkg/tools/log"
+	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	"github.com/networkservicemesh/sdk/pkg/tools/spire"
 
 	"github.com/edwarnicke/vpphelper"
@@ -53,24 +53,24 @@ import (
 
 func (f *ForwarderTestSuite) SetupSuite() {
 	logrus.SetFormatter(&nested.Formatter{})
-	logger.EnableTracing(true)
+	log.EnableTracing(true)
 	f.ctx, f.cancel = context.WithCancel(context.Background())
-	f.ctx, _ = logruslogger.New(f.ctx)
+	f.ctx = log.WithLog(f.ctx, logruslogger.New(f.ctx))
 
 	starttime := time.Now()
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Creating test vpp Server (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Creating test vpp Server (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.vppServerConn, f.vppServerRoot, f.vppServerErrCh = f.createVpp(f.ctx, "vpp-server")
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Creating test vpp Client (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Creating test vpp Client (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.vppClientConn, f.vppClientRoot, f.vppClientErrCh = f.createVpp(f.ctx, "vpp-client")
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Running Spire (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Running Spire (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	executable, err := os.Executable()
 	f.Require().NoError(err)
@@ -84,7 +84,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.Require().Len(f.spireErrCh, 0)
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Getting X509Source (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Getting X509Source (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	source, err := workloadapi.NewX509Source(f.ctx)
 	f.x509source = source
@@ -92,10 +92,10 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.Require().NoError(err)
 	svid, err := f.x509source.GetX509SVID()
 	f.Require().NoError(err, "error getting x509 svid")
-	logger.Log(f.ctx).Infof("SVID: %q received (time since start: %s)", svid.ID, time.Since(starttime))
+	log.FromContext(f.ctx).Infof("SVID: %q received (time since start: %s)", svid.ID, time.Since(starttime))
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Running system under test (SUT) (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Running system under test (SUT) (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	cmdStr := "forwarder"
 	f.sutErrCh = exechelper.Start(cmdStr,
@@ -109,12 +109,12 @@ func (f *ForwarderTestSuite) SetupSuite() {
 
 	// Get config from env
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.Require().NoError(envconfig.Process("nsm", &f.config))
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Creating registryServer and registryClient (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Creating registryServer and registryClient (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	memrg := memory.NewNetworkServiceEndpointRegistryServer()
 	registryServer := registrychain.NewNetworkServiceEndpointRegistryServer(
@@ -125,7 +125,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	)
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Get the regEndpoint from SUT (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Get the regEndpoint from SUT (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	serverCreds := credentials.NewTLS(tlsconfig.MTLSServerConfig(f.x509source, f.x509bundle, tlsconfig.AuthorizeAny()))
 	serverCreds = grpcfd.TransportCredentials(serverCreds)
@@ -149,10 +149,10 @@ func (f *ForwarderTestSuite) SetupSuite() {
 
 	regEndpoint, err := recv.Recv()
 	f.Require().NoError(err)
-	logger.Log(ctx).Infof("Received regEndpoint: %+v (time since start: %s)", regEndpoint, time.Since(starttime))
+	log.FromContext(ctx).Infof("Received regEndpoint: %+v (time since start: %s)", regEndpoint, time.Since(starttime))
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("Creating grpc.ClientConn to SUT (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("Creating grpc.ClientConn to SUT (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	clientCreds := credentials.NewTLS(tlsconfig.MTLSClientConfig(f.x509source, f.x509bundle, tlsconfig.AuthorizeAny()))
 	clientCreds = grpcfd.TransportCredentials(clientCreds)
@@ -166,7 +166,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	now := time.Now()
 	version, err := vpe.NewServiceClient(f.vppClientConn).ShowVersion(ctx, &vpe.ShowVersion{})
 	f.Require().NoError(err)
-	logger.Log(ctx).
+	log.FromContext(ctx).
 		WithField("duration", time.Since(now)).
 		WithField("vppName", "vpp-client").
 		WithField("version", version.Version).Info("complete")
@@ -174,13 +174,13 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	now = time.Now()
 	version, err = vpe.NewServiceClient(f.vppServerConn).ShowVersion(ctx, &vpe.ShowVersion{})
 	f.Require().NoError(err)
-	logger.Log(ctx).
+	log.FromContext(ctx).
 		WithField("duration", time.Since(now)).
 		WithField("vppName", "vpp-server").
 		WithField("version", version.Version).Info("complete")
 
 	// ********************************************************************************
-	logger.Log(f.ctx).Infof("SetupSuite Complete (time since start: %s)", time.Since(starttime))
+	log.FromContext(f.ctx).Infof("SetupSuite Complete (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 }
 
@@ -196,7 +196,7 @@ func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppCon
 		vpphelper.WithRootDir(vppRoot),
 	)
 	f.Require().Len(errCh, 0)
-	logger.Log(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)
 	return vppConn, vppRoot, errCh
 }
 
