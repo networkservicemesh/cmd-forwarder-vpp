@@ -45,6 +45,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
+	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	registryinterpose "github.com/networkservicemesh/sdk/pkg/registry/common/interpose"
 	registryrefresh "github.com/networkservicemesh/sdk/pkg/registry/common/refresh"
@@ -157,7 +158,12 @@ func main() {
 		vppConn,
 		vppinit.Must(vppinit.LinkToAfPacket(ctx, vppConn, config.TunnelIP)),
 		grpc.WithTransportCredentials(grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
-		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
+		grpc.WithDefaultCallOptions(
+			grpc.WaitForReady(true),
+			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime))),
+		),
+		grpcfd.WithChainStreamInterceptor(),
+		grpcfd.WithChainUnaryInterceptor(),
 	)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 4: create xconnect network service endpoint")
 

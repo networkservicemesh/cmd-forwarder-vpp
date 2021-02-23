@@ -100,26 +100,21 @@ type memifVerifiableClient struct {
 	networkservice.NetworkServiceClient
 }
 
-func newMemifVerifiableClient(ctx context.Context,
-	tokenGenerator token.GeneratorFunc,
-	sutCC grpc.ClientConnInterface,
-	vppConn vpphelper.Connection,
-	vppRootDir string,
-) verifiableClient {
+func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface, vppConn vpphelper.Connection, vppRootDir string) verifiableClient {
 	rv := &memifVerifiableClient{
 		ctx:        ctx,
 		vppRootDir: vppRootDir,
 		NetworkServiceClient: client.NewClient(
 			ctx,
-			"memifVerifiableClient",
-			nil,
-			tokenGenerator,
 			sutCC,
-			metadata.NewClient(),
-			up.NewClient(ctx, vppConn),
-			connectioncontext.NewClient(vppConn),
-			memif.NewClient(vppConn),
-			recvfd.NewClient(),
+			client.WithName("memifVerifiableClient"),
+			client.WithAdditionalFunctionality(
+				metadata.NewClient(),
+				up.NewClient(ctx, vppConn),
+				connectioncontext.NewClient(vppConn),
+				memif.NewClient(vppConn),
+				recvfd.NewClient(),
+			),
 		),
 	}
 	return rv

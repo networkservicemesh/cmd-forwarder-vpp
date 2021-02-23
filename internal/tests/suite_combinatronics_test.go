@@ -63,13 +63,11 @@ func (f *ForwarderTestSuite) TestCombinations() {
 	clients := map[string]func(ctx context.Context) verifiableClient{
 		kernelName: func(ctx context.Context) verifiableClient {
 			return newKernelVerifiableClient(ctx,
-				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.sutCC,
 			)
 		},
 		memifName: func(ctx context.Context) verifiableClient {
 			return newMemifVerifiableClient(ctx,
-				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.sutCC,
 				f.vppClientConn,
 				f.vppClientRoot,
