@@ -46,7 +46,9 @@ import (
 	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
+	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/spire"
+	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/edwarnicke/vpphelper"
 )
@@ -160,6 +162,11 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		regEndpoint.GetUrl(),
 		grpc.WithTransportCredentials(clientCreds),
 		grpc.WithBlock(),
+		grpc.WithDefaultCallOptions(
+			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, f.config.MaxTokenLifetime))),
+		),
+		grpcfd.WithChainUnaryInterceptor(),
+		grpcfd.WithChainStreamInterceptor(),
 	)
 	f.Require().NoError(err)
 

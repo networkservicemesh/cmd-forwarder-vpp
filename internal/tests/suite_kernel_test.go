@@ -135,10 +135,7 @@ type kernelVerifiableClient struct {
 	networkservice.NetworkServiceClient
 }
 
-func newKernelVerifiableClient(ctx context.Context,
-	tokenGenerator token.GeneratorFunc,
-	sutCC grpc.ClientConnInterface,
-) verifiableClient {
+func newKernelVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface) verifiableClient {
 	rootNSHandle, err := netns.Get()
 	if err != nil {
 		panic(fmt.Sprintf("unable to get root netNs: %+v", err))
@@ -158,14 +155,14 @@ func newKernelVerifiableClient(ctx context.Context,
 		clientNSHandle: clientNSHandle,
 		NetworkServiceClient: client.NewClient(
 			ctx,
-			"kernelVerifiableClient",
-			nil,
-			tokenGenerator,
 			sutCC,
-			ns.NewClient(clientNSHandle),
-			kernelmechanism.NewClient(),
-			sendfd.NewClient(),
-			ns.NewClient(rootNSHandle),
+			client.WithName("kernelVerifiableClient"),
+			client.WithAdditionalFunctionality(
+				ns.NewClient(clientNSHandle),
+				kernelmechanism.NewClient(),
+				sendfd.NewClient(),
+				ns.NewClient(rootNSHandle),
+			),
 		),
 	}
 	return rv
