@@ -32,7 +32,6 @@ import (
 	"github.com/edwarnicke/grpcfd"
 	"github.com/edwarnicke/signalctx"
 	"github.com/edwarnicke/vpphelper"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
@@ -43,16 +42,12 @@ import (
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/xconnectns"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
+	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
+	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
-	"github.com/networkservicemesh/sdk/pkg/tools/token"
-
-	registryinterpose "github.com/networkservicemesh/sdk/pkg/registry/common/interpose"
-	registryrefresh "github.com/networkservicemesh/sdk/pkg/registry/common/refresh"
-	registrysendfd "github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
-	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
-	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
+	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 )
@@ -194,22 +189,11 @@ func main() {
 		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
 	}
 
-	registryClient := registrychain.NewNetworkServiceEndpointRegistryClient(
-		registryinterpose.NewNetworkServiceEndpointRegistryClient(),
-		registryrefresh.NewNetworkServiceEndpointRegistryClient(),
-		registrysendfd.NewNetworkServiceEndpointRegistryClient(),
-		registryapi.NewNetworkServiceEndpointRegistryClient(registryCC),
-	)
-	// TODO - something smarter for expireTime
-	expireTime, err := ptypes.TimestampProto(time.Now().Add(config.MaxTokenLifetime))
-	if err != nil {
-		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
-	}
+	registryClient := registryclient.NewNetworkServiceEndpointRegistryInterposeClient(ctx, registryCC)
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name:                config.Name,
 		NetworkServiceNames: []string{config.NSName},
 		Url:                 listenOn.String(),
-		ExpirationTime:      expireTime,
 	})
 	if err != nil {
 		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
