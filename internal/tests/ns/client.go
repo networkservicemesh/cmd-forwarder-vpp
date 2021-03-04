@@ -22,6 +22,7 @@ package ns
 
 import (
 	"context"
+	"runtime"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/vishvananda/netns"
@@ -43,6 +44,9 @@ func NewClient(ns netns.NsHandle) networkservice.NetworkServiceClient {
 }
 
 func (n *nsClient) Request(ctx context.Context, request *networkservice.NetworkServiceRequest, opts ...grpc.CallOption) (*networkservice.Connection, error) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	curNetns, err := netns.Get()
 	if err != nil {
 		return nil, err
@@ -63,6 +67,9 @@ func (n *nsClient) Request(ctx context.Context, request *networkservice.NetworkS
 }
 
 func (n *nsClient) Close(ctx context.Context, conn *networkservice.Connection, opts ...grpc.CallOption) (*empty.Empty, error) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	curNetns, err := netns.Get()
 	if err != nil {
 		return nil, err
