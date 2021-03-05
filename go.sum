@@ -163,10 +163,10 @@ github.com/nats-io/nuid v1.0.1/go.mod h1:19wcPz3Ph3q0Jbyiqsd0kePYG7A95tJPxeL+1OS
 github.com/nats-io/stan.go v0.6.0/go.mod h1:eIcD5bi3pqbHT/xIIvXMwvzXYElgouBvaVRftaE+eac=
 github.com/networkservicemesh/api v0.0.0-20210218170701-1a72f1cba074 h1:lMU+bavS8l0vKZKtCYutUFtTaU5jzTEA7bD/s843XYU=
 github.com/networkservicemesh/api v0.0.0-20210218170701-1a72f1cba074/go.mod h1:qvxdY1Zt4QTtiG+uH1XmjpegeHjlt5Jj4A8iK55iJPI=
-github.com/networkservicemesh/sdk v0.0.0-20210304150727-68e58775b5d7 h1:brvUMXl8zJY8aPSuClQf/2SXLtTiy9va7NFqo54aW3o=
-github.com/networkservicemesh/sdk v0.0.0-20210304150727-68e58775b5d7/go.mod h1:IrL3IsUBr/iQrtLQEtmBRFKoIKjYZEW+Z7ZFDt9TbRc=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210304180615-272ba77e985a h1:nOdM052x4HDHhEard57mc0g6b5dn70KLlb/OeXs9kjE=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210304180615-272ba77e985a/go.mod h1:z0sf2KssULkaXrP1vN9UIgRYZmgUHCH9Sf2n9aIDKRQ=
+github.com/networkservicemesh/sdk v0.0.0-20210305042626-37d2e4bf0fd7 h1:6Nd1Gk/B6OIGnsNV86/Yrn+e3xcQb3Tx9TWcocyPTvM=
+github.com/networkservicemesh/sdk v0.0.0-20210305042626-37d2e4bf0fd7/go.mod h1:IrL3IsUBr/iQrtLQEtmBRFKoIKjYZEW+Z7ZFDt9TbRc=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210305043057-1ab63917155e h1:SEqfWpoI5diZOFLlz2tyVhT3YzHkaTf2GPlSzMx7V10=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210305043057-1ab63917155e/go.mod h1:FtALW1T51FtM8tV5maEJpFu15391f6L8g7W+gRv25FM=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nxadm/tail v1.4.4 h1:DQuhQpB1tVlglWS2hLQ5OV6B5r8aGxSrPc5Qo6uTN78=
