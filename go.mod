@@ -15,7 +15,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v0.0.0-20210218170701-1a72f1cba074
 	github.com/networkservicemesh/sdk v0.0.0-20210305042626-37d2e4bf0fd7
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20210305043057-1ab63917155e
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20210305165438-ba604a26fcf2
 	github.com/onsi/ginkgo v1.13.0 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0

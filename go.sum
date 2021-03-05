@@ -1,7 +1,5 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
-git.fd.io/govpp.git v0.3.6-0.20200903151113-c94a96227985 h1:SCYXEDTNj5MEshXZKh4yPJDHaA9+cu4cSzaF18jTUc8=
-git.fd.io/govpp.git v0.3.6-0.20200903151113-c94a96227985/go.mod h1:pCG9BwUtf+AwnHQWe3/Bk9URmfG0nRoM5DHA794z0/Y=
 git.fd.io/govpp.git v0.3.6-0.20210202134006-4c1cccf48cd1 h1:yNpDKZPsqbDXAuOUSKnJWI22QZp51Zd5fV8NvGvzOtU=
 git.fd.io/govpp.git v0.3.6-0.20210202134006-4c1cccf48cd1/go.mod h1:OCVd4W8SH+666KRQoMj6PM+oipLDZAHhqMz9B1TGbgI=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
@@ -40,7 +38,6 @@ github.com/edwarnicke/debug v1.0.0/go.mod h1:cJAtt6sSqp7yUFpiIvSD2Xzyc7iUTUMx0MU
 github.com/edwarnicke/exechelper v1.0.2/go.mod h1:/T271jtNX/ND4De6pa2aRy2+8sNtyCDB1A2pp4M+fUs=
 github.com/edwarnicke/exechelper v1.0.3 h1:OY2ocGAITTqnEDvZk0dRQSeMIQvyH0SyL/4ncz+5GeQ=
 github.com/edwarnicke/exechelper v1.0.3/go.mod h1:R65OUPKns4bgeHkCmfSHbmqLBU8aHZxTgLmEyUBUk4U=
-github.com/edwarnicke/govpp v0.0.0-20201111163523-106f68b6ba26/go.mod h1:wQua0G5mhpwGNG4HuudYCikLZviQI8g7CngtH9fJFCo=
 github.com/edwarnicke/govpp v0.0.0-20210225052125-79125273957c h1:Q9PEO4AHpwvd9Yd+WtA79h1NA1UpUl19WUMiUAF99i4=
 github.com/edwarnicke/govpp v0.0.0-20210225052125-79125273957c/go.mod h1:+J/hMuJr9nxWWHG+JJqhl+jpE4H97jO0tpvsaxSYEdU=
 github.com/edwarnicke/grpcfd v0.0.0-20210219150442-10fb469a6976 h1:qYvyZmwMS7wdlMlf/r8jPeBUIkjuPO/Ns9T7g1p7c2A=
@@ -60,10 +57,10 @@ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1m
 github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
-github.com/fsnotify/fsnotify v0.0.0-20170329110642-4da3e2cfbabc/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/fsnotify/fsnotify v1.4.9 h1:hsms1Qyu0jgnwNXIxa+/V/PDsU6CfLf6CNO8H7IWoS4=
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
+github.com/ftrvxmtrx/fd v0.0.0-20150925145434-c6d800382fff h1:zk1wwii7uXmI0znwU+lqg+wFL9G5+vm5I+9rv2let60=
 github.com/ftrvxmtrx/fd v0.0.0-20150925145434-c6d800382fff/go.mod h1:yUhRXHewUVJ1k89wHKP68xfzk7kwXUx/DV1nx4EBMbw=
 github.com/ghodss/yaml v0.0.0-20180820084758-c7ce16629ff4/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
@@ -165,8 +162,8 @@ github.com/networkservicemesh/api v0.0.0-20210218170701-1a72f1cba074 h1:lMU+bavS
 github.com/networkservicemesh/api v0.0.0-20210218170701-1a72f1cba074/go.mod h1:qvxdY1Zt4QTtiG+uH1XmjpegeHjlt5Jj4A8iK55iJPI=
 github.com/networkservicemesh/sdk v0.0.0-20210305042626-37d2e4bf0fd7 h1:6Nd1Gk/B6OIGnsNV86/Yrn+e3xcQb3Tx9TWcocyPTvM=
 github.com/networkservicemesh/sdk v0.0.0-20210305042626-37d2e4bf0fd7/go.mod h1:IrL3IsUBr/iQrtLQEtmBRFKoIKjYZEW+Z7ZFDt9TbRc=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210305043057-1ab63917155e h1:SEqfWpoI5diZOFLlz2tyVhT3YzHkaTf2GPlSzMx7V10=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210305043057-1ab63917155e/go.mod h1:FtALW1T51FtM8tV5maEJpFu15391f6L8g7W+gRv25FM=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210305165438-ba604a26fcf2 h1:9W98cUY/oLiSa/dn/j7dsMVj2hvaa7fUxqhnTHcWcGA=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210305165438-ba604a26fcf2/go.mod h1:FWuiBTYYuufitd3SCan4UBl5AbrS9G53RQfe1ra5uIg=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nxadm/tail v1.4.4 h1:DQuhQpB1tVlglWS2hLQ5OV6B5r8aGxSrPc5Qo6uTN78=
@@ -385,7 +382,6 @@ gopkg.in/square/go-jose.v2 v2.4.1 h1:H0TmLt7/KmzlrDOpa1F+zr0Tk90PbJYBfsVUmRLrf9Y
 gopkg.in/square/go-jose.v2 v2.4.1/go.mod h1:M9dMgbHiYLoDGQrXy7OpJDJWiKiU//h+vD76mk0e1AI=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 h1:uRGJdciOHaEIrze2W8Q3AKkepLTh2hOroT7a+7czfdQ=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=
-gopkg.in/yaml.v2 v2.0.0-20170407172122-cd8b52f8269e/go.mod h1:JAlM8MvJe8wmxCU4Bli9HhUf9+ttbYbLASfIpnQbh74=
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
