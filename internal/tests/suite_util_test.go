@@ -20,9 +20,11 @@ package tests
 
 import (
 	"context"
+	"net"
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/vishvananda/netlink"
 	"google.golang.org/grpc"
 
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
@@ -30,6 +32,9 @@ import (
 
 const (
 	contextTimeout = 100 * time.Second
+	forwarderIP    = "10.0.2.1"
+	clientIP       = "10.0.2.2"
+	serverIP       = "10.0.2.3"
 )
 
 func (f *ForwarderTestSuite) ListenAndServe(ctx context.Context, server *grpc.Server) <-chan error {
@@ -50,4 +55,52 @@ func (f *ForwarderTestSuite) ListenAndServe(ctx context.Context, server *grpc.Se
 		close(returnErrCh)
 	}(errCh, returnErrCh)
 	return returnErrCh
+}
+
+func SetupBridge() error {
+	la := netlink.NewLinkAttrs()
+	la.Name = "bridge"
+	bridge := &netlink.Bridge{LinkAttrs: la}
+	err := netlink.LinkAdd(bridge)
+	if err != nil {
+		return errors.Wrapf(err, "could not add %s: %v\n", la.Name, err)
+	}
+	if err := netlink.LinkSetUp(bridge); err != nil {
+		return errors.Wrapf(err, "failure creating bridge")
+	}
+
+	ifaceMap := map[string]*net.IPNet{
+		"fowarder": {IP: net.ParseIP(forwarderIP), Mask: net.CIDRMask(24, 32)},
+		"client":   {IP: net.ParseIP(clientIP), Mask: net.CIDRMask(24, 32)},
+		"server":   {IP: net.ParseIP(serverIP), Mask: net.CIDRMask(24, 32)},
+	}
+	for ifaceName, netIP := range ifaceMap {
+		la := netlink.NewLinkAttrs()
+		la.Name = ifaceName
+		l := &netlink.Veth{
+			LinkAttrs: la,
+			PeerName:  la.Name + "-veth",
+		}
+		if err := netlink.LinkAdd(l); err != nil {
+			return errors.Wrapf(err, "unable to create link %s", l.PeerName)
+		}
+		peer, err := netlink.LinkByName(l.PeerName)
+		if err != nil {
+			return errors.Wrapf(err, "unable to get link %s", l.PeerName)
+		}
+		if err := netlink.LinkSetUp(l); err != nil {
+			return errors.Wrapf(err, "unable to up link %s", l.Attrs().Name)
+		}
+		if err := netlink.LinkSetUp(peer); err != nil {
+			return errors.Wrapf(err, "unable to up link %s", peer.Attrs().Name)
+		}
+		if err := netlink.AddrAdd(l, &netlink.Addr{IPNet: netIP}); err != nil {
+			return errors.Wrapf(err, "unable to add address %s to link %s", netIP, l.Attrs().Name)
+		}
+
+		if err := netlink.LinkSetMaster(peer, bridge); err != nil {
+			return errors.Wrapf(err, "unable to add link %s to bridge %s", peer.Attrs().Name, bridge.LinkAttrs.Name)
+		}
+	}
+	return nil
 }

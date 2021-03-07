@@ -40,6 +40,7 @@ import (
 const (
 	kernelName = "Kernel"
 	memifName  = "Memif"
+	vxlanName  = "Vxlan"
 )
 
 func (f *ForwarderTestSuite) TestCombinations() {
@@ -59,6 +60,13 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				f.vppServerRoot,
 			)
 		},
+		vxlanName: func(ctx context.Context) verifiableEndpoint {
+			return newVxlanVerifiableEndpoint(ctx, prefix,
+				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
+				f.vppServerConn,
+				f.vppServerRoot,
+			)
+		},
 	}
 	clients := map[string]func(ctx context.Context) verifiableClient{
 		kernelName: func(ctx context.Context) verifiableClient {
@@ -68,6 +76,13 @@ func (f *ForwarderTestSuite) TestCombinations() {
 		},
 		memifName: func(ctx context.Context) verifiableClient {
 			return newMemifVerifiableClient(ctx,
+				f.sutCC,
+				f.vppClientConn,
+				f.vppClientRoot,
+			)
+		},
+		vxlanName: func(ctx context.Context) verifiableClient {
+			return newVxlanVerifiableClient(ctx,
 				f.sutCC,
 				f.vppClientConn,
 				f.vppClientRoot,

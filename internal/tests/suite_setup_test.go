@@ -22,6 +22,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"time"
@@ -51,6 +52,8 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/edwarnicke/vpphelper"
+
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 )
 
 func (f *ForwarderTestSuite) SetupSuite() {
@@ -62,14 +65,23 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	starttime := time.Now()
 
 	// ********************************************************************************
+	log.FromContext(f.ctx).Infof("Creating test bridge (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	f.Require().NoError(SetupBridge())
+
+	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test vpp Server (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.vppServerConn, f.vppServerRoot, f.vppServerErrCh = f.createVpp(f.ctx, "vpp-server")
+	_, err := vppinit.LinkToAfPacket(f.ctx, f.vppServerConn, net.ParseIP(serverIP))
+	f.Require().NoError(err)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test vpp Client (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.vppClientConn, f.vppClientRoot, f.vppClientErrCh = f.createVpp(f.ctx, "vpp-client")
+	_, err = vppinit.LinkToAfPacket(f.ctx, f.vppClientConn, net.ParseIP(clientIP))
+	f.Require().NoError(err)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Running Spire (time since start: %s)", time.Since(starttime))
@@ -106,6 +118,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		exechelper.WithStdout(os.Stdout),
 		exechelper.WithStderr(os.Stderr),
 		exechelper.WithGracePeriod(30*time.Second),
+		exechelper.WithEnvKV("NSM_TUNNEL_IP", forwarderIP),
 	)
 	f.Require().Len(f.sutErrCh, 0)
 
