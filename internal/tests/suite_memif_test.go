@@ -19,16 +19,18 @@
 package tests
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"net"
-	"os"
 	"regexp"
+	"time"
 
-	"github.com/edwarnicke/exechelper"
+	"git.fd.io/govpp.git/api"
+	"git.fd.io/govpp.git/binapi/vpe"
 	"github.com/edwarnicke/vpphelper"
 	"github.com/pkg/errors"
+
+	"github.com/networkservicemesh/sdk/pkg/tools/log"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
@@ -51,8 +53,8 @@ import (
 )
 
 type memifVerifiableEndpoint struct {
-	ctx        context.Context
-	vppRootDir string
+	ctx     context.Context
+	vppConn api.Connection
 	endpoint.Endpoint
 }
 
@@ -60,11 +62,10 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 	prefix *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
 	vppConn vpphelper.Connection,
-	vppRootDir string,
 ) verifiableEndpoint {
 	return &memifVerifiableEndpoint{
-		ctx:        ctx,
-		vppRootDir: vppRootDir,
+		ctx:     ctx,
+		vppConn: vppConn,
 		Endpoint: endpoint.NewServer(
 			ctx,
 			"memifVerifiableEndpoint",
@@ -87,7 +88,7 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 }
 
 func (k *memifVerifiableEndpoint) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(conn.GetContext().GetIpContext().GetSrcIpAddr(), k.vppRootDir)
+	return pingVpp(k.ctx, k.vppConn, conn.GetContext().GetIpContext().GetSrcIpAddr())
 }
 
 func (k *memifVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
@@ -95,15 +96,15 @@ func (k *memifVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) e
 }
 
 type memifVerifiableClient struct {
-	ctx        context.Context
-	vppRootDir string
+	ctx     context.Context
+	vppConn api.Connection
 	networkservice.NetworkServiceClient
 }
 
-func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface, vppConn vpphelper.Connection, vppRootDir string) verifiableClient {
+func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface, vppConn vpphelper.Connection) verifiableClient {
 	rv := &memifVerifiableClient{
-		ctx:        ctx,
-		vppRootDir: vppRootDir,
+		ctx:     ctx,
+		vppConn: vppConn,
 		NetworkServiceClient: client.NewClient(
 			ctx,
 			sutCC,
@@ -121,38 +122,45 @@ func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfac
 }
 
 func (m *memifVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(conn.GetContext().GetIpContext().GetDstIpAddr(), m.vppRootDir)
+	return pingVpp(m.ctx, m.vppConn, conn.GetContext().GetIpContext().GetDstIpAddr())
 }
 
 func (m *memifVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
 	return nil
 }
 
-func pingVpp(ipaddress, rootDir string) error {
+func pingVpp(ctx context.Context, vppConn api.Connection, ipaddress string) error {
 	ip, _, err := net.ParseCIDR(ipaddress)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	pingStr := fmt.Sprintf("vppctl -s %s/var/run/vpp/cli.sock ping %s interval 0.1 repeat 1 verbose", rootDir, ip.String())
+	pingCmd := &vpe.CliInband{
+		Cmd: fmt.Sprintf("ping %s interval 0.1 repeat 1 verbose", ip.String()),
+	}
 
 	// Prime the pump, vpp doesn't arp until needed, and so the first ping will fail
-	_ = exechelper.Run(pingStr,
-		exechelper.WithEnvirons(os.Environ()...),
-		exechelper.WithStdout(os.Stdout),
-		exechelper.WithStderr(os.Stderr),
-	)
-
-	buf := bytes.NewBuffer([]byte{})
-	if err := exechelper.Run(pingStr,
-		exechelper.WithEnvirons(os.Environ()...),
-		exechelper.WithStdout(os.Stdout),
-		exechelper.WithStderr(os.Stderr),
-		exechelper.WithStdout(buf),
-		exechelper.WithStderr(buf),
-	); err != nil {
+	now := time.Now()
+	pingRsp, err := vpe.NewServiceClient(vppConn).CliInband(ctx, pingCmd)
+	if err != nil {
 		return errors.WithStack(err)
 	}
-	if regexp.MustCompile(" 0% packet loss").Match(buf.Bytes()) {
+	log.FromContext(ctx).
+		WithField("vppapi", "CliInband").
+		WithField("Cmd", pingCmd).
+		WithField("Reply", pingRsp.Reply).
+		WithField("duration", time.Since(now)).Debug("completed")
+
+	now = time.Now()
+	if pingRsp, err = vpe.NewServiceClient(vppConn).CliInband(ctx, pingCmd); err != nil {
+		return errors.WithStack(err)
+	}
+	log.FromContext(ctx).
+		WithField("vppapi", "CliInband").
+		WithField("Cmd", pingCmd).
+		WithField("Reply", pingRsp.Reply).
+		WithField("duration", time.Since(now)).Debug("completed")
+
+	if regexp.MustCompile(" 0% packet loss").MatchString(pingRsp.Reply) {
 		return nil
 	}
 	return errors.New("Ping failed")

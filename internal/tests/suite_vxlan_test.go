@@ -39,19 +39,18 @@ import (
 )
 
 type vxlanVerifiableEndpoint struct {
-	ctx        context.Context
-	vppRootDir string
+	ctx     context.Context
+	vppConn api.Connection
 	endpoint.Endpoint
 }
 
 func newVxlanVerifiableEndpoint(ctx context.Context,
 	prefix *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
-	vppConn api.Connection,
-	vppRootDir string) verifiableEndpoint {
+	vppConn api.Connection) verifiableEndpoint {
 	rv := &vxlanVerifiableEndpoint{
-		ctx:        ctx,
-		vppRootDir: vppRootDir,
+		ctx:     ctx,
+		vppConn: vppConn,
 	}
 	name := "vxlanVerifiableEndpoint"
 	rv.Endpoint = endpoint.NewServer(ctx, name,
@@ -68,7 +67,7 @@ func newVxlanVerifiableEndpoint(ctx context.Context,
 }
 
 func (v *vxlanVerifiableEndpoint) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(conn.GetContext().GetIpContext().GetSrcIpAddr(), v.vppRootDir)
+	return pingVpp(v.ctx, v.vppConn, conn.GetContext().GetIpContext().GetSrcIpAddr())
 }
 
 func (v *vxlanVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
@@ -76,8 +75,8 @@ func (v *vxlanVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) e
 }
 
 type vxlanVerifiableClient struct {
-	ctx        context.Context
-	vppRootDir string
+	ctx     context.Context
+	vppConn api.Connection
 	networkservice.NetworkServiceClient
 }
 
@@ -85,11 +84,10 @@ func newVxlanVerifiableClient(
 	ctx context.Context,
 	sutCC grpc.ClientConnInterface,
 	vppConn api.Connection,
-	vppRootDir string,
 ) verifiableClient {
 	return &vxlanVerifiableClient{
-		ctx:        ctx,
-		vppRootDir: vppRootDir,
+		ctx:     ctx,
+		vppConn: vppConn,
 		NetworkServiceClient: client.NewClient(ctx,
 			sutCC,
 			client.WithName("vxlanVerifiableClient"),
@@ -102,7 +100,7 @@ func newVxlanVerifiableClient(
 }
 
 func (v *vxlanVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(conn.GetContext().GetIpContext().GetDstIpAddr(), v.vppRootDir)
+	return pingVpp(v.ctx, v.vppConn, conn.GetContext().GetIpContext().GetDstIpAddr())
 }
 
 func (v *vxlanVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
