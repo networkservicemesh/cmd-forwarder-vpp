@@ -202,10 +202,7 @@ func main() {
 
 	log.FromContext(ctx).Infof("Startup completed in %v", time.Since(starttime))
 
-	// TODO - cleaner shutdown across these three channels
 	<-ctx.Done()
-	<-srvErrCh
-	<-vppErrCh
 }
 
 func exitOnErrCh(ctx context.Context, cancel context.CancelFunc, errCh <-chan error) {
