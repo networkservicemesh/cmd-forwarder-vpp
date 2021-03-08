@@ -57,14 +57,12 @@ func (f *ForwarderTestSuite) TestCombinations() {
 			return newMemifVerifiableEndpoint(ctx, prefix,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
-				f.vppServerRoot,
 			)
 		},
 		vxlanName: func(ctx context.Context) verifiableEndpoint {
 			return newVxlanVerifiableEndpoint(ctx, prefix,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
-				f.vppServerRoot,
 			)
 		},
 	}
@@ -78,14 +76,12 @@ func (f *ForwarderTestSuite) TestCombinations() {
 			return newMemifVerifiableClient(ctx,
 				f.sutCC,
 				f.vppClientConn,
-				f.vppClientRoot,
 			)
 		},
 		vxlanName: func(ctx context.Context) verifiableClient {
 			return newVxlanVerifiableClient(ctx,
 				f.sutCC,
 				f.vppClientConn,
-				f.vppClientRoot,
 			)
 		},
 	}
