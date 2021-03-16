@@ -23,15 +23,15 @@ import (
 	"git.fd.io/govpp.git/api"
 	"google.golang.org/grpc"
 
-	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/ipam/point2pointipam"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/utils/metadata"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/utils/metadata"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
@@ -53,15 +53,18 @@ func newVxlanVerifiableEndpoint(ctx context.Context,
 		vppConn: vppConn,
 	}
 	name := "vxlanVerifiableEndpoint"
-	rv.Endpoint = endpoint.NewServer(ctx, name,
-		authorize.NewServer(),
+	rv.Endpoint = endpoint.NewServer(ctx,
 		tokenGenerator,
-		metadata.NewServer(),
-		point2pointipam.NewServer(prefix),
-		mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
-			vxlan.MECHANISM: vxlan.NewServer(vppConn, net.ParseIP(serverIP)),
-		}),
-		connectioncontext.NewServer(vppConn),
+		endpoint.WithName(name),
+		endpoint.WithAuthorizeServer(authorize.NewServer()),
+		endpoint.WithAdditionalFunctionality(
+			metadata.NewServer(),
+			point2pointipam.NewServer(prefix),
+			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
+				vxlan.MECHANISM: vxlan.NewServer(vppConn, net.ParseIP(serverIP)),
+			}),
+			connectioncontext.NewServer(vppConn),
+		),
 	)
 	return rv
 }
