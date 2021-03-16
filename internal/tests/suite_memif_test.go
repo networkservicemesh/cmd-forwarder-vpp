@@ -30,26 +30,26 @@ import (
 	"github.com/edwarnicke/vpphelper"
 	"github.com/pkg/errors"
 
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/tag"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms/sendfd"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/core/chain"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/ipam/point2pointipam"
+
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/memif"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/tag"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/up"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms/recvfd"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/ipam/point2pointipam"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/utils/metadata"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"google.golang.org/grpc"
-
-	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms/sendfd"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/core/chain"
 )
 
 type memifVerifiableEndpoint struct {
@@ -68,21 +68,23 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 		vppConn: vppConn,
 		Endpoint: endpoint.NewServer(
 			ctx,
-			"memifVerifiableEndpoint",
-			authorize.NewServer(),
 			tokenGenerator,
-			point2pointipam.NewServer(prefix),
-			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
-				memif.MECHANISM: chain.NewNetworkServiceServer(
-					metadata.NewServer(),
-					memif.NewServer(vppConn),
-					tag.NewServer(ctx, vppConn),
-					connectioncontext.NewServer(vppConn),
-					up.NewServer(ctx, vppConn),
-					sendfd.NewServer(),
-				),
-			}),
-			sendfd.NewServer(),
+			endpoint.WithName("memifVerifiableEndpoint"),
+			endpoint.WithAuthorizeServer(authorize.NewServer()),
+			endpoint.WithAdditionalFunctionality(
+				point2pointipam.NewServer(prefix),
+				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
+					memif.MECHANISM: chain.NewNetworkServiceServer(
+						metadata.NewServer(),
+						memif.NewServer(vppConn),
+						tag.NewServer(ctx, vppConn),
+						connectioncontext.NewServer(vppConn),
+						up.NewServer(ctx, vppConn),
+						sendfd.NewServer(),
+					),
+				}),
+				sendfd.NewServer(),
+			),
 		),
 	}
 }

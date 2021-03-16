@@ -93,18 +93,20 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 		endpointNSHandle: endpointNSHandle,
 		Endpoint: endpoint.NewServer(
 			ctx,
-			"kernelVerifiableEndpoint",
-			authorize.NewServer(),
 			tokenGenerator,
-			point2pointipam.NewServer(prefix),
-			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
-				kernel.MECHANISM: chain.NewNetworkServiceServer(
-					kernelmechanism.NewServer(),
-				),
-			}),
-			ns.NewServer(endpointNSHandle),
-			sendfd.NewServer(),
-			ns.NewServer(rootNSHandle),
+			endpoint.WithName("kernelVerifiableEndpoint"),
+			endpoint.WithAuthorizeServer(authorize.NewServer()),
+			endpoint.WithAdditionalFunctionality(
+				point2pointipam.NewServer(prefix),
+				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
+					kernel.MECHANISM: chain.NewNetworkServiceServer(
+						kernelmechanism.NewServer(),
+					),
+				}),
+				ns.NewServer(endpointNSHandle),
+				sendfd.NewServer(),
+				ns.NewServer(rootNSHandle),
+			),
 		),
 	}
 }
