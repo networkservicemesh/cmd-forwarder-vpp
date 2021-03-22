@@ -14,8 +14,8 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v0.0.0-20210305165706-bcfdc8d78700
-	github.com/networkservicemesh/sdk v0.0.0-20210322080953-5bdbc048dab0
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20210322081250-024be6715f92
+	github.com/networkservicemesh/sdk v0.0.0-20210322090132-801aa9713ef0
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20210322090915-67f338c937e3
 	github.com/onsi/ginkgo v1.13.0 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
