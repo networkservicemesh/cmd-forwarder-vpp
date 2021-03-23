@@ -20,8 +20,8 @@ package tests
 
 import (
 	"context"
-	"fmt"
 	"net"
+	"strings"
 	"testing"
 	"time"
 
@@ -31,35 +31,34 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
+	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/memif"
+	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/vxlan"
+	"github.com/networkservicemesh/api/pkg/api/networkservice/payload"
+
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 )
 
-const (
-	kernelName = "Kernel"
-	memifName  = "Memif"
-	vxlanName  = "Vxlan"
-)
-
 func (f *ForwarderTestSuite) TestCombinations() {
 	_, prefix, err := net.ParseCIDR("10.0.0.0/24")
 	f.Require().NoError(err)
 	endpoints := map[string]func(ctx context.Context) verifiableEndpoint{
-		kernelName: func(ctx context.Context) verifiableEndpoint {
+		kernel.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newKernelVerifiableEndpoint(ctx,
 				prefix,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 			)
 		},
-		memifName: func(ctx context.Context) verifiableEndpoint {
+		memif.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newMemifVerifiableEndpoint(ctx, prefix,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
 			)
 		},
-		vxlanName: func(ctx context.Context) verifiableEndpoint {
+		vxlan.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newVxlanVerifiableEndpoint(ctx, prefix,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
@@ -67,99 +66,121 @@ func (f *ForwarderTestSuite) TestCombinations() {
 		},
 	}
 	clients := map[string]func(ctx context.Context) verifiableClient{
-		kernelName: func(ctx context.Context) verifiableClient {
+		kernel.MECHANISM: func(ctx context.Context) verifiableClient {
 			return newKernelVerifiableClient(ctx,
 				f.sutCC,
 			)
 		},
-		memifName: func(ctx context.Context) verifiableClient {
+		memif.MECHANISM: func(ctx context.Context) verifiableClient {
 			return newMemifVerifiableClient(ctx,
 				f.sutCC,
 				f.vppClientConn,
 			)
 		},
-		vxlanName: func(ctx context.Context) verifiableClient {
+		vxlan.MECHANISM: func(ctx context.Context) verifiableClient {
 			return newVxlanVerifiableClient(ctx,
 				f.sutCC,
 				f.vppClientConn,
 			)
 		},
 	}
-	for endpointMechanism, epF := range endpoints {
-		for clientMechanism, clFunc := range clients {
-			networkserviceName := fmt.Sprintf("%sTo%s", clientMechanism, endpointMechanism)
-			epFunc := epF
-			clientFunc := clFunc
-			f.T().Run(networkserviceName, func(t *testing.T) {
-				starttime := time.Now()
-				// Create ctx for test
-				ctx, cancel := context.WithTimeout(f.ctx, contextTimeout)
-				defer cancel()
-				ctx = log.WithFields(ctx, map[string]interface{}{"test": t.Name()})
-				ctx = log.WithLog(ctx, logruslogger.New(ctx))
-				networkserviceName := "ns"
-				// Create testRequest
-				testRequest := &networkservice.NetworkServiceRequest{
-					Connection: &networkservice.Connection{
-						NetworkService: networkserviceName,
-					},
-				}
-				// ********************************************************************************
-				log.FromContext(f.ctx).Infof("Launching %s test server (time since start: %s)", t.Name(), time.Since(starttime))
-				// ********************************************************************************
-				now := time.Now()
-				serverCreds := credentials.NewTLS(tlsconfig.MTLSServerConfig(f.x509source, f.x509bundle, tlsconfig.AuthorizeAny()))
-				serverCreds = grpcfd.TransportCredentials(serverCreds)
-				server := grpc.NewServer(grpc.Creds(serverCreds))
-				ep := epFunc(ctx)
-				networkservice.RegisterNetworkServiceServer(server, ep)
-				networkservice.RegisterMonitorConnectionServer(server, ep)
-				serverErrCh := f.ListenAndServe(ctx, server)
-				log.FromContext(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
 
-				// ********************************************************************************
-				log.FromContext(f.ctx).Infof("Sending Request to forwarder (time since start: %s)", time.Since(starttime))
-				// ********************************************************************************
-				now = time.Now()
-				client := clientFunc(ctx)
-				conn, err := client.Request(ctx, testRequest)
-				require.NoError(t, err)
-				require.NotNil(t, conn)
-				log.FromContext(ctx).Infof("Sending Request to forwarder (took : %s)", time.Since(now))
+	payloads := map[string][]string{
+		payload.IP: {
+			kernel.MECHANISM,
+			memif.MECHANISM,
+		},
+		payload.Ethernet: {
+			kernel.MECHANISM,
+			memif.MECHANISM,
+			vxlan.MECHANISM,
+		},
+	}
 
-				// ********************************************************************************
-				log.FromContext(f.ctx).Infof("Verifying Connection (time since start: %s)", time.Since(starttime))
-				// ********************************************************************************
-				now = time.Now()
-				require.NoError(t, client.VerifyConnection(conn))
-				require.NoError(t, ep.VerifyConnection(conn))
-				log.FromContext(ctx).Infof("Verifying Connection (took : %s)", time.Since(now))
+	for _, pl := range []string{payload.Ethernet, payload.IP} {
+		payloadName := pl
+		f.T().Run(strings.Title(strings.ToLower(payloadName)), func(t *testing.T) {
+			for _, cm := range payloads[payloadName] {
+				clientMechanism := cm
+				t.Run(strings.Title(strings.ToLower(clientMechanism)), func(t *testing.T) {
+					for _, em := range payloads[payloadName] {
+						endpointMechanism := em
+						epFunc := endpoints[endpointMechanism]
+						clientFunc := clients[clientMechanism]
+						t.Run(strings.Title(strings.ToLower(endpointMechanism)), func(t *testing.T) {
+							starttime := time.Now()
+							// Create ctx for test
+							ctx, cancel := context.WithTimeout(f.ctx, contextTimeout)
+							defer cancel()
+							ctx = log.WithFields(ctx, map[string]interface{}{"test": t.Name()})
+							ctx = log.WithLog(ctx, logruslogger.New(ctx))
+							networkserviceName := "ns"
+							// Create testRequest
+							testRequest := &networkservice.NetworkServiceRequest{
+								Connection: &networkservice.Connection{
+									NetworkService: networkserviceName,
+									Payload:        payloadName,
+								},
+							}
+							// ********************************************************************************
+							log.FromContext(f.ctx).Infof("Launching %s test server (time since start: %s)", t.Name(), time.Since(starttime))
+							// ********************************************************************************
+							now := time.Now()
+							serverCreds := credentials.NewTLS(tlsconfig.MTLSServerConfig(f.x509source, f.x509bundle, tlsconfig.AuthorizeAny()))
+							serverCreds = grpcfd.TransportCredentials(serverCreds)
+							server := grpc.NewServer(grpc.Creds(serverCreds))
+							ep := epFunc(ctx)
+							networkservice.RegisterNetworkServiceServer(server, ep)
+							networkservice.RegisterMonitorConnectionServer(server, ep)
+							serverErrCh := f.ListenAndServe(ctx, server)
+							log.FromContext(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
 
-				// ********************************************************************************
-				log.FromContext(f.ctx).Infof("Sending Close to forwarder (time since start: %s)", time.Since(starttime))
-				// ********************************************************************************
-				now = time.Now()
-				_, err = client.Close(ctx, conn)
-				require.NoError(t, err)
-				log.FromContext(ctx).Infof("Sending Close to forwarder (took : %s)", time.Since(now))
+							// ********************************************************************************
+							log.FromContext(f.ctx).Infof("Sending Request to forwarder (time since start: %s)", time.Since(starttime))
+							// ********************************************************************************
+							now = time.Now()
+							client := clientFunc(ctx)
+							conn, err := client.Request(ctx, testRequest)
+							require.NoError(t, err)
+							require.NotNil(t, conn)
+							log.FromContext(ctx).Infof("Sending Request to forwarder (took : %s)", time.Since(now))
 
-				// ********************************************************************************
-				log.FromContext(f.ctx).Infof("Verifying Connection Closed (time since start: %s)", time.Since(starttime))
-				// ********************************************************************************
-				now = time.Now()
-				require.NoError(t, client.VerifyClose(conn))
-				require.NoError(t, ep.VerifyClose(conn))
-				log.FromContext(ctx).Infof("Verifying Connection Closed (took : %s)", time.Since(now))
-				// ********************************************************************************
-				log.FromContext(f.ctx).Infof("Canceling ctx to end test (time since start: %s)", time.Since(starttime))
-				// ********************************************************************************
-				cancel()
-				err = <-serverErrCh
-				require.NoError(t, err)
-				// ********************************************************************************
-				log.FromContext(f.ctx).Infof("%s completed (time since start: %s)", t.Name(), time.Since(starttime))
-				// ********************************************************************************
-			})
-		}
+							// ********************************************************************************
+							log.FromContext(f.ctx).Infof("Verifying Connection (time since start: %s)", time.Since(starttime))
+							// ********************************************************************************
+							now = time.Now()
+							require.NoError(t, client.VerifyConnection(conn))
+							require.NoError(t, ep.VerifyConnection(conn))
+							log.FromContext(ctx).Infof("Verifying Connection (took : %s)", time.Since(now))
+
+							// ********************************************************************************
+							log.FromContext(f.ctx).Infof("Sending Close to forwarder (time since start: %s)", time.Since(starttime))
+							// ********************************************************************************
+							now = time.Now()
+							_, err = client.Close(ctx, conn)
+							require.NoError(t, err)
+							log.FromContext(ctx).Infof("Sending Close to forwarder (took : %s)", time.Since(now))
+
+							// ********************************************************************************
+							log.FromContext(f.ctx).Infof("Verifying Connection Closed (time since start: %s)", time.Since(starttime))
+							// ********************************************************************************
+							now = time.Now()
+							require.NoError(t, client.VerifyClose(conn))
+							require.NoError(t, ep.VerifyClose(conn))
+							log.FromContext(ctx).Infof("Verifying Connection Closed (took : %s)", time.Since(now))
+							// ********************************************************************************
+							log.FromContext(f.ctx).Infof("Canceling ctx to end test (time since start: %s)", time.Since(starttime))
+							// ********************************************************************************
+							cancel()
+							err = <-serverErrCh
+							require.NoError(t, err)
+							// ********************************************************************************
+							log.FromContext(f.ctx).Infof("%s completed (time since start: %s)", t.Name(), time.Since(starttime))
+							// ********************************************************************************
+						})
+					}
+				})
+			}
+		})
 	}
 }
