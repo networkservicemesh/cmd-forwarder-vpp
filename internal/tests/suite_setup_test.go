@@ -127,6 +127,12 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 	f.Require().NoError(envconfig.Process("nsm", &f.config))
 
+	level, err := logrus.ParseLevel(f.config.LogLevel)
+	if err != nil {
+		logrus.Fatalf("invalid log level %s", f.config.LogLevel)
+	}
+	logrus.SetLevel(level)
+
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating registryServer and registryClient (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
