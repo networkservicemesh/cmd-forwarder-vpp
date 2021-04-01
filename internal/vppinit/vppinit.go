@@ -57,30 +57,22 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 	if link == nil {
 		return tunnelIP, nil
 	}
-	afPacketCreate := &af_packet.AfPacketCreate{
-		HwAddr:     types.ToVppMacAddress(&link.Attrs().HardwareAddr),
-		HostIfName: link.Attrs().Name,
-	}
-	now := time.Now()
-	afPacketCreateRsp, err := af_packet.NewServiceClient(vppConn).AfPacketCreate(ctx, afPacketCreate)
+
+	swIfIndex, err := createAfPacket(ctx, vppConn, link)
 	if err != nil {
 		return nil, err
 	}
-	log.FromContext(ctx).
-		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
-		WithField("duration", time.Since(now)).
-		WithField("vppapi", "AfPacketCreate").Debug("completed")
 
-	now = time.Now()
+	now := time.Now()
 	_, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetFlags(ctx, &interfaces.SwInterfaceSetFlags{
-		SwIfIndex: afPacketCreateRsp.SwIfIndex,
+		SwIfIndex: swIfIndex,
 		Flags:     interface_types.IF_STATUS_API_FLAG_ADMIN_UP,
 	})
 	if err != nil {
 		return nil, err
 	}
 	log.FromContext(ctx).
-		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
+		WithField("swIfIndex", swIfIndex).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetFlags").Debug("completed")
 
@@ -91,7 +83,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		if addr.IPNet != nil && addr.IPNet.IP.Equal(tunnelIP) {
 			now = time.Now()
 			_, err = interfaces.NewServiceClient(vppConn).SwInterfaceAddDelAddress(ctx, &interfaces.SwInterfaceAddDelAddress{
-				SwIfIndex: afPacketCreateRsp.SwIfIndex,
+				SwIfIndex: swIfIndex,
 				IsAdd:     true,
 				Prefix:    types.ToVppAddressWithPrefix(addr.IPNet),
 			})
@@ -99,7 +91,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 				return nil, err
 			}
 			log.FromContext(ctx).
-				WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
+				WithField("swIfIndex", swIfIndex).
 				WithField("prefix", addr.IPNet).
 				WithField("isAdd", true).
 				WithField("duration", time.Since(now)).
@@ -113,7 +105,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 			NPaths:     1,
 			Paths: []fib_types.FibPath{
 				{
-					SwIfIndex: uint32(afPacketCreateRsp.SwIfIndex),
+					SwIfIndex: uint32(swIfIndex),
 					TableID:   0,
 					RpfID:     0,
 					Weight:    1,
@@ -135,13 +127,52 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 			return nil, err
 		}
 		log.FromContext(ctx).
-			WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
+			WithField("swIfIndex", swIfIndex).
 			WithField("prefix", ipRouteAddDel.Route.Prefix).
 			WithField("isAdd", true).
 			WithField("duration", time.Since(now)).
 			WithField("vppapi", "IPRouteAddDel").Debug("completed")
 	}
 	return tunnelIP, nil
+}
+
+func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
+	afPacketCreate := &af_packet.AfPacketCreate{
+		HwAddr:     types.ToVppMacAddress(&link.Attrs().HardwareAddr),
+		HostIfName: link.Attrs().Name,
+	}
+	now := time.Now()
+	afPacketCreateRsp, err := af_packet.NewServiceClient(vppConn).AfPacketCreate(ctx, afPacketCreate)
+	if err != nil {
+		return 0, err
+	}
+	log.FromContext(ctx).
+		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
+		WithField("duration", time.Since(now)).
+		WithField("vppapi", "AfPacketCreate").Debug("completed")
+
+	if err := setMtu(ctx, vppConn, link, afPacketCreateRsp.SwIfIndex); err != nil {
+		return 0, err
+	}
+	return afPacketCreateRsp.SwIfIndex, nil
+}
+
+func setMtu(ctx context.Context, vppConn api.Connection, link netlink.Link, swIfIndex interface_types.InterfaceIndex) error {
+	now := time.Now()
+	setMtu := &interfaces.HwInterfaceSetMtu{
+		SwIfIndex: swIfIndex,
+		Mtu:       uint16(link.Attrs().MTU),
+	}
+	_, err := interfaces.NewServiceClient(vppConn).HwInterfaceSetMtu(ctx, setMtu)
+	if err != nil {
+		return err
+	}
+	log.FromContext(ctx).
+		WithField("swIfIndex", setMtu.SwIfIndex).
+		WithField("MTU", setMtu.Mtu).
+		WithField("duration", time.Since(now)).
+		WithField("vppapi", "HwInterfaceSetMtu").Debug("completed")
+	return nil
 }
 
 func linkAddrsRoutes(ctx context.Context, tunnelIP net.IP) (netlink.Link, []netlink.Addr, []netlink.Route, error) {
