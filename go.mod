@@ -14,8 +14,8 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v0.0.0-20210331143834-12761e9f673f
-	github.com/networkservicemesh/sdk v0.0.0-20210401051421-31c2fcc635c5
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20210401052035-0ac2d3d0dd0e
+	github.com/networkservicemesh/sdk v0.0.0-20210402195311-3ee436ab0ac1
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20210402195647-b460cdd86967
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.2
