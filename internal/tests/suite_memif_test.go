@@ -30,7 +30,6 @@ import (
 	"github.com/edwarnicke/vpphelper"
 	"github.com/pkg/errors"
 
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/tag"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms/sendfd"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/core/chain"
@@ -38,16 +37,18 @@ import (
 
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 
-	"github.com/networkservicemesh/api/pkg/api/networkservice"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/memif"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/up"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms/recvfd"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/utils/metadata"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
+
+	"github.com/networkservicemesh/api/pkg/api/networkservice"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/memif"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/tag"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/up"
 
 	"google.golang.org/grpc"
 )
@@ -72,18 +73,18 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 			endpoint.WithName("memifVerifiableEndpoint"),
 			endpoint.WithAuthorizeServer(authorize.NewServer()),
 			endpoint.WithAdditionalFunctionality(
+				sendfd.NewServer(),
 				point2pointipam.NewServer(prefix),
 				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 					memif.MECHANISM: chain.NewNetworkServiceServer(
 						metadata.NewServer(),
-						memif.NewServer(vppConn),
-						tag.NewServer(ctx, vppConn),
-						connectioncontext.NewServer(vppConn),
 						up.NewServer(ctx, vppConn),
+						connectioncontext.NewServer(vppConn),
+						tag.NewServer(ctx, vppConn),
+						memif.NewServer(vppConn),
 						sendfd.NewServer(),
 					),
 				}),
-				sendfd.NewServer(),
 			),
 		),
 	}
