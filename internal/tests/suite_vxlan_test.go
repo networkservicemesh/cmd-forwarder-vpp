@@ -60,10 +60,10 @@ func newVxlanVerifiableEndpoint(ctx context.Context,
 		endpoint.WithAdditionalFunctionality(
 			metadata.NewServer(),
 			point2pointipam.NewServer(prefix),
+			connectioncontext.NewServer(vppConn),
 			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 				vxlan.MECHANISM: vxlan.NewServer(vppConn, net.ParseIP(serverIP)),
 			}),
-			connectioncontext.NewServer(vppConn),
 		),
 	)
 	return rv
