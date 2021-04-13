@@ -1,6 +1,6 @@
 module github.com/networkservicemesh/cmd-forwarder-vpp
 
-go 1.15
+go 1.16
 
 require (
 	git.fd.io/govpp.git v0.3.6-0.20210202134006-4c1cccf48cd1
