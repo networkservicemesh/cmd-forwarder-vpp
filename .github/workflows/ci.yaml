@@ -141,7 +141,7 @@ jobs:
         with:
           github-token: ${{ github.token }}
       - name: Publish Image
-        if: github.event_name == 'push' && github.ref == 'refs/heads/$default-branch' && success() && steps.findPr.outputs.number
+        if: github.event_name == 'push' && github.ref == format('refs/heads/{0}}',$default-branch) && success() && steps.findPr.outputs.number
         uses: matootie/github-docker@v3.0.0
         with:
           accessToken: ${{ github.token }}
