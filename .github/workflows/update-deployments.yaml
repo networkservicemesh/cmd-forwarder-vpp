@@ -43,7 +43,6 @@ jobs:
           echo "Commit Message:"
           cat /tmp/commit-message
       - name: Find and Replace version
-        working-directory: networkservicemesh/deployments-k8s
         uses: jacobtomlinson/gha-find-replace@$default-branch
         with:
           find: "${{ github.event.repository.name }}:.*\n"
