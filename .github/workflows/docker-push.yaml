@@ -3,7 +3,7 @@ name: push
 on:
   push:
     branches:
-      - $default-branch
+      - master
   workflow_run:
     types:
       - completed
@@ -19,7 +19,7 @@ jobs:
       ORG: networkservicemeshci
       CGO_ENABLED: 0
       NAME: ${{ github.event.repository.name }}
-    if: ${{ github.repository != 'networkservicemesh/cmd-template' && (github.event.workflow_run.conclusion == 'success' && github.actor == 'nsmbot' || github.ref == 'refs/heads/$default-branch') }}
+    if: ${{ github.repository != 'networkservicemesh/cmd-template' && (github.event.workflow_run.conclusion == 'success' && github.actor == 'nsmbot' || github.ref == 'refs/heads/master') }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v1
