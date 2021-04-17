@@ -13,9 +13,9 @@ require (
 	github.com/edwarnicke/vpphelper v0.0.0-20210225052320-b4f1f1aff45d
 	github.com/golang/protobuf v1.4.3
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/api v0.0.0-20210413152715-ad449d9a9192
-	github.com/networkservicemesh/sdk v0.0.0-20210416175346-962dbf653fb8
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20210416175659-44ad7bc7e4c8
+	github.com/networkservicemesh/api v0.0.0-20210417193417-dd329f8d6b7a
+	github.com/networkservicemesh/sdk v0.0.0-20210417194505-478fed8a7e3f
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20210417194859-974ca16b82c9
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.2
