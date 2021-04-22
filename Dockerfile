@@ -1,6 +1,6 @@
 ARG VPP_VERSION=v20.09
 FROM ghcr.io/edwarnicke/govpp/vpp:${VPP_VERSION} as go
-COPY --from=golang:1.15.3-buster /usr/local/go/ /go
+COPY --from=golang:1.16.3-buster /usr/local/go/ /go
 ENV PATH ${PATH}:/go/bin
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
