@@ -9,7 +9,6 @@ require (
 	github.com/edwarnicke/exechelper v1.0.3
 	github.com/edwarnicke/govpp v0.0.0-20210225052125-79125273957c
 	github.com/edwarnicke/grpcfd v0.0.0-20210219150442-10fb469a6976
-	github.com/edwarnicke/signalctx v0.0.0-20201105214533-3a35840b3011
 	github.com/edwarnicke/vpphelper v0.0.0-20210225052320-b4f1f1aff45d
 	github.com/golang/protobuf v1.4.3
 	github.com/kelseyhightower/envconfig v1.4.0
