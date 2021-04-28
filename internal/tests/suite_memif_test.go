@@ -91,7 +91,12 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 }
 
 func (k *memifVerifiableEndpoint) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(k.ctx, k.vppConn, conn.GetContext().GetIpContext().GetSrcIpAddr())
+	for _, ip := range conn.GetContext().GetIpContext().GetSrcIpAddrs() {
+		if err := pingVpp(k.ctx, k.vppConn, ip); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (k *memifVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
@@ -125,7 +130,12 @@ func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfac
 }
 
 func (m *memifVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(m.ctx, m.vppConn, conn.GetContext().GetIpContext().GetDstIpAddr())
+	for _, ip := range conn.GetContext().GetIpContext().GetDstIpAddrs() {
+		if err := pingVpp(m.ctx, m.vppConn, ip); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (m *memifVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
