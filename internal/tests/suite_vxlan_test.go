@@ -70,7 +70,12 @@ func newVxlanVerifiableEndpoint(ctx context.Context,
 }
 
 func (v *vxlanVerifiableEndpoint) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(v.ctx, v.vppConn, conn.GetContext().GetIpContext().GetSrcIpAddr())
+	for _, ip := range conn.GetContext().GetIpContext().GetSrcIpAddrs() {
+		if err := pingVpp(v.ctx, v.vppConn, ip); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (v *vxlanVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
@@ -103,7 +108,12 @@ func newVxlanVerifiableClient(
 }
 
 func (v *vxlanVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
-	return pingVpp(v.ctx, v.vppConn, conn.GetContext().GetIpContext().GetDstIpAddr())
+	for _, ip := range conn.GetContext().GetIpContext().GetDstIpAddrs() {
+		if err := pingVpp(v.ctx, v.vppConn, ip); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (v *vxlanVerifiableClient) VerifyClose(conn *networkservice.Connection) error {

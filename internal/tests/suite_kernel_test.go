@@ -118,11 +118,13 @@ func (k *kernelVerifiableEndpoint) VerifyConnection(conn *networkservice.Connect
 		Cls:  cls.LOCAL,
 		Type: kernel.MECHANISM,
 	}
-	if err := checkKernelInterface(namingConn, conn.GetContext().GetIpContext().GetDstIPNet(), k.endpointNSHandle); err != nil {
+	if err := checkKernelInterface(namingConn, conn.GetContext().GetIpContext().GetDstIPNets(), k.endpointNSHandle); err != nil {
 		return err
 	}
-	if err := pingKernel(conn.GetContext().GetIpContext().GetSrcIPNet(), k.endpointNSHandle); err != nil {
-		return err
+	for _, ip := range conn.GetContext().GetIpContext().GetSrcIPNets() {
+		if err := pingKernel(ip, k.endpointNSHandle); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -171,11 +173,13 @@ func newKernelVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfa
 }
 
 func (k *kernelVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
-	if err := checkKernelInterface(conn, conn.GetContext().GetIpContext().GetSrcIPNet(), k.clientNSHandle); err != nil {
+	if err := checkKernelInterface(conn, conn.GetContext().GetIpContext().GetSrcIPNets(), k.clientNSHandle); err != nil {
 		return err
 	}
-	if err := pingKernel(conn.GetContext().GetIpContext().GetDstIPNet(), k.clientNSHandle); err != nil {
-		return err
+	for _, ip := range conn.GetContext().GetIpContext().GetDstIPNets() {
+		if err := pingKernel(ip, k.clientNSHandle); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -184,7 +188,7 @@ func (k *kernelVerifiableClient) VerifyClose(conn *networkservice.Connection) er
 	return checkNoKernelInterface(conn, k.clientNSHandle)
 }
 
-func checkKernelInterface(conn *networkservice.Connection, ipnet *net.IPNet, nsHandle netns.NsHandle) error {
+func checkKernelInterface(conn *networkservice.Connection, ipNets []*net.IPNet, nsHandle netns.NsHandle) error {
 	if mechanism := kernel.ToMechanism(conn.GetMechanism()); mechanism != nil {
 		curNetNS, err := netns.Get()
 		if err != nil {
@@ -203,12 +207,19 @@ func checkKernelInterface(conn *networkservice.Connection, ipnet *net.IPNet, nsH
 		if err != nil {
 			return errors.Wrapf(err, "unable to list addresses for interface %q", ifaceName)
 		}
-		for _, addr := range addrs {
-			if addr.IP.Equal(ipnet.IP) && addr.Mask.String() == ipnet.Mask.String() {
-				return nil
+		for _, ipNet := range ipNets {
+			found := false
+			for _, addr := range addrs {
+				if addr.IP.Equal(ipNet.IP) && addr.Mask.String() == ipNet.Mask.String() {
+					found = true
+					break
+				}
+			}
+			if !found {
+				return errors.Errorf("Did not find expected addr %q on interface %q", ipNet, ifaceName)
 			}
 		}
-		return errors.Errorf("Did not find expected addr %q on interface %q", ipnet, ifaceName)
+		return nil
 	}
 	return errors.New("not a kernel mechanism")
 }
