@@ -20,12 +20,10 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"net"
 	"net/url"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 	"time"
 
@@ -59,6 +57,7 @@ type Config struct {
 	NSName           string        `default:"xconnectns" desc:"Name of Network Service to Register with Registry"`
 	TunnelIP         net.IP        `desc:"IP to use for tunnels" split_words:"true"`
 	ConnectTo        url.URL       `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
+	ListenOn         url.URL       `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
 	MaxTokenLifetime time.Duration `default:"24h" desc:"maximum lifetime of tokens" split_words:"true"`
 }
 
@@ -146,11 +145,6 @@ func main() {
 	log.FromContext(ctx).Infof("executing phase 4: create xconnect network service endpoint (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
-	tmpDir, err := ioutil.TempDir("", "forwarder-")
-	if err != nil {
-		logrus.Fatalf("error creating tmpDir %+v", err)
-	}
-	defer func(tmpDir string) { _ = os.Remove(tmpDir) }(tmpDir)
 
 	endpoint := xconnectns.NewServer(
 		ctx,
@@ -177,8 +171,7 @@ func main() {
 	now = time.Now()
 	server := grpc.NewServer(grpc.Creds(grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())))))
 	endpoint.Register(server)
-	listenOn := &(url.URL{Scheme: "unix", Path: filepath.Join(tmpDir, "listen.on")})
-	srvErrCh := grpcutils.ListenAndServe(ctx, listenOn, server)
+	srvErrCh := grpcutils.ListenAndServe(ctx, &config.ListenOn, server)
 	exitOnErrCh(ctx, cancel, srvErrCh)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 5: create grpc server and register xconnect")
 
@@ -201,7 +194,7 @@ func main() {
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name:                config.Name,
 		NetworkServiceNames: []string{config.NSName},
-		Url:                 listenOn.String(),
+		Url:                 config.ListenOn.String(),
 	})
 	if err != nil {
 		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
