@@ -24,6 +24,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/edwarnicke/exechelper"
 	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
@@ -32,8 +33,6 @@ import (
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/cls"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
-
-	"github.com/edwarnicke/exechelper"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
@@ -72,7 +71,7 @@ type kernelVerifiableEndpoint struct {
 }
 
 func newKernelVerifiableEndpoint(ctx context.Context,
-	prefix *net.IPNet,
+	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
 ) verifiableEndpoint {
 	rootNSHandle, err := netns.Get()
@@ -97,7 +96,8 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 			endpoint.WithName("kernelVerifiableEndpoint"),
 			endpoint.WithAuthorizeServer(authorize.NewServer()),
 			endpoint.WithAdditionalFunctionality(
-				point2pointipam.NewServer(prefix),
+				point2pointipam.NewServer(prefix1),
+				point2pointipam.NewServer(prefix2),
 				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 					kernel.MECHANISM: chain.NewNetworkServiceServer(
 						kernelmechanism.NewServer(),
