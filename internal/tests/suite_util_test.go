@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	contextTimeout = 1000 * time.Second
+	contextTimeout = 100 * time.Second
 	forwarderIP    = "10.0.2.1"
 	clientIP       = "10.0.2.2"
 	serverIP       = "10.0.2.3"
