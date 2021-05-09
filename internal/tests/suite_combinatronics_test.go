@@ -43,23 +43,26 @@ import (
 )
 
 func (f *ForwarderTestSuite) TestCombinations() {
-	_, prefix, err := net.ParseCIDR("10.0.0.0/24")
+	_, prefix1, err := net.ParseCIDR("10.0.0.0/24")
+	f.Require().NoError(err)
+	_, prefix2, err := net.ParseCIDR("fc00::/7")
 	f.Require().NoError(err)
 	endpoints := map[string]func(ctx context.Context) verifiableEndpoint{
 		kernel.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newKernelVerifiableEndpoint(ctx,
-				prefix,
+				prefix1,
+				prefix2,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 			)
 		},
 		memif.MECHANISM: func(ctx context.Context) verifiableEndpoint {
-			return newMemifVerifiableEndpoint(ctx, prefix,
+			return newMemifVerifiableEndpoint(ctx, prefix1, prefix2,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
 			)
 		},
 		vxlan.MECHANISM: func(ctx context.Context) verifiableEndpoint {
-			return newVxlanVerifiableEndpoint(ctx, prefix,
+			return newVxlanVerifiableEndpoint(ctx, prefix1, prefix2,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
 			)

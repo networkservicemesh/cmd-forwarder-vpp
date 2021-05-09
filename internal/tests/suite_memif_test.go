@@ -60,7 +60,7 @@ type memifVerifiableEndpoint struct {
 }
 
 func newMemifVerifiableEndpoint(ctx context.Context,
-	prefix *net.IPNet,
+	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
 	vppConn vpphelper.Connection,
 ) verifiableEndpoint {
@@ -74,7 +74,8 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 			endpoint.WithAuthorizeServer(authorize.NewServer()),
 			endpoint.WithAdditionalFunctionality(
 				sendfd.NewServer(),
-				point2pointipam.NewServer(prefix),
+				point2pointipam.NewServer(prefix1),
+				point2pointipam.NewServer(prefix2),
 				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 					memif.MECHANISM: chain.NewNetworkServiceServer(
 						metadata.NewServer(),

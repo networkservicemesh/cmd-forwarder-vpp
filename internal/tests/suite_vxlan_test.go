@@ -45,7 +45,7 @@ type vxlanVerifiableEndpoint struct {
 }
 
 func newVxlanVerifiableEndpoint(ctx context.Context,
-	prefix *net.IPNet,
+	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
 	vppConn api.Connection) verifiableEndpoint {
 	rv := &vxlanVerifiableEndpoint{
@@ -59,7 +59,8 @@ func newVxlanVerifiableEndpoint(ctx context.Context,
 		endpoint.WithAuthorizeServer(authorize.NewServer()),
 		endpoint.WithAdditionalFunctionality(
 			metadata.NewServer(),
-			point2pointipam.NewServer(prefix),
+			point2pointipam.NewServer(prefix1),
+			point2pointipam.NewServer(prefix2),
 			connectioncontext.NewServer(vppConn),
 			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 				vxlan.MECHANISM: vxlan.NewServer(vppConn, net.ParseIP(serverIP)),
