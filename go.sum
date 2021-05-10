@@ -42,8 +42,8 @@ github.com/edwarnicke/grpcfd v0.1.0 h1:f0lmmNDYawQaW+dMNoF8d4DxwPxxczNSFuvu5C7pt
 github.com/edwarnicke/grpcfd v0.1.0/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=
 github.com/edwarnicke/log v1.0.0 h1:T6uRNCmR99GTt/CpRr2Gz8eGW8fm0HMThDNGdNxPaGk=
 github.com/edwarnicke/log v1.0.0/go.mod h1:eWsQQlQ0IU5wHlJvyXFH3dS8s2g9GzN7JnXodo6yaIY=
-github.com/edwarnicke/sdk-vpp v0.0.0-20210510170150-8583a7dfd8a5 h1:Rbp7+8GmLefHaaR5MzZc8KqUFXrA7JkIWltCK/+eUB0=
-github.com/edwarnicke/sdk-vpp v0.0.0-20210510170150-8583a7dfd8a5/go.mod h1:IACLZyOg9O35h65EL1Z+PKRAvE4Qt8ujRvdpc9p0OGQ=
+github.com/edwarnicke/sdk-vpp v0.0.0-20210510175258-2016bc16d1f9 h1:9OHmgBTb8xGRLLY/8480o6VbvXCm7LehQ7E75mTfyf4=
+github.com/edwarnicke/sdk-vpp v0.0.0-20210510175258-2016bc16d1f9/go.mod h1:IACLZyOg9O35h65EL1Z+PKRAvE4Qt8ujRvdpc9p0OGQ=
 github.com/edwarnicke/serialize v0.0.0-20200705214914-ebc43080eecf/go.mod h1:XvbCO/QGsl3X8RzjBMoRpkm54FIAZH5ChK2j+aox7pw=
 github.com/edwarnicke/serialize v1.0.7 h1:geX8vmyu8Ij2S5fFIXjy9gBDkKxXnrMIzMoDvV0Ddac=
 github.com/edwarnicke/serialize v1.0.7/go.mod h1:y79KgU2P7ALH/4j37uTSIdNavHFNttqN7pzO6Y8B2aw=
