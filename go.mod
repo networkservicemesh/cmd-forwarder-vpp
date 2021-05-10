@@ -25,3 +25,5 @@ require (
 	golang.org/x/tools v0.0.0-20200812195022-5ae4c3c160a0 // indirect
 	google.golang.org/grpc v1.35.0
 )
+
+replace github.com/networkservicemesh/sdk-vpp => github.com/edwarnicke/sdk-vpp v0.0.0-20210510202250-3efecb9e6f0b
