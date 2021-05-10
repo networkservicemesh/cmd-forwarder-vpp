@@ -26,4 +26,4 @@ require (
 	google.golang.org/grpc v1.35.0
 )
 
-replace github.com/networkservicemesh/sdk-vpp => github.com/edwarnicke/sdk-vpp v0.0.0-20210510152515-dcb1471e2253
+replace github.com/networkservicemesh/sdk-vpp => github.com/edwarnicke/sdk-vpp v0.0.0-20210510164452-a335f77fbbd7
