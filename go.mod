@@ -9,7 +9,7 @@ require (
 	github.com/edwarnicke/exechelper v1.0.3
 	github.com/edwarnicke/govpp v0.0.0-20210225052125-79125273957c
 	github.com/edwarnicke/grpcfd v0.1.0
-	github.com/edwarnicke/vpphelper v0.0.0-20210225052320-b4f1f1aff45d
+	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
 	github.com/golang/protobuf v1.4.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v0.0.0-20210509180413-5753c9f30588

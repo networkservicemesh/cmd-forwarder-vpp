@@ -59,6 +59,7 @@ type Config struct {
 	ConnectTo        url.URL       `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
 	ListenOn         url.URL       `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
 	MaxTokenLifetime time.Duration `default:"24h" desc:"maximum lifetime of tokens" split_words:"true"`
+	VppAPISocket     string        `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder"`
 }
 
 func main() {
@@ -122,8 +123,17 @@ func main() {
 	log.FromContext(ctx).Infof("executing phase 2: run vpp and get a connection to it (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
-	vppConn, vppErrCh := vpphelper.StartAndDialContext(ctx)
-	exitOnErrCh(ctx, cancel, vppErrCh)
+	var vppConn vpphelper.Connection
+	var vppErrCh <-chan error
+	if config.VppAPISocket != "" { // If we have a VppAPISocket, use that
+		vppConn = vpphelper.DialContext(ctx, config.VppAPISocket)
+		errCh := make(chan error)
+		close(errCh)
+		vppErrCh = errCh
+	} else { // If we don't have a VPPAPISocket, start VPP and use that
+		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
+		exitOnErrCh(ctx, cancel, vppErrCh)
+	}
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 
 	// ********************************************************************************
