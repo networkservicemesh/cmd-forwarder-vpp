@@ -59,7 +59,7 @@ type Config struct {
 	ConnectTo        url.URL       `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
 	ListenOn         url.URL       `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
 	MaxTokenLifetime time.Duration `default:"24h" desc:"maximum lifetime of tokens" split_words:"true"`
-	VppAPISocket     string        `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder"`
+	VppAPISocket     string        `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
 }
 
 func main() {
