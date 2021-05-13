@@ -38,12 +38,40 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 )
 
+// Func - vpp initialization function
+type Func struct {
+	f func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error)
+}
+
+// Execute vpp initialization function
+func (f *Func) Execute(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+	return f.f(ctx, vppConn, tunnelIP)
+}
+
+// Decode for envconfig to select correct vpp initialization function
+func (f *Func) Decode(value string) error {
+	switch value {
+	case "AF_PACKET":
+		f.f = LinkToAfPacket
+	case "NONE":
+		f.f = None
+	default:
+		return errors.Errorf("%s invalid valud for VPP init function", value)
+	}
+	return nil
+}
+
 // Must - simple wrapper to panic in the event of an error
 func Must(tunnelIP net.IP, err error) net.IP {
 	if err != nil {
 		panic(fmt.Sprintf("error: %+v", err))
 	}
 	return tunnelIP
+}
+
+// None - will perform no VPP initialization
+func None(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+	return tunnelIP, nil
 }
 
 // LinkToAfPacket - will link vpp via af_packet to the interface having the tunnelIP
