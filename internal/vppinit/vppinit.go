@@ -31,6 +31,7 @@ import (
 	interfaces "github.com/edwarnicke/govpp/binapi/interface"
 	"github.com/edwarnicke/govpp/binapi/interface_types"
 	"github.com/edwarnicke/govpp/binapi/ip"
+	"github.com/edwarnicke/govpp/binapi/ip_neighbor"
 	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
 
@@ -103,6 +104,11 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		WithField("swIfIndex", swIfIndex).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetFlags").Debug("completed")
+
+	err = addIPNeighbor(ctx, vppConn, swIfIndex, link.Attrs().Index)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, addr := range addrs {
 		if addr.IPNet != nil && addr.IPNet.IP.IsGlobalUnicast() && tunnelIP == nil {
@@ -183,6 +189,41 @@ func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Li
 		return 0, err
 	}
 	return afPacketCreateRsp.SwIfIndex, nil
+}
+
+func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkIdx int) error {
+	neighList, err := netlink.NeighList(linkIdx, netlink.FAMILY_ALL)
+	if err != nil {
+		return err
+	}
+	for i := range neighList {
+		entry := neighList[i]
+		if entry.State != netlink.NUD_PERMANENT {
+			continue
+		}
+
+		now := time.Now()
+		ipNeighborAddDel := &ip_neighbor.IPNeighborAddDel{
+			IsAdd: true,
+			Neighbor: ip_neighbor.IPNeighbor{
+				SwIfIndex:  swIfIndex,
+				Flags:      ip_neighbor.IP_API_NEIGHBOR_FLAG_STATIC,
+				MacAddress: types.ToVppMacAddress(&entry.HardwareAddr),
+				IPAddress:  types.ToVppAddress(entry.IP),
+			},
+		}
+		_, err = ip_neighbor.NewServiceClient(vppConn).IPNeighborAddDel(ctx, ipNeighborAddDel)
+		if err != nil {
+			return err
+		}
+		log.FromContext(ctx).
+			WithField("swIfIndex", swIfIndex).
+			WithField("ipAddress", entry.IP.String()).
+			WithField("macAddress", entry.HardwareAddr.String()).
+			WithField("duration", time.Since(now)).
+			WithField("vppapi", "IPNeighborAddDel").Debug("completed")
+	}
+	return nil
 }
 
 func setMtu(ctx context.Context, vppConn api.Connection, link netlink.Link, swIfIndex interface_types.InterfaceIndex) error {

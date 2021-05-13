@@ -186,3 +186,6 @@ issues:
       linters:
         - gocritic
       text: "each iteration copies 216 bytes"
+    - path: internal/vppinit/vppinit.go
+      linters:
+        - gocyclo
