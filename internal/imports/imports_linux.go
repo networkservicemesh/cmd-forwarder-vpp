@@ -9,6 +9,8 @@ import (
 	_ "github.com/antonfisher/nested-logrus-formatter"
 	_ "github.com/edwarnicke/debug"
 	_ "github.com/edwarnicke/exechelper"
+	_ "github.com/edwarnicke/govpp/binapi/acl"
+	_ "github.com/edwarnicke/govpp/binapi/acl_types"
 	_ "github.com/edwarnicke/govpp/binapi/af_packet"
 	_ "github.com/edwarnicke/govpp/binapi/fib_types"
 	_ "github.com/edwarnicke/govpp/binapi/interface"
