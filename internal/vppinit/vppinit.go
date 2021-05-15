@@ -92,6 +92,10 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return nil, err
 	}
 
+	if aclErr := denyAllACLToInterface(ctx, vppConn, swIfIndex); aclErr != nil {
+		return nil, aclErr
+	}
+
 	now := time.Now()
 	_, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetFlags(ctx, &interfaces.SwInterfaceSetFlags{
 		SwIfIndex: swIfIndex,
