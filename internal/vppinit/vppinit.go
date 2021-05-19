@@ -202,7 +202,7 @@ func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interf
 	}
 	for i := range neighList {
 		entry := neighList[i]
-		if entry.State != netlink.NUD_PERMANENT {
+		if entry.State != netlink.NUD_PERMANENT && entry.State != netlink.NUD_REACHABLE {
 			continue
 		}
 
