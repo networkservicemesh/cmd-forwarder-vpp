@@ -32,6 +32,7 @@ import (
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/memif"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/vxlan"
+	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/pinhole"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/tag"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/up"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/tools/types"
