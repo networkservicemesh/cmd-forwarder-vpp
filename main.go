@@ -45,6 +45,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
+	"github.com/networkservicemesh/sdk/pkg/tools/opentracing"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
@@ -190,18 +191,20 @@ func main() {
 	log.FromContext(ctx).Infof("executing phase 6: register %s with the registry (time since start: %s)", config.NSName, time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
-	registryCreds := credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny()))
-	registryCreds = grpcfd.TransportCredentials(registryCreds)
-	registryCC, err := grpc.DialContext(ctx,
-		config.ConnectTo.String(),
-		grpc.WithTransportCredentials(registryCreds),
+	clientOptions := append(
+		opentracing.WithTracingDial(),
 		grpc.WithBlock(),
+		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
+		grpc.WithTransportCredentials(
+			grpcfd.TransportCredentials(
+				credentials.NewTLS(
+					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny()),
+				),
+			),
+		),
 	)
-	if err != nil {
-		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
-	}
 
-	registryClient := registryclient.NewNetworkServiceEndpointRegistryInterposeClient(ctx, registryCC)
+	registryClient := registryclient.NewNetworkServiceEndpointRegistryInterposeClient(ctx, &config.ConnectTo, registryclient.WithDialOptions(clientOptions...))
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name:                config.Name,
 		NetworkServiceNames: []string{config.NSName},
