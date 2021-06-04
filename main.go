@@ -62,6 +62,7 @@ type Config struct {
 	MaxTokenLifetime time.Duration `default:"24h" desc:"maximum lifetime of tokens" split_words:"true"`
 	VppAPISocket     string        `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
 	VppInit          vppinit.Func  `default:"AF_PACKET" desc:"type of VPP initialization.  Must be AF_PACKET or NONE" split_words:"true"`
+	LogLevel         string        `default:"INFO" desc:"Log level" split_words:"true"`
 }
 
 func main() {
@@ -117,6 +118,12 @@ func main() {
 	if err := envconfig.Process("nsm", config); err != nil {
 		logrus.Fatalf("error processing config from env: %+v", err)
 	}
+
+	level, err := logrus.ParseLevel(config.LogLevel)
+	if err != nil {
+		logrus.Fatalf("invalid log level %s", config.LogLevel)
+	}
+	logrus.SetLevel(level)
 
 	log.FromContext(ctx).Infof("Config: %#v", config)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 1: get config from environment")
