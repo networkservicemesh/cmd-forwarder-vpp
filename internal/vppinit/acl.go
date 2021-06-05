@@ -25,42 +25,43 @@ import (
 	"github.com/edwarnicke/govpp/binapi/acl"
 	"github.com/edwarnicke/govpp/binapi/acl_types"
 	"github.com/edwarnicke/govpp/binapi/interface_types"
+	"github.com/edwarnicke/govpp/binapi/ip_types"
 	"github.com/pkg/errors"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/tools/types"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 )
 
-func denyAllACLToInterface(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex) error {
-	denyAll := &acl.ACLAddReplace{
-		ACLIndex: ^uint32(0),
-		Tag:      "nsm-vppinit-denyall",
-		R: []acl_types.ACLRule{
-			{
-				IsPermit: acl_types.ACL_ACTION_API_DENY,
-				SrcPrefix: types.ToVppPrefix(&net.IPNet{
-					IP:   net.IPv4zero,
-					Mask: net.CIDRMask(0, 32),
-				}),
-			},
-			{
-				IsPermit: acl_types.ACL_ACTION_API_DENY,
-				SrcPrefix: types.ToVppPrefix(&net.IPNet{
-					IP:   net.IPv6zero,
-					Mask: net.CIDRMask(0, 128),
-				}),
-			},
-		},
-	}
+var ipV4zeroPrefix ip_types.Prefix = types.ToVppPrefix(&net.IPNet{
+	IP:   net.IPv4zero,
+	Mask: net.CIDRMask(0, 32),
+})
 
+var ipv6zeroPrefix ip_types.Prefix = types.ToVppPrefix(&net.IPNet{
+	IP:   net.IPv6zero,
+	Mask: net.CIDRMask(0, 128),
+})
+
+func denyAllACLToInterface(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex) error {
 	now := time.Now()
-	denyAllRsp, err := acl.NewServiceClient(vppConn).ACLAddReplace(ctx, denyAll)
+	ingressRsp, err := acl.NewServiceClient(vppConn).ACLAddReplace(ctx, ingressACLAddDelete())
 	if err != nil {
 		return errors.Wrapf(err, "unable to add denyall ACL")
 	}
 
 	log.FromContext(ctx).
-		WithField("aclIndex", denyAllRsp.ACLIndex).
+		WithField("aclIndex", ingressRsp.ACLIndex).
+		WithField("duration", time.Since(now)).
+		WithField("vppapi", "ACLAddReplace").Debug("completed")
+
+	now = time.Now()
+	egressRsp, err := acl.NewServiceClient(vppConn).ACLAddReplace(ctx, egressACLAddDelete())
+	if err != nil {
+		return errors.Wrapf(err, "unable to add denyall ACL")
+	}
+
+	log.FromContext(ctx).
+		WithField("aclIndex", egressRsp.ACLIndex).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "ACLAddReplace").Debug("completed")
 
@@ -70,8 +71,8 @@ func denyAllACLToInterface(ctx context.Context, vppConn api.Connection, swIfInde
 		Count:     2,
 		NInput:    1,
 		Acls: []uint32{
-			denyAllRsp.ACLIndex,
-			denyAllRsp.ACLIndex,
+			ingressRsp.ACLIndex,
+			egressRsp.ACLIndex,
 		},
 	}
 	_, err = acl.NewServiceClient(vppConn).ACLInterfaceSetACLList(ctx, interfaceACLList)
@@ -85,4 +86,66 @@ func denyAllACLToInterface(ctx context.Context, vppConn api.Connection, swIfInde
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "ACLInterfaceSetACLList").Debug("completed")
 	return nil
+}
+
+func ingressACLAddDelete() *acl.ACLAddReplace {
+	return &acl.ACLAddReplace{
+		ACLIndex: ^uint32(0),
+		Tag:      "nsm-vppinit-denyall-ingress",
+		R: []acl_types.ACLRule{
+			{
+				// Allow ingress ICMPv6 Router Advertisement Message
+				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
+				SrcPrefix:              ipv6zeroPrefix,
+				DstportOrIcmpcodeFirst: 134,
+				DstportOrIcmpcodeLast:  134,
+			},
+			{
+				// Allow ingress ICMPv6 Neighbor Advertisement Message
+				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
+				SrcPrefix:              ipv6zeroPrefix,
+				DstportOrIcmpcodeFirst: 136,
+				DstportOrIcmpcodeLast:  136,
+			},
+			{
+				IsPermit:  acl_types.ACL_ACTION_API_DENY,
+				SrcPrefix: ipV4zeroPrefix,
+			},
+			{
+				IsPermit:  acl_types.ACL_ACTION_API_DENY,
+				SrcPrefix: ipv6zeroPrefix,
+			},
+		},
+	}
+}
+
+func egressACLAddDelete() *acl.ACLAddReplace {
+	return &acl.ACLAddReplace{
+		ACLIndex: ^uint32(0),
+		Tag:      "nsm-vppinit-denyall-egress",
+		R: []acl_types.ACLRule{
+			{
+				// Allow egress ICMPv6 Router Solicitation Message
+				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
+				DstPrefix:              ipv6zeroPrefix,
+				SrcportOrIcmptypeFirst: 133,
+				SrcportOrIcmptypeLast:  133,
+			},
+			{
+				// Allow egress ICMPv6 Neighbor Solicitation Message
+				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
+				SrcPrefix:              ipv6zeroPrefix,
+				SrcportOrIcmptypeFirst: 135,
+				SrcportOrIcmptypeLast:  135,
+			},
+			{
+				IsPermit:  acl_types.ACL_ACTION_API_DENY,
+				DstPrefix: ipV4zeroPrefix,
+			},
+			{
+				IsPermit:  acl_types.ACL_ACTION_API_DENY,
+				DstPrefix: ipv6zeroPrefix,
+			},
+		},
+	}
 }
