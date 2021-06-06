@@ -67,6 +67,7 @@ import (
 	_ "github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	_ "github.com/spiffe/go-spiffe/v2/svid/x509svid"
 	_ "github.com/spiffe/go-spiffe/v2/workloadapi"
+	_ "github.com/stretchr/testify/assert"
 	_ "github.com/stretchr/testify/require"
 	_ "github.com/stretchr/testify/suite"
 	_ "github.com/thanhpk/randstr"
