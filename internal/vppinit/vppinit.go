@@ -166,6 +166,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		}
 		log.FromContext(ctx).
 			WithField("swIfIndex", swIfIndex).
+			WithField("nh.address", ipRouteAddDel.Route.Paths[0].Nh.Address).
 			WithField("prefix", ipRouteAddDel.Route.Prefix).
 			WithField("isAdd", true).
 			WithField("duration", time.Since(now)).
@@ -186,6 +187,8 @@ func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Li
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
+		WithField("hwaddr", afPacketCreate.HwAddr).
+		WithField("hostIfName", afPacketCreate.HostIfName).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "AfPacketCreate").Debug("completed")
 
