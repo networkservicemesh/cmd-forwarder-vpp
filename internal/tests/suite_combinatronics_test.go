@@ -27,6 +27,7 @@ import (
 
 	"github.com/edwarnicke/grpcfd"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -144,17 +145,18 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							now = time.Now()
 							client := clientFunc(ctx)
 							conn, err := client.Request(ctx, testRequest)
-							require.NoError(t, err)
-							require.NotNil(t, conn)
+							assert.NoError(t, err)
+							assert.NotNil(t, conn)
 							log.FromContext(ctx).Infof("Sending Request to forwarder (took : %s)", time.Since(now))
-
-							// ********************************************************************************
-							log.FromContext(f.ctx).Infof("Verifying Connection (time since start: %s)", time.Since(starttime))
-							// ********************************************************************************
-							now = time.Now()
-							require.NoError(t, client.VerifyConnection(conn))
-							require.NoError(t, ep.VerifyConnection(conn))
-							log.FromContext(ctx).Infof("Verifying Connection (took : %s)", time.Since(now))
+							if err == nil {
+								// ********************************************************************************
+								log.FromContext(f.ctx).Infof("Verifying Connection (time since start: %s)", time.Since(starttime))
+								// ********************************************************************************
+								now = time.Now()
+								require.NoError(t, client.VerifyConnection(conn))
+								require.NoError(t, ep.VerifyConnection(conn))
+								log.FromContext(ctx).Infof("Verifying Connection (took : %s)", time.Since(now))
+							}
 
 							// ********************************************************************************
 							log.FromContext(f.ctx).Infof("Sending Close to forwarder (time since start: %s)", time.Since(starttime))
@@ -171,6 +173,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							require.NoError(t, client.VerifyClose(conn))
 							require.NoError(t, ep.VerifyClose(conn))
 							log.FromContext(ctx).Infof("Verifying Connection Closed (took : %s)", time.Since(now))
+
 							// ********************************************************************************
 							log.FromContext(f.ctx).Infof("Canceling ctx to end test (time since start: %s)", time.Since(starttime))
 							// ********************************************************************************
