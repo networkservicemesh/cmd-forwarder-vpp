@@ -136,7 +136,6 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 				WithField("vppapi", "SwInterfaceAddDelAddress").Debug("completed")
 		}
 	}
-	tunnelIsIpv6 := tunnelIP.To4() == nil
 	ipRouteAddDel := &ip.IPRouteAddDel{
 		IsAdd: true,
 		Route: ip.IPRoute{
@@ -150,32 +149,43 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 					Weight:    1,
 					Type:      fib_types.FIB_API_PATH_TYPE_NORMAL,
 					Flags:     fib_types.FIB_API_PATH_FLAG_NONE,
-					Proto:     types.IsV6toFibProto(tunnelIsIpv6),
+					Proto:     types.IsV6toFibProto(tunnelIP.To4() == nil),
 				},
 			},
 		},
 	}
 	for _, route := range routes {
-		logger := log.FromContext(ctx).
-			WithField("swIfIndex", swIfIndex).
-			WithField("nh.address", types.FromVppIPAddressUnion(ipRouteAddDel.Route.Paths[0].Nh.Address, route.Gw.To4() == nil)).
-			WithField("prefix", ipRouteAddDel.Route.Prefix).
-			WithField("isAdd", true)
-		ipRouteAddDel.Route.Prefix = types.ToVppPrefix(route.Dst)
 		if route.Gw != nil {
 			routeIsIpv6 := route.Gw.To4() == nil
-			if tunnelIsIpv6 != routeIsIpv6 {
-				logger.Debug("skipped addr with mismatched ip version")
-				continue
-			}
 			ipRouteAddDel.Route.Paths[0].Nh.Address = types.ToVppAddress(route.Gw).Un
+			ipRouteAddDel.Route.Paths[0].Proto = types.IsV6toFibProto(routeIsIpv6)
+			if route.Dst == nil {
+				var netString string
+				if routeIsIpv6 {
+					netString = "::0/0"
+				} else {
+					netString = "0.0.0.0/0"
+				}
+				var ipNet *net.IPNet
+				_, ipNet, err = net.ParseCIDR(netString)
+				if err != nil {
+					return nil, err
+				}
+				route.Dst = ipNet
+			}
 		}
+		ipRouteAddDel.Route.Prefix = types.ToVppPrefix(route.Dst)
 		now = time.Now()
 		_, err = ip.NewServiceClient(vppConn).IPRouteAddDel(ctx, ipRouteAddDel)
 		if err != nil {
 			return nil, err
 		}
-		logger.WithField("duration", time.Since(now)).
+		log.FromContext(ctx).
+			WithField("swIfIndex", swIfIndex).
+			WithField("nh.address", types.FromVppIPAddressUnion(ipRouteAddDel.Route.Paths[0].Nh.Address, route.Gw.To4() == nil)).
+			WithField("prefix", ipRouteAddDel.Route.Prefix).
+			WithField("isAdd", true).
+			WithField("duration", time.Since(now)).
 			WithField("vppapi", "IPRouteAddDel").Debug("completed")
 	}
 	return tunnelIP, nil
