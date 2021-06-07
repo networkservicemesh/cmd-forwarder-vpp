@@ -136,6 +136,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 				WithField("vppapi", "SwInterfaceAddDelAddress").Debug("completed")
 		}
 	}
+	tunnelIsIpv6 := tunnelIP.To4() == nil
 	ipRouteAddDel := &ip.IPRouteAddDel{
 		IsAdd: true,
 		Route: ip.IPRoute{
@@ -149,14 +150,25 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 					Weight:    1,
 					Type:      fib_types.FIB_API_PATH_TYPE_NORMAL,
 					Flags:     fib_types.FIB_API_PATH_FLAG_NONE,
-					Proto:     types.IsV6toFibProto(tunnelIP.To4() == nil),
+					Proto:     types.IsV6toFibProto(tunnelIsIpv6),
 				},
 			},
 		},
 	}
 	for _, route := range routes {
+		logger := log.FromContext(ctx).
+			WithField("swIfIndex", swIfIndex).
+			WithField("nh.address", types.FromVppIPAddressUnion(ipRouteAddDel.Route.Paths[0].Nh.Address, route.Gw.To4() == nil)).
+			WithField("prefix", ipRouteAddDel.Route.Prefix).
+			WithField("isAdd", true).
+			WithField("vppapi", "IPRouteAddDel")
 		ipRouteAddDel.Route.Prefix = types.ToVppPrefix(route.Dst)
 		if route.Gw != nil {
+			routeIsIpv6 := route.Gw.To4() == nil
+			if tunnelIsIpv6 != routeIsIpv6 {
+				logger.Debug("skipped addr with mismatched ip version")
+				continue
+			}
 			ipRouteAddDel.Route.Paths[0].Nh.Address = types.ToVppAddress(route.Gw).Un
 		}
 		now = time.Now()
@@ -164,13 +176,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		if err != nil {
 			return nil, err
 		}
-		log.FromContext(ctx).
-			WithField("swIfIndex", swIfIndex).
-			WithField("nh.address", types.FromVppIPAddressUnion(ipRouteAddDel.Route.Paths[0].Nh.Address, route.Gw.To4() == nil)).
-			WithField("prefix", ipRouteAddDel.Route.Prefix).
-			WithField("isAdd", true).
-			WithField("duration", time.Since(now)).
-			WithField("vppapi", "IPRouteAddDel").Debug("completed")
+		logger.WithField("duration", time.Since(now)).Debug("completed")
 	}
 	return tunnelIP, nil
 }
