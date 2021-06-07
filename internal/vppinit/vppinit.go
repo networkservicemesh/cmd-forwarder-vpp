@@ -160,8 +160,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 			WithField("swIfIndex", swIfIndex).
 			WithField("nh.address", types.FromVppIPAddressUnion(ipRouteAddDel.Route.Paths[0].Nh.Address, route.Gw.To4() == nil)).
 			WithField("prefix", ipRouteAddDel.Route.Prefix).
-			WithField("isAdd", true).
-			WithField("vppapi", "IPRouteAddDel")
+			WithField("isAdd", true)
 		ipRouteAddDel.Route.Prefix = types.ToVppPrefix(route.Dst)
 		if route.Gw != nil {
 			routeIsIpv6 := route.Gw.To4() == nil
@@ -176,7 +175,8 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		if err != nil {
 			return nil, err
 		}
-		logger.WithField("duration", time.Since(now)).Debug("completed")
+		logger.WithField("duration", time.Since(now)).
+			WithField("vppapi", "IPRouteAddDel").Debug("completed")
 	}
 	return tunnelIP, nil
 }
