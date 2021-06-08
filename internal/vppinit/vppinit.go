@@ -155,10 +155,26 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		},
 	}
 	for _, route := range routes {
-		ipRouteAddDel.Route.Prefix = types.ToVppPrefix(route.Dst)
 		if route.Gw != nil {
+			routeIsIpv6 := route.Gw.To4() == nil
 			ipRouteAddDel.Route.Paths[0].Nh.Address = types.ToVppAddress(route.Gw).Un
+			ipRouteAddDel.Route.Paths[0].Proto = types.IsV6toFibProto(routeIsIpv6)
+			if route.Dst == nil {
+				var netString string
+				if routeIsIpv6 {
+					netString = "::0/0"
+				} else {
+					netString = "0.0.0.0/0"
+				}
+				var ipNet *net.IPNet
+				_, ipNet, err = net.ParseCIDR(netString)
+				if err != nil {
+					return nil, err
+				}
+				route.Dst = ipNet
+			}
 		}
+		ipRouteAddDel.Route.Prefix = types.ToVppPrefix(route.Dst)
 		now = time.Now()
 		_, err = ip.NewServiceClient(vppConn).IPRouteAddDel(ctx, ipRouteAddDel)
 		if err != nil {
