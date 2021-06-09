@@ -114,9 +114,7 @@ func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfac
 	rv := &memifVerifiableClient{
 		ctx:     ctx,
 		vppConn: vppConn,
-		NetworkServiceClient: client.NewClient(
-			ctx,
-			sutCC,
+		NetworkServiceClient: client.NewClientFactory(
 			client.WithName("memifVerifiableClient"),
 			client.WithAdditionalFunctionality(
 				metadata.NewClient(),
@@ -125,7 +123,7 @@ func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfac
 				memif.NewClient(vppConn),
 				recvfd.NewClient(),
 			),
-		),
+		)(ctx, sutCC),
 	}
 	return rv
 }
