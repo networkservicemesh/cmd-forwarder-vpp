@@ -1,6 +1,10 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 git.fd.io/govpp.git v0.3.6-0.20210202134006-4c1cccf48cd1 h1:yNpDKZPsqbDXAuOUSKnJWI22QZp51Zd5fV8NvGvzOtU=
 git.fd.io/govpp.git v0.3.6-0.20210202134006-4c1cccf48cd1/go.mod h1:OCVd4W8SH+666KRQoMj6PM+oipLDZAHhqMz9B1TGbgI=
+github.com/Bolodya1997/sdk v0.0.0-20210608061330-d49b25471bdd h1:ADHHWxgQAJNE0ziRr1qFzdX1dVXHrEd4ey8awGDT244=
+github.com/Bolodya1997/sdk v0.0.0-20210608061330-d49b25471bdd/go.mod h1:i8dwCdHWGOzIIANoUDER7ujrLRuNUGwpX1OGJC3OHqw=
+github.com/Bolodya1997/sdk-vpp v0.0.0-20210609050909-6a0b9fd7b9b1 h1:JgYxQraKml/OWi+RWJKOIBdoRsmz0NlLeClRWhNakgA=
+github.com/Bolodya1997/sdk-vpp v0.0.0-20210609050909-6a0b9fd7b9b1/go.mod h1:CHhCJ3QgbLGxT2srnHFeetgSzbmCzD7ip2yJlv3AVto=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/DataDog/datadog-go v2.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bEn0jTI6LJU0mpw=
@@ -143,10 +147,6 @@ github.com/nats-io/nuid v1.0.1/go.mod h1:19wcPz3Ph3q0Jbyiqsd0kePYG7A95tJPxeL+1OS
 github.com/nats-io/stan.go v0.6.0/go.mod h1:eIcD5bi3pqbHT/xIIvXMwvzXYElgouBvaVRftaE+eac=
 github.com/networkservicemesh/api v0.0.0-20210607090113-57f36f2c295b h1:+7wAqJikkh4iOTK67BwyXLvIjxcNg5oefdLN/VV8Rsk=
 github.com/networkservicemesh/api v0.0.0-20210607090113-57f36f2c295b/go.mod h1:B6meq/SWjWR6bGXZdXPfbOeaBK+T1JayLdtEJQCsXKU=
-github.com/networkservicemesh/sdk v0.0.0-20210608053425-06aafeb2606f h1:n+9BqBg4ee9N0Qc2gYk8mJFmwUmeKabPjrr3VzvxZjs=
-github.com/networkservicemesh/sdk v0.0.0-20210608053425-06aafeb2606f/go.mod h1:i8dwCdHWGOzIIANoUDER7ujrLRuNUGwpX1OGJC3OHqw=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210608053942-fa13426047ac h1:XZzTYRUtFAjyQe9AJyn4SJDXh9v8tYZg/juJzf3bOPY=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210608053942-fa13426047ac/go.mod h1:70H1pfYSr4Wl6/lQ0h+BUnzCobjCGOgVWloeYfE/P9s=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/olekukonko/tablewriter v0.0.1/go.mod h1:vsDQFd/mU46D+Z4whnwzcISnGGzXWMclvtLoiIKAKIo=
