@@ -57,6 +57,7 @@ import (
 
 func (f *ForwarderTestSuite) SetupSuite() {
 	logrus.SetFormatter(&nested.Formatter{})
+	logrus.SetLevel(logrus.DebugLevel)
 	log.EnableTracing(true)
 	f.ctx, f.cancel = context.WithCancel(context.Background())
 	f.ctx = log.WithLog(f.ctx, logruslogger.New(f.ctx))
