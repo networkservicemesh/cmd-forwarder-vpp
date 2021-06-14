@@ -36,8 +36,8 @@ github.com/edwarnicke/debug v1.0.0/go.mod h1:cJAtt6sSqp7yUFpiIvSD2Xzyc7iUTUMx0MU
 github.com/edwarnicke/exechelper v1.0.2/go.mod h1:/T271jtNX/ND4De6pa2aRy2+8sNtyCDB1A2pp4M+fUs=
 github.com/edwarnicke/exechelper v1.0.3 h1:OY2ocGAITTqnEDvZk0dRQSeMIQvyH0SyL/4ncz+5GeQ=
 github.com/edwarnicke/exechelper v1.0.3/go.mod h1:R65OUPKns4bgeHkCmfSHbmqLBU8aHZxTgLmEyUBUk4U=
-github.com/edwarnicke/govpp v0.0.0-20210225052125-79125273957c h1:Q9PEO4AHpwvd9Yd+WtA79h1NA1UpUl19WUMiUAF99i4=
-github.com/edwarnicke/govpp v0.0.0-20210225052125-79125273957c/go.mod h1:+J/hMuJr9nxWWHG+JJqhl+jpE4H97jO0tpvsaxSYEdU=
+github.com/edwarnicke/govpp v0.0.0-20210613224216-90cfa3213b00 h1:lbJYLHK/wiPcipTEn9/zpa33/lvVnpTvDkjzMCvuxac=
+github.com/edwarnicke/govpp v0.0.0-20210613224216-90cfa3213b00/go.mod h1:+J/hMuJr9nxWWHG+JJqhl+jpE4H97jO0tpvsaxSYEdU=
 github.com/edwarnicke/grpcfd v0.1.0 h1:f0lmmNDYawQaW+dMNoF8d4DxwPxxczNSFuvu5C7ptRk=
 github.com/edwarnicke/grpcfd v0.1.0/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=
 github.com/edwarnicke/log v1.0.0 h1:T6uRNCmR99GTt/CpRr2Gz8eGW8fm0HMThDNGdNxPaGk=
@@ -145,8 +145,8 @@ github.com/networkservicemesh/api v0.0.0-20210609080649-aa4a0cc6c9ea h1:Oz3k/v09
 github.com/networkservicemesh/api v0.0.0-20210609080649-aa4a0cc6c9ea/go.mod h1:B6meq/SWjWR6bGXZdXPfbOeaBK+T1JayLdtEJQCsXKU=
 github.com/networkservicemesh/sdk v0.0.0-20210613034335-e9c194857db9 h1:bu82CTkt9frbWxMIG9uPj+Y6Sc3uLXKEkQ6INKhqcI0=
 github.com/networkservicemesh/sdk v0.0.0-20210613034335-e9c194857db9/go.mod h1:6URyucmK3kQQ45Eg7fo57zDtrwIceNx3wBA3OuqN4S8=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210613034715-633721011d0b h1:h453HK6lmTYur0dqtOhKoIlnYbT7zzRD5XcxrghdbdI=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210613034715-633721011d0b/go.mod h1:UuGYAKrNTR/070iAgjy3iS7UyNb6K6t+m0pJMLbf9ZA=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210614025522-33bd41d9fe95 h1:3kCFmBNLYPxMu+hE8rgukD0ODRJ9tEOdBJg1lwliPz8=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210614025522-33bd41d9fe95/go.mod h1:c62g5modA5scx3SYNvZPiJXlKY2lRRU3C1Q85Oek5SA=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/olekukonko/tablewriter v0.0.1/go.mod h1:vsDQFd/mU46D+Z4whnwzcISnGGzXWMclvtLoiIKAKIo=
