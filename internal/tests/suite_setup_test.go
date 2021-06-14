@@ -137,7 +137,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	log.FromContext(f.ctx).Infof("Creating registryServer and registryClient (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	memrg := memory.NewNetworkServiceEndpointRegistryServer()
-	registryServer := registrychain.NewNetworkServiceEndpointRegistryServer(
+	f.registryServer = registrychain.NewNetworkServiceEndpointRegistryServer(
 		expire.NewNetworkServiceEndpointRegistryServer(f.ctx, time.Hour),
 		registryrecvfd.NewNetworkServiceEndpointRegistryServer(),
 		memrg,
@@ -150,7 +150,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	serverCreds = grpcfd.TransportCredentials(serverCreds)
 	server := grpc.NewServer(grpc.Creds(serverCreds))
 
-	registry.RegisterNetworkServiceEndpointRegistryServer(server, registryServer)
+	registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
 	ctx, cancel := context.WithCancel(f.ctx)
 	defer func(cancel context.CancelFunc, serverErrCh <-chan error) {
 		cancel()

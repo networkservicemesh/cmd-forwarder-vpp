@@ -30,6 +30,8 @@ import (
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
 
+	"github.com/networkservicemesh/api/pkg/api/registry"
+
 	"github.com/edwarnicke/vpphelper"
 )
 
@@ -65,6 +67,9 @@ type ForwarderTestSuite struct {
 	vppClientConn  vpphelper.Connection
 	vppClientRoot  string
 	vppClientErrCh <-chan error
+
+	// registry server stuff
+	registryServer registry.NetworkServiceEndpointRegistryServer
 }
 
 func TestForwarderTestSuite(t *testing.T) {

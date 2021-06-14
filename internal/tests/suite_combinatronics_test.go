@@ -34,6 +34,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/wireguard"
+	"github.com/networkservicemesh/api/pkg/api/registry"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/memif"
@@ -153,6 +154,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 									ep := epFunc(ctx)
 									networkservice.RegisterNetworkServiceServer(server, ep)
 									networkservice.RegisterMonitorConnectionServer(server, ep)
+									registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
 									serverErrCh := f.ListenAndServe(ctx, server)
 									log.FromContext(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
 
