@@ -32,6 +32,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/wireguard"
+	"github.com/networkservicemesh/api/pkg/api/registry"
+
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/memif"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/vxlan"
@@ -68,6 +71,12 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				f.vppServerConn,
 			)
 		},
+		wireguard.MECHANISM: func(ctx context.Context) verifiableEndpoint {
+			return newWireguardVerifiableEndpoint(ctx, prefix1, prefix2,
+				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
+				f.vppServerConn,
+			)
+		},
 	}
 	clients := map[string]func(ctx context.Context) verifiableClient{
 		kernel.MECHANISM: func(ctx context.Context) verifiableClient {
@@ -87,12 +96,19 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				f.vppClientConn,
 			)
 		},
+		wireguard.MECHANISM: func(ctx context.Context) verifiableClient {
+			return newWireguardVerifiableClient(ctx,
+				f.sutCC,
+				f.vppClientConn,
+			)
+		},
 	}
 
 	payloads := map[string][]string{
 		payload.IP: {
 			kernel.MECHANISM,
 			memif.MECHANISM,
+			wireguard.MECHANISM,
 		},
 		payload.Ethernet: {
 			kernel.MECHANISM,
@@ -100,7 +116,6 @@ func (f *ForwarderTestSuite) TestCombinations() {
 			vxlan.MECHANISM,
 		},
 	}
-
 	for _, pl := range []string{payload.Ethernet, payload.IP} {
 		payloadName := pl
 		f.T().Run(strings.Title(strings.ToLower(payloadName)), func(t *testing.T) {
@@ -136,6 +151,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							ep := epFunc(ctx)
 							networkservice.RegisterNetworkServiceServer(server, ep)
 							networkservice.RegisterMonitorConnectionServer(server, ep)
+							registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
 							serverErrCh := f.ListenAndServe(ctx, server)
 							log.FromContext(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
 
@@ -153,8 +169,8 @@ func (f *ForwarderTestSuite) TestCombinations() {
 								log.FromContext(f.ctx).Infof("Verifying Connection (time since start: %s)", time.Since(starttime))
 								// ********************************************************************************
 								now = time.Now()
-								require.NoError(t, client.VerifyConnection(conn))
-								require.NoError(t, ep.VerifyConnection(conn))
+								assert.NoError(t, client.VerifyConnection(conn))
+								assert.NoError(t, ep.VerifyConnection(conn))
 								log.FromContext(ctx).Infof("Verifying Connection (took : %s)", time.Since(now))
 							}
 

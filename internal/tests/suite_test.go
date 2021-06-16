@@ -30,6 +30,8 @@ import (
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
 
+	"github.com/networkservicemesh/api/pkg/api/registry"
+
 	"github.com/edwarnicke/vpphelper"
 )
 
@@ -40,6 +42,8 @@ type Config struct {
 	TunnelIP         net.IP        `desc:"IP to use for tunnels" split_words:"true"`
 	ConnectTo        url.URL       `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
 	MaxTokenLifetime time.Duration `default:"24h" desc:"maximum lifetime of tokens" split_words:"true"`
+	LogLevel         string        `default:"INFO" desc:"Log level" split_words:"true"`
+	TestCount        int           `default:"1" desc:"Number of time to run tests" split_words:"true"`
 }
 
 type ForwarderTestSuite struct {
@@ -63,6 +67,9 @@ type ForwarderTestSuite struct {
 	vppClientConn  vpphelper.Connection
 	vppClientRoot  string
 	vppClientErrCh <-chan error
+
+	// registry server stuff
+	registryServer registry.NetworkServiceEndpointRegistryServer
 }
 
 func TestForwarderTestSuite(t *testing.T) {

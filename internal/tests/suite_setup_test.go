@@ -57,6 +57,7 @@ import (
 
 func (f *ForwarderTestSuite) SetupSuite() {
 	logrus.SetFormatter(&nested.Formatter{})
+	logrus.SetLevel(logrus.DebugLevel)
 	log.EnableTracing(true)
 	f.ctx, f.cancel = context.WithCancel(context.Background())
 	f.ctx = log.WithLog(f.ctx, logruslogger.New(f.ctx))
@@ -127,11 +128,17 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 	f.Require().NoError(envconfig.Process("nsm", &f.config))
 
+	level, err := logrus.ParseLevel(f.config.LogLevel)
+	if err != nil {
+		logrus.Fatalf("invalid log level %s", f.config.LogLevel)
+	}
+	logrus.SetLevel(level)
+
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating registryServer and registryClient (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	memrg := memory.NewNetworkServiceEndpointRegistryServer()
-	registryServer := registrychain.NewNetworkServiceEndpointRegistryServer(
+	f.registryServer = registrychain.NewNetworkServiceEndpointRegistryServer(
 		expire.NewNetworkServiceEndpointRegistryServer(f.ctx, time.Hour),
 		registryrecvfd.NewNetworkServiceEndpointRegistryServer(),
 		memrg,
@@ -144,7 +151,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	serverCreds = grpcfd.TransportCredentials(serverCreds)
 	server := grpc.NewServer(grpc.Creds(serverCreds))
 
-	registry.RegisterNetworkServiceEndpointRegistryServer(server, registryServer)
+	registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
 	ctx, cancel := context.WithCancel(f.ctx)
 	defer func(cancel context.CancelFunc, serverErrCh <-chan error) {
 		cancel()
