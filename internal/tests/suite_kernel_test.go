@@ -117,6 +117,9 @@ func (k *kernelVerifiableEndpoint) VerifyConnection(conn *networkservice.Connect
 	namingConn.Mechanism = &networkservice.Mechanism{
 		Cls:  cls.LOCAL,
 		Type: kernel.MECHANISM,
+		Parameters: map[string]string{
+			kernel.InterfaceNameKey: kernelmechanism.GetNameFromConnection(namingConn),
+		},
 	}
 	if err := checkKernelInterface(namingConn, conn.GetContext().GetIpContext().GetDstIPNets(), k.endpointNSHandle); err != nil {
 		return err
