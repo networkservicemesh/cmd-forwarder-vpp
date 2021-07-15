@@ -199,7 +199,7 @@ func checkKernelInterface(conn *networkservice.Connection, ipNets []*net.IPNet, 
 		if err != nil {
 			return errors.Wrap(err, "unable to get netlink Handle in target netNs")
 		}
-		ifaceName := mechanism.GetInterfaceName(conn)
+		ifaceName := mechanism.GetInterfaceName()
 		link, err := netlinkHandle.LinkByName(ifaceName)
 		if err != nil {
 			return errors.Wrapf(err, "unable to find interface %q", ifaceName)
@@ -235,7 +235,7 @@ func checkNoKernelInterface(conn *networkservice.Connection, nsHandle netns.NsHa
 		if err != nil {
 			return errors.Wrap(err, "unable to get netlink Handle in target netNs")
 		}
-		ifaceName := mechanism.GetInterfaceName(conn)
+		ifaceName := mechanism.GetInterfaceName()
 		_, err = netlinkHandle.LinkByName(ifaceName)
 		if err == nil {
 			return errors.Errorf("found interface %q", ifaceName)
