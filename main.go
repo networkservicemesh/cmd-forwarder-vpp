@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Cisco and/or its affiliates.
+// Copyright (c) 2020-2021 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -60,7 +60,7 @@ type Config struct {
 	TunnelIP         net.IP        `desc:"IP to use for tunnels" split_words:"true"`
 	ConnectTo        url.URL       `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
 	ListenOn         url.URL       `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
-	MaxTokenLifetime time.Duration `default:"24h" desc:"maximum lifetime of tokens" split_words:"true"`
+	MaxTokenLifetime time.Duration `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
 	VppAPISocket     string        `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
 	VppInit          vppinit.Func  `default:"AF_PACKET" desc:"type of VPP initialization.  Must be AF_PACKET or NONE" split_words:"true"`
 	LogLevel         string        `default:"INFO" desc:"Log level" split_words:"true"`
