@@ -85,7 +85,6 @@ import (
 	_ "os"
 	_ "os/signal"
 	_ "path/filepath"
-	_ "regexp"
 	_ "runtime"
 	_ "strings"
 	_ "syscall"
