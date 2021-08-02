@@ -23,7 +23,9 @@ COPY . .
 RUN go build -o /bin/forwarder .
 
 FROM build as test
-CMD go test -test.v ./...
+RUN apt-get update -y
+RUN apt-get install -y iperf3
+CMD go test -test.v ./... -bench=. -timeout 1h
 
 FROM test as debug
 WORKDIR /build/internal/tests/
