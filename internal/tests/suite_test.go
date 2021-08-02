@@ -20,11 +20,9 @@ package tests
 
 import (
 	"context"
-	"net"
-	"net/url"
 	"testing"
-	"time"
 
+	"github.com/edwarnicke/vpphelper"
 	"github.com/spiffe/go-spiffe/v2/bundle/x509bundle"
 	"github.com/spiffe/go-spiffe/v2/svid/x509svid"
 	"github.com/stretchr/testify/suite"
@@ -32,31 +30,22 @@ import (
 
 	"github.com/networkservicemesh/api/pkg/api/registry"
 
-	"github.com/edwarnicke/vpphelper"
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/config"
 )
-
-// Config - configuration for cmd-forwarder-vpp
-type Config struct {
-	Name             string        `default:"forwarder" desc:"Name of Endpoint"`
-	NSName           string        `default:"xconnectns" desc:"Name of Network Service to Register with Registry"`
-	TunnelIP         net.IP        `desc:"IP to use for tunnels" split_words:"true"`
-	ConnectTo        url.URL       `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
-	MaxTokenLifetime time.Duration `default:"24h" desc:"maximum lifetime of tokens" split_words:"true"`
-	LogLevel         string        `default:"INFO" desc:"Log level" split_words:"true"`
-	TestCount        int           `default:"1" desc:"Number of time to run tests" split_words:"true"`
-}
 
 type ForwarderTestSuite struct {
 	suite.Suite
 	ctx    context.Context
 	cancel context.CancelFunc
-	config Config
+	config config.Config
+
+	sutErrCh <-chan error
+	sutCC    grpc.ClientConnInterface
+
 	// Spire stuff
 	spireErrCh <-chan error
-	sutErrCh   <-chan error
 	x509source x509svid.Source
 	x509bundle x509bundle.Source
-	sutCC      grpc.ClientConnInterface
 
 	// vppServer stuff
 	vppServerConn  vpphelper.Connection
