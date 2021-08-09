@@ -67,6 +67,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	log.FromContext(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	_ = os.Setenv("NSM_TUNNEL_IP", forwarderIP)
+	// _ = os.Setenv("NSM_VPP_INIT", "AF_XDP")
 	f.Require().NoError(f.config.Process())
 
 	// ********************************************************************************
@@ -78,14 +79,14 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	log.FromContext(f.ctx).Infof("Creating test vpp Server (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.vppServerConn, f.vppServerRoot, f.vppServerErrCh = f.createVpp(f.ctx, "vpp-server")
-	_, err := vppinit.LinkToAfPacket(f.ctx, f.vppServerConn, net.ParseIP(serverIP))
+	_, err := vppinit.LinkToSocket(f.ctx, f.vppServerConn, net.ParseIP(serverIP), vppinit.AfPacket)
 	f.Require().NoError(err)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test vpp Client (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.vppClientConn, f.vppClientRoot, f.vppClientErrCh = f.createVpp(f.ctx, "vpp-client")
-	_, err = vppinit.LinkToAfPacket(f.ctx, f.vppClientConn, net.ParseIP(clientIP))
+	_, err = vppinit.LinkToSocket(f.ctx, f.vppClientConn, net.ParseIP(clientIP), vppinit.AfPacket)
 	f.Require().NoError(err)
 
 	// ********************************************************************************

@@ -169,12 +169,12 @@ func main() {
 		dir, _ := path.Split(cfg.VppAPISocket)
 		statsOpts = append(statsOpts, stats.WithSocket(path.Join(dir, "stats.sock")))
 		cleanupOpts = append(cleanupOpts, cleanup.WithDoneChan(cleanupDoneCh))
-
 		log.FromContext(ctx).Info("external vpp is being used")
-	} else { // If we don't have a VPPAPISocket, start VPP and use that
-		if err = cfg.VppInit.Decode("AF_PACKET"); err != nil {
+
+		if err = cfg.VppInit.Decode("NONE"); err != nil {
 			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
 		}
+	} else { // If we don't have a VPPAPISocket, start VPP and use that
 		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
 		exitOnErrCh(ctx, cancel, vppErrCh)
 		close(cleanupDoneCh)

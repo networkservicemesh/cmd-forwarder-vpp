@@ -1,6 +1,6 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
-// Copyright (c) 2021-2022 Doc.ai and/or its affiliates.
+// Copyright (c) 2021-2023 Doc.ai and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -48,7 +48,7 @@ type Config struct {
 	TunnelIP     net.IP       `desc:"IP to use for tunnels" split_words:"true"`
 	VxlanPort    uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
 	VppAPISocket string       `default:"/var/run/vpp/external/vpp-api.sock" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
-	VppInit      vppinit.Func `default:"NONE" desc:"type of VPP initialization. Must be NONE or AF_PACKET" split_words:"true"`
+	VppInit      vppinit.Func `default:"AF_PACKET" desc:"type of VPP initialization. Must be AF_XDP, AF_PACKET or NONE" split_words:"true"`
 
 	ResourcePollTimeout time.Duration `default:"30s" desc:"device plugin polling timeout" split_words:"true"`
 	DevicePluginPath    string        `default:"/var/lib/kubelet/device-plugins/" desc:"path to the device plugin directory" split_words:"true"`
