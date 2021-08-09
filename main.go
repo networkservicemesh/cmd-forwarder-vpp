@@ -62,7 +62,7 @@ type Config struct {
 	ListenOn         url.URL       `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
 	MaxTokenLifetime time.Duration `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
 	VppAPISocket     string        `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
-	VppInit          vppinit.Func  `default:"AF_PACKET" desc:"type of VPP initialization.  Must be AF_PACKET or NONE" split_words:"true"`
+	VppInit          vppinit.Func  `default:"AF_XDP" desc:"type of VPP initialization.  Must be AF_XDP, AF_PACKET or NONE" split_words:"true"`
 	LogLevel         string        `default:"INFO" desc:"Log level" split_words:"true"`
 }
 

@@ -23,10 +23,14 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strconv"
+	"strings"
+	"syscall"
 	"time"
 
 	"git.fd.io/govpp.git/api"
 	"github.com/edwarnicke/govpp/binapi/af_packet"
+	"github.com/edwarnicke/govpp/binapi/af_xdp"
 	"github.com/edwarnicke/govpp/binapi/fib_types"
 	interfaces "github.com/edwarnicke/govpp/binapi/interface"
 	"github.com/edwarnicke/govpp/binapi/interface_types"
@@ -37,6 +41,22 @@ import (
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/tools/types"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
+)
+
+// AfType represents socket address family
+type AfType uint32
+
+const (
+	// AfPacket - AF_PACKET
+	AfPacket AfType = 0
+	// AfXDP - AF_XDP
+	AfXDP AfType = 1
+)
+
+// Minimum required kernel version for AF_XDP
+const (
+	afXdpMajorVer = 5
+	afXdpMinorVer = 4
 )
 
 // Func - vpp initialization function
@@ -53,7 +73,13 @@ func (f *Func) Execute(ctx context.Context, vppConn api.Connection, tunnelIP net
 func (f *Func) Decode(value string) error {
 	switch value {
 	case "AF_PACKET":
-		f.f = LinkToAfPacket
+		f.f = func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+			return LinkToSocket(ctx, vppConn, tunnelIP, AfPacket)
+		}
+	case "AF_XDP":
+		f.f = func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+			return LinkToSocket(ctx, vppConn, tunnelIP, AfXDP)
+		}
 	case "NONE":
 		f.f = None
 	default:
@@ -75,10 +101,38 @@ func None(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP,
 	return tunnelIP, nil
 }
 
-// LinkToAfPacket - will link vpp via af_packet to the interface having the tunnelIP
+// Get Linux kernel version
+// Example: 5.11.0-25-generic -> 5.11
+func getKernelVer() []int {
+	var uname syscall.Utsname
+	err := syscall.Uname(&uname)
+	if err != nil {
+		return nil
+	}
+
+	b := make([]byte, 0, len(uname.Release))
+	for _, v := range uname.Release {
+		if v == 0x00 {
+			break
+		}
+		b = append(b, byte(v))
+	}
+	ver := strings.Split(string(b), ".")
+	maj, err := strconv.Atoi(ver[0])
+	if err != nil {
+		return nil
+	}
+	min, err := strconv.Atoi(ver[1])
+	if err != nil {
+		return nil
+	}
+	return []int{maj, min}
+}
+
+// LinkToSocket - will link vpp via af_packet or af_xdp to the interface having the tunnelIP
 // if tunnelIP is nil, it will find the interface for the default route and use that instead.
 // It returns the resulting tunnelIP
-func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, family AfType) (net.IP, error) {
 	link, addrs, routes, err := linkAddrsRoutes(ctx, tunnelIP)
 	if err != nil {
 		return nil, err
@@ -87,7 +141,20 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return tunnelIP, nil
 	}
 
-	swIfIndex, err := createAfPacket(ctx, vppConn, link)
+	afFunc := createAfPacket
+	if family == AfXDP {
+		// Check if AF_XDP is supported
+		ver := getKernelVer()
+		if ver != nil {
+			if ver[0] > afXdpMajorVer || (ver[0] == afXdpMajorVer && ver[1] >= afXdpMinorVer) {
+				afFunc = createAfXDP
+			} else {
+				log.FromContext(ctx).Warn("AF_XDP is not supported for this linux kernel version. AF_PACKET will be used")
+			}
+		}
+	}
+
+	swIfIndex, err := afFunc(ctx, vppConn, link)
 	if err != nil {
 		return nil, err
 	}
@@ -212,6 +279,27 @@ func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Li
 		return 0, err
 	}
 	return afPacketCreateRsp.SwIfIndex, nil
+}
+
+func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
+	afXDPCreate := &af_xdp.AfXdpCreate{
+		HostIf: link.Attrs().Name,
+	}
+	now := time.Now()
+	afXDPCreateRsp, err := af_xdp.NewServiceClient(vppConn).AfXdpCreate(ctx, afXDPCreate)
+	if err != nil {
+		return 0, err
+	}
+	log.FromContext(ctx).
+		WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+		WithField("hostIfName", afXDPCreate.HostIf).
+		WithField("duration", time.Since(now)).
+		WithField("vppapi", "afXDPCreateRsp").Debug("completed")
+
+	if err := setMtu(ctx, vppConn, link, afXDPCreateRsp.SwIfIndex); err != nil {
+		return 0, err
+	}
+	return afXDPCreateRsp.SwIfIndex, nil
 }
 
 func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkIdx int) error {
