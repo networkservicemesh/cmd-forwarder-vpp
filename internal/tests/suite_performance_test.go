@@ -49,7 +49,7 @@ import (
 	"time"
 )
 
-const N = 5
+const N = 8
 const M = 1
 
 type clientInfo struct {
@@ -62,7 +62,7 @@ var errTable = map[string][]string{}
 
 func (f *ForwarderTestSuite) TestKernelToKernelPerformance() {
 	//time.Sleep(time.Hour)
-	//f.T().Skip()
+	f.T().Skip()
 	//create endpoint
 	epCtx, epCancel := context.WithCancel(f.ctx)
 
@@ -100,11 +100,7 @@ func (f *ForwarderTestSuite) TestKernelToKernelPerformance() {
 			testRequest := &networkservice.NetworkServiceRequest{
 				Connection: &networkservice.Connection{
 					NetworkService: networkserviceName,
-					Payload:        payload.Ethernet,
-					//Mechanism: &networkservice.Mechanism{
-					//	Type: wireguard.MECHANISM,
-					//	Cls:  cls.REMOTE,
-					//},
+					Payload:        payload.IP,
 				},
 			}
 
@@ -143,14 +139,14 @@ func (f *ForwarderTestSuite) TestKernelToKernelPerformance() {
 	wg := sync.WaitGroup{}
 	for k, v := range clInfo.clientWithConn {
 		cl, ok := k.(*kernelVerifiableClient)
-		e, ok2 := ep.(*kernelVerifiableEndpoint)
+		_, ok2 := ep.(*kernelVerifiableEndpoint)
 		if !ok || !ok2 {
 			continue
 		}
 		wg.Add(1)
 		conn := v
 		go func() {
-			_ = iperfMeasure(conn, cl, e)
+			_ = iperfMeasure(conn, cl)
 			wg.Done()
 		}()
 	}
@@ -169,7 +165,113 @@ func (f *ForwarderTestSuite) TestKernelToKernelPerformance() {
 	err = <-serverErrCh
 }
 
-func iperfMeasure(conn *networkservice.Connection, k *kernelVerifiableClient, ep *kernelVerifiableEndpoint) error {
+func (f *ForwarderTestSuite) TestKernelToVxlanToKernelPerformance() {
+	//time.Sleep(time.Hour)
+	//f.T().Skip()
+	//create endpoint
+	epCtx, epCancel := context.WithCancel(f.ctx)
+
+	serverCreds := credentials.NewTLS(tlsconfig.MTLSServerConfig(f.x509source, f.x509bundle, tlsconfig.AuthorizeAny()))
+	serverCreds = grpcfd.TransportCredentials(serverCreds)
+	server := grpc.NewServer(grpc.Creds(serverCreds))
+
+	_, prefix1, err := net.ParseCIDR("10.0.0.0/24")
+	f.Require().NoError(err)
+	_, prefix2, err := net.ParseCIDR("fc00::/7")
+	f.Require().NoError(err)
+
+	ep := newKernelToVxlanVerifiableEndpoint(epCtx,
+		prefix1,
+		prefix2,
+		spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
+		f.vppServerConn,
+	)
+
+	networkservice.RegisterNetworkServiceServer(server, ep)
+	networkservice.RegisterMonitorConnectionServer(server, ep)
+	registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
+	serverErrCh := f.ListenAndServe(epCtx, server)
+
+	clInfo := &clientInfo{
+		clientWithConn: map[verifiableClient]*networkservice.Connection{},
+	}
+	for i := 0; i < N; i++ {
+		f.T().Run(fmt.Sprintf("Kernel%v", i+1), func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(f.ctx, contextTimeout * 100)
+			clInfo.cancels = append(clInfo.cancels, cancel)
+
+			ctx = log.WithLog(ctx, logruslogger.New(ctx))
+			networkserviceName := "ns"
+			// Create testRequest
+			testRequest := &networkservice.NetworkServiceRequest{
+				Connection: &networkservice.Connection{
+					NetworkService: networkserviceName,
+					Payload:        payload.Ethernet,
+				},
+			}
+
+			client := newKernelVerifiableClient(ctx, f.sutCC)
+			conn, err := client.Request(ctx, testRequest)
+			assert.NoError(t, err)
+			assert.NotNil(t, conn)
+
+			clInfo.clientWithConn[client] = conn
+			//if conn != nil {
+			//	latencyTable[conn.Id] = []string{}
+			//}
+
+			if err == nil {
+				assert.NoError(t, client.VerifyConnection(conn))
+				assert.NoError(t, ep.VerifyConnection(conn))
+			}
+		})
+	}
+
+	//for _, v := range clInfo.clientWithConn {
+	//	e, ok2 := ep.(*kernelToVxlanVerifiableEndpoint)
+	//	if !ok2 {
+	//		continue
+	//	}
+	//	v2 := v
+	//	for _, ip := range v2.GetContext().GetIpContext().GetDstIPNets() {
+	//		ip2 := ip
+	//		log.FromContext(f.ctx).Infof(ip2.IP.String())
+	//		go func() {
+	//			_ = iperf.StartServer(ip2, e.endpointNSHandle)
+	//		}()
+	//		time.Sleep(time.Second * 10)
+	//	}
+	//}
+	//wg := sync.WaitGroup{}
+	//for k, v := range clInfo.clientWithConn {
+	//	cl, ok := k.(*kernelVerifiableClient)
+	//	_, ok2 := ep.(*kernelToVxlanVerifiableEndpoint)
+	//	if !ok || !ok2 {
+	//		continue
+	//	}
+	//	wg.Add(1)
+	//	conn := v
+	//	go func() {
+	//		_ = iperfMeasure(conn, cl)
+	//		wg.Done()
+	//	}()
+	//}
+	//wg.Wait()
+	//
+	//_ = iperf.WriteFile("kernelToWireguardTo", "kernel", N, M)
+
+	for _, c := range clInfo.cancels {
+		c()
+	}
+
+	//writeFile("kernel", "kernel", N, M)
+
+	epCancel()
+
+	err = <-serverErrCh
+}
+
+func iperfMeasure(conn *networkservice.Connection, k *kernelVerifiableClient) error {
 	for _, ip := range conn.GetContext().GetIpContext().GetDstIPNets() {
 		var err error
 		for i := 0; i < 20; i++ {
@@ -363,7 +465,6 @@ func (f *ForwarderTestSuite) TestMemifToMemifPerformance() {
 		})
 	}
 
-	time.Sleep(time.Hour)
 	//for _, v := range clInfo.clientWithConn {
 	//	e, ok2 := ep.(*kernelVerifiableEndpoint)
 	//	if !ok2 {

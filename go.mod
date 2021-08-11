@@ -11,9 +11,11 @@ require (
 	github.com/edwarnicke/grpcfd v0.1.0
 	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
 	github.com/golang/protobuf v1.4.3
+	github.com/google/uuid v1.1.2 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/api v0.5.1-0.20210618184350-e3fc29dc170b
-	github.com/networkservicemesh/sdk v0.5.1-0.20210630092016-3b8e683e3d9c
+	github.com/networkservicemesh/api v1.0.1-0.20210715134717-6e4a0f8eae3e
+	github.com/networkservicemesh/sdk v1.0.0
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20210811064243-0548354e4811
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20210702090826-b6ed43b14a02
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
@@ -24,3 +26,5 @@ require (
 	github.com/vishvananda/netns v0.0.0-20200728191858-db3c7e526aae
 	google.golang.org/grpc v1.35.0
 )
+
+replace github.com/networkservicemesh/sdk-vpp => github.com/Mixaster995/sdk-vpp v0.0.0-20210811094428-725a2a321882
