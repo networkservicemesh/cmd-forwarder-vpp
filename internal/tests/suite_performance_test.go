@@ -49,7 +49,7 @@ import (
 	"time"
 )
 
-const N = 8
+const N = 10
 const M = 1
 
 type clientInfo struct {
