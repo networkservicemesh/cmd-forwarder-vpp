@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Cisco and/or its affiliates.
+// Copyright (c) 2020-2021 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -66,6 +66,7 @@ type verifiableClient interface {
 
 type kernelVerifiableEndpoint struct {
 	ctx              context.Context
+	endpointNSName   string
 	endpointNSHandle netns.NsHandle
 	endpoint.Endpoint
 }
@@ -78,7 +79,7 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 	if err != nil {
 		panic(fmt.Sprintf("unable to get root netNs: %+v", err))
 	}
-	endpointNSName := fmt.Sprintf("endpoint-%s", randstr.Hex(4))
+	endpointNSName := fmt.Sprintf("nse-%s", randstr.Hex(4))
 	endpointNSHandle, err := netns.NewNamed(endpointNSName)
 	if err != nil {
 		panic(fmt.Sprintf("unable create netNs %s: %+v", endpointNSName, err))
@@ -89,6 +90,7 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 	}(endpointNSName)
 	return &kernelVerifiableEndpoint{
 		ctx:              ctx,
+		endpointNSName:   endpointNSName,
 		endpointNSHandle: endpointNSHandle,
 		Endpoint: endpoint.NewServer(
 			ctx,
@@ -100,7 +102,7 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 				point2pointipam.NewServer(prefix2),
 				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 					kernel.MECHANISM: chain.NewNetworkServiceServer(
-						kernelmechanism.NewServer(),
+						kernelmechanism.NewServer(kernelmechanism.WithInterfaceName(endpointNSName)),
 					),
 				}),
 				ns.NewServer(endpointNSHandle),
@@ -117,6 +119,9 @@ func (k *kernelVerifiableEndpoint) VerifyConnection(conn *networkservice.Connect
 	namingConn.Mechanism = &networkservice.Mechanism{
 		Cls:  cls.LOCAL,
 		Type: kernel.MECHANISM,
+		Parameters: map[string]string{
+			kernel.InterfaceNameKey: k.endpointNSName,
+		},
 	}
 	if err := checkKernelInterface(namingConn, conn.GetContext().GetIpContext().GetDstIPNets(), k.endpointNSHandle); err != nil {
 		return err

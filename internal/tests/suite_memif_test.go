@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Cisco and/or its affiliates.
+// Copyright (c) 2020-2021 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -22,7 +22,7 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"regexp"
+	"strings"
 	"time"
 
 	"git.fd.io/govpp.git/api"
@@ -172,7 +172,8 @@ func pingVpp(ctx context.Context, vppConn api.Connection, ipaddress string) erro
 		WithField("Reply", pingRsp.Reply).
 		WithField("duration", time.Since(now)).Debug("completed")
 
-	if regexp.MustCompile(" 0% packet loss").MatchString(pingRsp.Reply) {
+	if strings.Contains(pingRsp.Reply, " 0% packet loss") &&
+		!strings.Contains(pingRsp.Reply, " 0 sent, 0 received") {
 		return nil
 	}
 	return errors.New("Ping failed")
