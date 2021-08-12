@@ -154,9 +154,9 @@ func (v *kernelToVxlanVerifiableEndpoint) VerifyConnection(conn *networkservice.
 		Cls:  cls.LOCAL,
 		Type: kernel.MECHANISM,
 	}
-	if err := checkKernelInterface(namingConn, conn.GetContext().GetIpContext().GetDstIPNets(), v.endpointNSHandle); err != nil {
-		return err
-	}
+	//if err := checkKernelInterface(namingConn, conn.GetContext().GetIpContext().GetDstIPNets(), v.endpointNSHandle); err != nil {
+	//	return err
+	//}
 	for _, ip := range conn.GetContext().GetIpContext().GetSrcIPNets() {
 		if err := pingKernel(ip, v.endpointNSHandle); err != nil {
 			return err
