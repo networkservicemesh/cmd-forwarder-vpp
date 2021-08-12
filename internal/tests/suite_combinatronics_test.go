@@ -47,6 +47,8 @@ import (
 )
 
 func (f *ForwarderTestSuite) TestCombinations() {
+	f.T().Skip()
+
 	_, prefix1, err := net.ParseCIDR("10.0.0.0/24")
 	f.Require().NoError(err)
 	_, prefix2, err := net.ParseCIDR("fc00::/7")
