@@ -3,11 +3,11 @@ module github.com/networkservicemesh/cmd-forwarder-vpp
 go 1.16
 
 require (
-	git.fd.io/govpp.git v0.3.6-0.20210202134006-4c1cccf48cd1
+	git.fd.io/govpp.git v0.3.6-0.20210615121054-5de7f6b85458
 	github.com/antonfisher/nested-logrus-formatter v1.3.0
 	github.com/edwarnicke/debug v1.0.0
 	github.com/edwarnicke/exechelper v1.0.3
-	github.com/edwarnicke/govpp v0.0.0-20210613224216-90cfa3213b00
+	github.com/edwarnicke/govpp v0.0.0-20210817123650-e0e3b4843cf5
 	github.com/edwarnicke/grpcfd v0.1.0
 	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
 	github.com/golang/protobuf v1.4.3
