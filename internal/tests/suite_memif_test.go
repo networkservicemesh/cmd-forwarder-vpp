@@ -121,6 +121,7 @@ func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfac
 				up.NewClient(ctx, vppConn),
 				connectioncontext.NewClient(vppConn),
 				memif.NewClient(vppConn),
+				sendfd.NewClient(),
 				recvfd.NewClient(),
 			),
 		)(ctx, sutCC),
