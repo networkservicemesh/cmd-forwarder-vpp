@@ -23,15 +23,16 @@ import (
 	"github.com/edwarnicke/vpphelper"
 	"google.golang.org/grpc"
 
+	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
+
+	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/ipam/point2pointipam"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/utils/metadata"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
-	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
@@ -101,15 +102,17 @@ func newWireguardVerifiableClient(
 	return &vxlanVerifiableClient{
 		ctx:     ctx,
 		vppConn: vppConn,
-		NetworkServiceClient: client.NewClientFactory(
+		NetworkServiceClient: client.NewClient(
+			ctx,
 			client.WithName("vxlanVerifiableClient"),
+			client.WithClientConn(sutCC),
 			client.WithAdditionalFunctionality(
 				up.NewClient(ctx, vppConn),
 				connectioncontext.NewClient(vppConn),
 				wireguard.NewClient(vppConn, net.ParseIP(clientIP)),
 				pinhole.NewClient(vppConn),
 			),
-		)(ctx, sutCC),
+		),
 	}
 }
 
