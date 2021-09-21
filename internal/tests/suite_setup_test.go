@@ -24,6 +24,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
@@ -31,7 +32,7 @@ import (
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/edwarnicke/exechelper"
 	"github.com/edwarnicke/grpcfd"
-	"github.com/kelseyhightower/envconfig"
+	"github.com/edwarnicke/vpphelper"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
@@ -39,20 +40,26 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/networkservicemesh/api/pkg/api/registry"
+	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8stest/deviceplugin"
+	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8stest/podresources"
+	"github.com/networkservicemesh/sdk-k8s/pkg/tools/socketpath"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/expire"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/memory"
 	registryrecvfd "github.com/networkservicemesh/sdk/pkg/registry/common/recvfd"
 	"github.com/networkservicemesh/sdk/pkg/registry/core/adapters"
 	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
+	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/spire"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
-	"github.com/edwarnicke/vpphelper"
-
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
+)
+
+const (
+	kubeletSocket = "kubelet.sock"
 )
 
 func (f *ForwarderTestSuite) SetupSuite() {
@@ -63,6 +70,12 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.ctx = log.WithLog(f.ctx, logruslogger.New(f.ctx))
 
 	starttime := time.Now()
+
+	// ********************************************************************************
+	log.FromContext(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	_ = os.Setenv("NSM_TUNNEL_IP", forwarderIP)
+	f.Require().NoError(f.config.Process())
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test bridge (time since start: %s)", time.Since(starttime))
@@ -82,6 +95,21 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.vppClientConn, f.vppClientRoot, f.vppClientErrCh = f.createVpp(f.ctx, "vpp-client")
 	_, err = vppinit.LinkToAfPacket(f.ctx, f.vppClientConn, net.ParseIP(clientIP))
 	f.Require().NoError(err)
+
+	// ********************************************************************************
+	log.FromContext(f.ctx).Infof("Creating k8s API stubs (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	// Create and start device plugin server
+	grpcServer := grpc.NewServer()
+	deviceplugin.StartRegistrationServer(f.config.DevicePluginPath, grpcServer)
+	socketPath := socketpath.SocketPath(path.Join(f.config.DevicePluginPath, kubeletSocket))
+	f.Require().Len(grpcutils.ListenAndServe(f.ctx, grpcutils.AddressToURL(socketPath), grpcServer), 0)
+
+	// Create and start pod resources server
+	grpcServer = grpc.NewServer()
+	podresources.StartPodResourcesListerServer(grpcServer)
+	socketPath = socketpath.SocketPath(path.Join(f.config.PodResourcesPath, kubeletSocket))
+	f.Require().Len(grpcutils.ListenAndServe(f.ctx, grpcutils.AddressToURL(socketPath), grpcServer), 0)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Running Spire (time since start: %s)", time.Since(starttime))
@@ -118,21 +146,8 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		exechelper.WithStdout(os.Stdout),
 		exechelper.WithStderr(os.Stderr),
 		exechelper.WithGracePeriod(30*time.Second),
-		exechelper.WithEnvKV("NSM_TUNNEL_IP", forwarderIP),
 	)
 	f.Require().Len(f.sutErrCh, 0)
-
-	// Get config from env
-	// ********************************************************************************
-	log.FromContext(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
-	// ********************************************************************************
-	f.Require().NoError(envconfig.Process("nsm", &f.config))
-
-	level, err := logrus.ParseLevel(f.config.LogLevel)
-	if err != nil {
-		logrus.Fatalf("invalid log level %s", f.config.LogLevel)
-	}
-	logrus.SetLevel(level)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating registryServer and registryClient (time since start: %s)", time.Since(starttime))

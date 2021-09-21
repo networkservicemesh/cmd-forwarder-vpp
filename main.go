@@ -20,8 +20,6 @@ package main
 
 import (
 	"context"
-	"net"
-	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -31,7 +29,6 @@ import (
 	"github.com/edwarnicke/debug"
 	"github.com/edwarnicke/grpcfd"
 	"github.com/edwarnicke/vpphelper"
-	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
@@ -39,7 +36,12 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/xconnectns"
+	"github.com/networkservicemesh/sdk-k8s/pkg/tools/deviceplugin"
+	"github.com/networkservicemesh/sdk-k8s/pkg/tools/podresources"
+	sriovconfig "github.com/networkservicemesh/sdk-sriov/pkg/sriov/config"
+	"github.com/networkservicemesh/sdk-sriov/pkg/sriov/pci"
+	"github.com/networkservicemesh/sdk-sriov/pkg/sriov/resource"
+	sriovtoken "github.com/networkservicemesh/sdk-sriov/pkg/sriov/token"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
@@ -50,21 +52,10 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/config"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/xconnectns"
 )
-
-// Config - configuration for cmd-forwarder-vpp
-type Config struct {
-	Name             string        `default:"forwarder" desc:"Name of Endpoint"`
-	NSName           string        `default:"xconnectns" desc:"Name of Network Service to Register with Registry"`
-	TunnelIP         net.IP        `desc:"IP to use for tunnels" split_words:"true"`
-	ConnectTo        url.URL       `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
-	ListenOn         url.URL       `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
-	MaxTokenLifetime time.Duration `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
-	VppAPISocket     string        `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
-	VppInit          vppinit.Func  `default:"AF_PACKET" desc:"type of VPP initialization.  Must be AF_PACKET or NONE" split_words:"true"`
-	LogLevel         string        `default:"INFO" desc:"Log level" split_words:"true"`
-}
 
 func main() {
 	// ********************************************************************************
@@ -98,45 +89,47 @@ func main() {
 	starttime := time.Now()
 
 	// enumerating phases
-	log.FromContext(ctx).Infof("there are 6 phases which will be executed followed by a success message:")
+	log.FromContext(ctx).Infof("there are 9 phases which will be executed followed by a success message:")
 	log.FromContext(ctx).Infof("the phases include:")
 	log.FromContext(ctx).Infof("1: get config from environment")
 	log.FromContext(ctx).Infof("2: run vpp and get a connection to it")
-	log.FromContext(ctx).Infof("3: retrieve spiffe svid")
-	log.FromContext(ctx).Infof("4: create xconnect network service endpoint")
-	log.FromContext(ctx).Infof("5: create grpc server and register xconnect")
-	log.FromContext(ctx).Infof("6: register xconnectns with the registry")
+	log.FromContext(ctx).Infof("3: get SR-IOV config from file")
+	log.FromContext(ctx).Infof("4: init pools")
+	log.FromContext(ctx).Infof("5: start device plugin server")
+	log.FromContext(ctx).Infof("6: retrieve spiffe svid")
+	log.FromContext(ctx).Infof("7: create xconnect network service endpoint")
+	log.FromContext(ctx).Infof("8: create grpc server and register xconnect")
+	log.FromContext(ctx).Infof("9: register xconnectns with the registry")
 	log.FromContext(ctx).Infof("a final success message with start time duration")
 
 	// ********************************************************************************
 	log.FromContext(ctx).Infof("executing phase 1: get config from environment (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now := time.Now()
-	config := &Config{}
-	if err := envconfig.Usage("nsm", config); err != nil {
+
+	cfg := new(config.Config)
+	if err := cfg.Process(); err != nil {
 		logrus.Fatal(err)
 	}
-	if err := envconfig.Process("nsm", config); err != nil {
-		logrus.Fatalf("error processing config from env: %+v", err)
-	}
+	log.FromContext(ctx).Infof("Config: %#v", cfg)
 
-	level, err := logrus.ParseLevel(config.LogLevel)
+	level, err := logrus.ParseLevel(cfg.LogLevel)
 	if err != nil {
-		logrus.Fatalf("invalid log level %s", config.LogLevel)
+		logrus.Fatalf("invalid log level %s", cfg.LogLevel)
 	}
 	logrus.SetLevel(level)
 
-	log.FromContext(ctx).Infof("Config: %#v", config)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 1: get config from environment")
 
 	// ********************************************************************************
 	log.FromContext(ctx).Infof("executing phase 2: run vpp and get a connection to it (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
+
 	var vppConn vpphelper.Connection
 	var vppErrCh <-chan error
-	if config.VppAPISocket != "" { // If we have a VppAPISocket, use that
-		vppConn = vpphelper.DialContext(ctx, config.VppAPISocket)
+	if cfg.VppAPISocket != "" { // If we have a VppAPISocket, use that
+		vppConn = vpphelper.DialContext(ctx, cfg.VppAPISocket)
 		errCh := make(chan error)
 		close(errCh)
 		vppErrCh = errCh
@@ -144,12 +137,64 @@ func main() {
 		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
 		exitOnErrCh(ctx, cancel, vppErrCh)
 	}
+
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 
 	// ********************************************************************************
-	log.FromContext(ctx).Infof("executing phase 3: retrieving svid, check spire agent logs if this is the last line you see (time since start: %s)", time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 3: get SR-IOV config from file (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
+
+	sriovConfig, err := sriovconfig.ReadConfig(ctx, cfg.SRIOVConfigFile)
+	if err != nil {
+		log.FromContext(ctx).Fatalf("failed to get PCI resources config: %+v", err)
+	}
+
+	if err = pci.UpdateConfig(cfg.PCIDevicesPath, cfg.PCIDriversPath, sriovConfig); err != nil {
+		log.FromContext(ctx).Fatalf("failed to update PCI resources config with VFs: %+v", err)
+	}
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 3: get SR-IOV config from file")
+
+	// ********************************************************************************
+	log.FromContext(ctx).Infof("executing phase 4: init pools (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	now = time.Now()
+
+	tokenPool := sriovtoken.NewPool(sriovConfig)
+
+	pciPool, err := pci.NewPool(cfg.PCIDevicesPath, cfg.PCIDriversPath, cfg.VFIOPath, sriovConfig)
+	if err != nil {
+		log.FromContext(ctx).Fatalf("failed to init PCI pool: %+v", err)
+	}
+
+	resourcePool := resource.NewPool(tokenPool, sriovConfig)
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 4: init pools")
+
+	// ********************************************************************************
+	log.FromContext(ctx).Infof("executing phase 5: start device plugin server (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	now = time.Now()
+
+	// Start device plugin server
+	if err = deviceplugin.StartServers(
+		ctx,
+		tokenPool,
+		cfg.ResourcePollTimeout,
+		deviceplugin.NewClient(cfg.DevicePluginPath),
+		podresources.NewClient(cfg.PodResourcesPath),
+	); err != nil {
+		log.FromContext(ctx).Fatalf("failed to start a device plugin server: %+v", err)
+	}
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 5: start device plugin server")
+
+	// ********************************************************************************
+	log.FromContext(ctx).Infof("executing phase 6: retrieving svid, check spire agent logs if this is the last line you see (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	now = time.Now()
+
 	source, err := workloadapi.NewX509Source(ctx)
 	if err != nil {
 		logrus.Fatalf("error getting x509 source: %+v", err)
@@ -159,49 +204,64 @@ func main() {
 		logrus.Fatalf("error getting x509 svid: %+v", err)
 	}
 	logrus.Infof("SVID: %q", svid.ID)
-	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 3: retrieving svid")
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 6: retrieving svid")
 
 	// ********************************************************************************
-	log.FromContext(ctx).Infof("executing phase 4: create xconnect network service endpoint (time since start: %s)", time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 7: create xconnect network service endpoint (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
 
 	endpoint := xconnectns.NewServer(
 		ctx,
-		config.Name,
+		cfg.Name,
 		authorize.NewServer(),
-		spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime),
-		&config.ConnectTo,
+		spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime),
 		vppConn,
-		vppinit.Must(config.VppInit.Execute(ctx, vppConn, config.TunnelIP)),
+		vppinit.Must(cfg.VppInit.Execute(ctx, vppConn, cfg.TunnelIP)),
+		pciPool,
+		resourcePool,
+		sriovConfig,
+		cfg.VFIOPath, cfg.CgroupPath,
+		&cfg.ConnectTo,
 		grpc.WithTransportCredentials(
 			resetting.NewCredentials(
 				grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny()))),
 				source.Updated())),
 		grpc.WithDefaultCallOptions(
 			grpc.WaitForReady(true),
-			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime))),
+			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime))),
 		),
 		grpcfd.WithChainStreamInterceptor(),
 		grpcfd.WithChainUnaryInterceptor(),
 	)
-	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 4: create xconnect network service endpoint")
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 7: create xconnect network service endpoint")
 
 	// ********************************************************************************
-	log.FromContext(ctx).Infof("executing phase 5: create grpc server and register xconnect (time since start: %s)", time.Since(starttime))
-	// TODO add serveroptions for tracing
+	log.FromContext(ctx).Infof("executing phase 8: create grpc server and register xconnect (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
-	server := grpc.NewServer(grpc.Creds(grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())))))
+
+	server := grpc.NewServer(
+		// TODO add serveroptions for tracing
+		grpc.Creds(
+			grpcfd.TransportCredentials(
+				credentials.NewTLS(
+					tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())))),
+	)
 	endpoint.Register(server)
-	srvErrCh := grpcutils.ListenAndServe(ctx, &config.ListenOn, server)
+
+	srvErrCh := grpcutils.ListenAndServe(ctx, &cfg.ListenOn, server)
 	exitOnErrCh(ctx, cancel, srvErrCh)
-	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 5: create grpc server and register xconnect")
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 8: create grpc server and register xconnect")
 
 	// ********************************************************************************
-	log.FromContext(ctx).Infof("executing phase 6: register %s with the registry (time since start: %s)", config.NSName, time.Since(starttime))
+	log.FromContext(ctx).Infof("executing phase 9: register %s with the registry (time since start: %s)", cfg.NSName, time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
+
 	clientOptions := append(
 		opentracing.WithTracingDial(),
 		grpc.WithBlock(),
@@ -209,22 +269,20 @@ func main() {
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(
 				credentials.NewTLS(
-					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny()),
-				),
-			),
-		),
+					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 	)
 
-	registryClient := registryclient.NewNetworkServiceEndpointRegistryInterposeClient(ctx, &config.ConnectTo, registryclient.WithDialOptions(clientOptions...))
+	registryClient := registryclient.NewNetworkServiceEndpointRegistryInterposeClient(ctx, &cfg.ConnectTo, registryclient.WithDialOptions(clientOptions...))
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
-		Name:                config.Name,
-		NetworkServiceNames: []string{config.NSName},
-		Url:                 config.ListenOn.String(),
+		Name:                cfg.Name,
+		NetworkServiceNames: []string{cfg.NSName},
+		Url:                 cfg.ListenOn.String(),
 	})
 	if err != nil {
 		log.FromContext(ctx).Fatalf("failed to connect to registry: %+v", err)
 	}
-	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 6: register %s with the registry", config.NSName)
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 9: register %s with the registry", cfg.NSName)
 
 	log.FromContext(ctx).Infof("Startup completed in %v", time.Since(starttime))
 
