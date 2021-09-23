@@ -59,6 +59,11 @@ func NewServer(
 	clientURL *url.URL,
 	clientDialOptions ...grpc.DialOption,
 ) endpoint.Endpoint {
+	vppForwarder := vppxconnectns.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, clientDialOptions...)
+	if sriovConfig == nil {
+		return vppForwarder
+	}
+
 	return endpoint.Combine(func(servers []networkservice.NetworkServiceServer) networkservice.NetworkServiceServer {
 		vppForwarder := servers[0]
 		sriovForwarder := servers[1]
@@ -82,7 +87,7 @@ func NewServer(
 			noop.MECHANISM:      sriovForwarder,
 		})
 	},
-		vppxconnectns.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, clientDialOptions...),
+		vppForwarder,
 		sriovxconnectns.NewServer(ctx, name, authzServer, tokenGenerator, pciPool, resourcePool, sriovConfig, vfioDir, cgroupBaseDir, clientURL, clientDialOptions...),
 	)
 }
