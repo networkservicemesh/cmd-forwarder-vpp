@@ -24,7 +24,6 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
-	"path"
 	"path/filepath"
 	"time"
 
@@ -40,15 +39,11 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/networkservicemesh/api/pkg/api/registry"
-	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8stest/deviceplugin"
-	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8stest/podresources"
-	"github.com/networkservicemesh/sdk-k8s/pkg/tools/socketpath"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/expire"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/memory"
 	registryrecvfd "github.com/networkservicemesh/sdk/pkg/registry/common/recvfd"
 	"github.com/networkservicemesh/sdk/pkg/registry/core/adapters"
 	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
-	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
@@ -56,10 +51,6 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
-)
-
-const (
-	kubeletSocket = "kubelet.sock"
 )
 
 func (f *ForwarderTestSuite) SetupSuite() {
@@ -95,21 +86,6 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.vppClientConn, f.vppClientRoot, f.vppClientErrCh = f.createVpp(f.ctx, "vpp-client")
 	_, err = vppinit.LinkToAfPacket(f.ctx, f.vppClientConn, net.ParseIP(clientIP))
 	f.Require().NoError(err)
-
-	// ********************************************************************************
-	log.FromContext(f.ctx).Infof("Creating k8s API stubs (time since start: %s)", time.Since(starttime))
-	// ********************************************************************************
-	// Create and start device plugin server
-	grpcServer := grpc.NewServer()
-	deviceplugin.StartRegistrationServer(f.config.DevicePluginPath, grpcServer)
-	socketPath := socketpath.SocketPath(path.Join(f.config.DevicePluginPath, kubeletSocket))
-	f.Require().Len(grpcutils.ListenAndServe(f.ctx, grpcutils.AddressToURL(socketPath), grpcServer), 0)
-
-	// Create and start pod resources server
-	grpcServer = grpc.NewServer()
-	podresources.StartPodResourcesListerServer(grpcServer)
-	socketPath = socketpath.SocketPath(path.Join(f.config.PodResourcesPath, kubeletSocket))
-	f.Require().Len(grpcutils.ListenAndServe(f.ctx, grpcutils.AddressToURL(socketPath), grpcServer), 0)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Running Spire (time since start: %s)", time.Since(starttime))

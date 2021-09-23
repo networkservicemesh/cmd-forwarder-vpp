@@ -23,11 +23,6 @@ COPY . .
 RUN go build -o /bin/forwarder .
 
 FROM build as test
-ENV NSM_DEVICE_PLUGIN_PATH=/build/run/device-plugins
-RUN mkdir -p ${NSM_DEVICE_PLUGIN_PATH}
-ENV NSM_POD_RESOURCES_PATH=/build/run/pod-resources
-RUN mkdir -p ${NSM_POD_RESOURCES_PATH}
-ENV NSM_SRIOV_CONFIG_FILE=/dev/null
 CMD go test -test.v ./...
 
 FROM test as debug

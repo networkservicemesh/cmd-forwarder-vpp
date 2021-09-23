@@ -38,6 +38,7 @@ import (
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/deviceplugin"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/podresources"
+	"github.com/networkservicemesh/sdk-sriov/pkg/networkservice/common/resourcepool"
 	sriovconfig "github.com/networkservicemesh/sdk-sriov/pkg/sriov/config"
 	"github.com/networkservicemesh/sdk-sriov/pkg/sriov/pci"
 	"github.com/networkservicemesh/sdk-sriov/pkg/sriov/resource"
@@ -141,54 +142,12 @@ func main() {
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 
 	// ********************************************************************************
-	log.FromContext(ctx).Infof("executing phase 3: get SR-IOV config from file (time since start: %s)", time.Since(starttime))
+	// executing phases 3-5
 	// ********************************************************************************
-	now = time.Now()
-
-	sriovConfig, err := sriovconfig.ReadConfig(ctx, cfg.SRIOVConfigFile)
-	if err != nil {
-		log.FromContext(ctx).Fatalf("failed to get PCI resources config: %+v", err)
+	sriovConfig, pciPool, resourcePool := setupSRIOV(ctx, cfg, starttime)
+	if sriovConfig == nil {
+		log.FromContext(ctx).Warn("SR-IOV is not enabled")
 	}
-
-	if err = pci.UpdateConfig(cfg.PCIDevicesPath, cfg.PCIDriversPath, sriovConfig); err != nil {
-		log.FromContext(ctx).Fatalf("failed to update PCI resources config with VFs: %+v", err)
-	}
-
-	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 3: get SR-IOV config from file")
-
-	// ********************************************************************************
-	log.FromContext(ctx).Infof("executing phase 4: init pools (time since start: %s)", time.Since(starttime))
-	// ********************************************************************************
-	now = time.Now()
-
-	tokenPool := sriovtoken.NewPool(sriovConfig)
-
-	pciPool, err := pci.NewPool(cfg.PCIDevicesPath, cfg.PCIDriversPath, cfg.VFIOPath, sriovConfig)
-	if err != nil {
-		log.FromContext(ctx).Fatalf("failed to init PCI pool: %+v", err)
-	}
-
-	resourcePool := resource.NewPool(tokenPool, sriovConfig)
-
-	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 4: init pools")
-
-	// ********************************************************************************
-	log.FromContext(ctx).Infof("executing phase 5: start device plugin server (time since start: %s)", time.Since(starttime))
-	// ********************************************************************************
-	now = time.Now()
-
-	// Start device plugin server
-	if err = deviceplugin.StartServers(
-		ctx,
-		tokenPool,
-		cfg.ResourcePollTimeout,
-		deviceplugin.NewClient(cfg.DevicePluginPath),
-		podresources.NewClient(cfg.PodResourcesPath),
-	); err != nil {
-		log.FromContext(ctx).Fatalf("failed to start a device plugin server: %+v", err)
-	}
-
-	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 5: start device plugin server")
 
 	// ********************************************************************************
 	log.FromContext(ctx).Infof("executing phase 6: retrieving svid, check spire agent logs if this is the last line you see (time since start: %s)", time.Since(starttime))
@@ -290,6 +249,69 @@ func main() {
 	<-ctx.Done()
 	<-srvErrCh
 	<-vppErrCh
+}
+
+func setupSRIOV(ctx context.Context, cfg *config.Config, starttime time.Time) (*sriovconfig.Config, resourcepool.PCIPool, resourcepool.ResourcePool) {
+	if cfg.SRIOVConfigFile == "" {
+		log.FromContext(ctx).Warn("skipping phases 3-5: no PCI resources config")
+		return nil, nil, nil
+	}
+
+	// ********************************************************************************
+	log.FromContext(ctx).Infof("executing phase 3: get SR-IOV config from file (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	now := time.Now()
+
+	sriovConfig, err := sriovconfig.ReadConfig(ctx, cfg.SRIOVConfigFile)
+	if err != nil {
+		log.FromContext(ctx).Fatalf("failed to get PCI resources config: %+v", err)
+	}
+
+	if err = pci.UpdateConfig(cfg.PCIDevicesPath, cfg.PCIDriversPath, sriovConfig); err != nil {
+		log.FromContext(ctx).Fatalf("failed to update PCI resources config with VFs: %+v", err)
+	}
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 3: get SR-IOV config from file")
+
+	if len(sriovConfig.PhysicalFunctions) == 0 {
+		log.FromContext(ctx).Warn("skipping phases 4-5: empty PF list")
+		return nil, nil, nil
+	}
+
+	// ********************************************************************************
+	log.FromContext(ctx).Infof("executing phase 4: init pools (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	now = time.Now()
+
+	tokenPool := sriovtoken.NewPool(sriovConfig)
+
+	pciPool, err := pci.NewPool(cfg.PCIDevicesPath, cfg.PCIDriversPath, cfg.VFIOPath, sriovConfig)
+	if err != nil {
+		log.FromContext(ctx).Fatalf("failed to init PCI pool: %+v", err)
+	}
+
+	resourcePool := resource.NewPool(tokenPool, sriovConfig)
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 4: init pools")
+
+	// ********************************************************************************
+	log.FromContext(ctx).Infof("executing phase 5: start device plugin server (time since start: %s)", time.Since(starttime))
+	// ********************************************************************************
+	now = time.Now()
+
+	if err = deviceplugin.StartServers(
+		ctx,
+		tokenPool,
+		cfg.ResourcePollTimeout,
+		deviceplugin.NewClient(cfg.DevicePluginPath),
+		podresources.NewClient(cfg.PodResourcesPath),
+	); err != nil {
+		log.FromContext(ctx).Fatalf("failed to start a device plugin server: %+v", err)
+	}
+
+	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 5: start device plugin server")
+
+	return sriovConfig, pciPool, resourcePool
 }
 
 func exitOnErrCh(ctx context.Context, cancel context.CancelFunc, errCh <-chan error) {
