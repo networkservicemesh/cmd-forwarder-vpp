@@ -46,6 +46,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
+	"github.com/networkservicemesh/sdk/pkg/tools/jaeger"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentracing"
@@ -77,6 +78,8 @@ func main() {
 	// ********************************************************************************
 	logrus.SetFormatter(&nested.Formatter{})
 	log.EnableTracing(true)
+	jaegerCloser := jaeger.InitJaeger(ctx, "cmd-forwarder-vpp")
+	defer func() { _ = jaegerCloser.Close() }()
 	ctx = log.WithFields(ctx, map[string]interface{}{"cmd": os.Args[0]})
 	ctx = log.WithLog(ctx, logruslogger.New(ctx))
 
