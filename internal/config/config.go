@@ -41,6 +41,7 @@ type Config struct {
 	LogLevel         string        `default:"INFO" desc:"Log level" split_words:"true"`
 
 	TunnelIP     net.IP       `desc:"IP to use for tunnels" split_words:"true"`
+	VxlanPort    uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
 	VppAPISocket string       `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
 	VppInit      vppinit.Func `default:"AF_PACKET" desc:"type of VPP initialization.  Must be AF_PACKET or NONE" split_words:"true"`
 

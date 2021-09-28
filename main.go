@@ -180,6 +180,7 @@ func main() {
 		spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime),
 		vppConn,
 		vppinit.Must(cfg.VppInit.Execute(ctx, vppConn, cfg.TunnelIP)),
+		cfg.VxlanPort,
 		pciPool,
 		resourcePool,
 		sriovConfig,

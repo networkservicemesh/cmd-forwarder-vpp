@@ -52,6 +52,7 @@ func NewServer(
 	tokenGenerator token.GeneratorFunc,
 	vppConn vppxconnectns.Connection,
 	tunnelIP net.IP,
+	tunnelPort uint16,
 	pciPool resourcepool.PCIPool,
 	resourcePool resourcepool.ResourcePool,
 	sriovConfig *sriovconfig.Config,
@@ -59,7 +60,7 @@ func NewServer(
 	clientURL *url.URL,
 	clientDialOptions ...grpc.DialOption,
 ) endpoint.Endpoint {
-	vppForwarder := vppxconnectns.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, clientDialOptions...)
+	vppForwarder := vppxconnectns.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, clientDialOptions...)
 	if sriovConfig == nil {
 		return vppForwarder
 	}
