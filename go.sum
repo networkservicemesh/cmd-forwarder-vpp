@@ -23,8 +23,8 @@ cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0Zeo
 cloud.google.com/go/storage v1.6.0/go.mod h1:N7U0C8pVQ/+NIKOBQyamJIeKQKkZ+mxpohlUTyfDhBk=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 git.fd.io/govpp.git v0.3.6-0.20210202134006-4c1cccf48cd1/go.mod h1:OCVd4W8SH+666KRQoMj6PM+oipLDZAHhqMz9B1TGbgI=
-git.fd.io/govpp.git v0.3.6-0.20210615121054-5de7f6b85458 h1:6I9Hu2Tfg8qYtjKrdD9aRhIvMnNHQhh6MEoDC0hd8zc=
-git.fd.io/govpp.git v0.3.6-0.20210615121054-5de7f6b85458/go.mod h1:OCVd4W8SH+666KRQoMj6PM+oipLDZAHhqMz9B1TGbgI=
+git.fd.io/govpp.git v0.3.6-0.20210927044411-385ccc0d8ba9 h1:QFHVGWCWf6e226vMy1zU614eC3glrfJO2CwREUk8D6s=
+git.fd.io/govpp.git v0.3.6-0.20210927044411-385ccc0d8ba9/go.mod h1:OCVd4W8SH+666KRQoMj6PM+oipLDZAHhqMz9B1TGbgI=
 github.com/Azure/go-ansiterm v0.0.0-20210608223527-2377c96fe795/go.mod h1:LmzpDX56iTiv29bbRTIsUNlaFfuhWRQBWjQdVyAevI8=
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/Azure/go-autorest v14.2.0+incompatible/go.mod h1:r+4oMnoxhatjLLJ6zxSWATqVooLgysK6ZNox3g/xq24=
@@ -101,9 +101,8 @@ github.com/edwarnicke/debug v1.0.0/go.mod h1:cJAtt6sSqp7yUFpiIvSD2Xzyc7iUTUMx0MU
 github.com/edwarnicke/exechelper v1.0.2/go.mod h1:/T271jtNX/ND4De6pa2aRy2+8sNtyCDB1A2pp4M+fUs=
 github.com/edwarnicke/exechelper v1.0.3 h1:OY2ocGAITTqnEDvZk0dRQSeMIQvyH0SyL/4ncz+5GeQ=
 github.com/edwarnicke/exechelper v1.0.3/go.mod h1:R65OUPKns4bgeHkCmfSHbmqLBU8aHZxTgLmEyUBUk4U=
-github.com/edwarnicke/govpp v0.0.0-20210817123650-e0e3b4843cf5/go.mod h1:qCZYvdwFh5TJepc7DwDmOQ9olgfLjjX90JlyRE4SpYw=
-github.com/edwarnicke/govpp v0.0.0-20210831163558-1534cf6ada42 h1:kUFNUAIMZMCQVXC9FqqF3y2B9OzB4OsAzgN/lvgFzws=
-github.com/edwarnicke/govpp v0.0.0-20210831163558-1534cf6ada42/go.mod h1:qCZYvdwFh5TJepc7DwDmOQ9olgfLjjX90JlyRE4SpYw=
+github.com/edwarnicke/govpp v0.0.0-20210928024809-7b7ae743b62d h1:KvhkLWa50BIeFWBTEEQJnH69BLc7VfRQWISbN3jCgX4=
+github.com/edwarnicke/govpp v0.0.0-20210928024809-7b7ae743b62d/go.mod h1:kHDnxA+SSNFeMEHz7xvhub1zvx4mOTRlWWRCay2n5NM=
 github.com/edwarnicke/grpcfd v0.1.0 h1:f0lmmNDYawQaW+dMNoF8d4DxwPxxczNSFuvu5C7ptRk=
 github.com/edwarnicke/grpcfd v0.1.0/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=
 github.com/edwarnicke/log v1.0.0 h1:T6uRNCmR99GTt/CpRr2Gz8eGW8fm0HMThDNGdNxPaGk=
@@ -349,8 +348,8 @@ github.com/networkservicemesh/sdk-kernel v0.0.0-20210928064414-8237d1940dab h1:2
 github.com/networkservicemesh/sdk-kernel v0.0.0-20210928064414-8237d1940dab/go.mod h1:0V+2MBFK1B8IsSHKk6yYjc12xUUQwV49KCUve9lah7c=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20210924085919-868bbc152fb4 h1:NA8YzBX8W28MMDYMmPk99tKf5ijD3zYE0DYfAKOZxEc=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20210924085919-868bbc152fb4/go.mod h1:agnfxvuC9k/LTBT7azseDToGC5GKvJbAwohBy8f40i4=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210928064717-f51410a45033 h1:g1r42Ml3P46rfxuUR1E7MPUriEWBD8G9AWDUbnbpwfw=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20210928064717-f51410a45033/go.mod h1:HrBLMVafBfrj6XhC1J9gWkwvzCLbWsE1x5+b/NQF76A=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210928090848-c72337937ace h1:J22jPUsLxmScuCvPTGjJAwsxxBIHXQLhQ2jVFHNGFqo=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20210928090848-c72337937ace/go.mod h1:CZlzdHakYg5Pm53/ux5sSHDL5iMsy0B3BEP78HK6NU8=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
