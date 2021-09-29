@@ -26,7 +26,6 @@ import (
 	"time"
 
 	"git.fd.io/govpp.git/api"
-	"github.com/edwarnicke/govpp/binapi/af_packet"
 	"github.com/edwarnicke/govpp/binapi/fib_types"
 	interfaces "github.com/edwarnicke/govpp/binapi/interface"
 	"github.com/edwarnicke/govpp/binapi/interface_types"
@@ -35,6 +34,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
 
+	"github.com/networkservicemesh/sdk-vpp/pkg/tools/initvpp"
 	"github.com/networkservicemesh/sdk-vpp/pkg/tools/types"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 )
@@ -87,12 +87,12 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return tunnelIP, nil
 	}
 
-	swIfIndex, err := createAfPacket(ctx, vppConn, link)
+	swIfIndex, err := initvpp.CreateAfPacket(ctx, vppConn, link)
 	if err != nil {
 		return nil, err
 	}
 
-	if aclErr := denyAllACLToInterface(ctx, vppConn, swIfIndex); aclErr != nil {
+	if aclErr := initvpp.DenyAllACLToInterface(ctx, vppConn, swIfIndex); aclErr != nil {
 		return nil, aclErr
 	}
 
@@ -191,29 +191,6 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 	return tunnelIP, nil
 }
 
-func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
-	afPacketCreate := &af_packet.AfPacketCreate{
-		HwAddr:     types.ToVppMacAddress(&link.Attrs().HardwareAddr),
-		HostIfName: link.Attrs().Name,
-	}
-	now := time.Now()
-	afPacketCreateRsp, err := af_packet.NewServiceClient(vppConn).AfPacketCreate(ctx, afPacketCreate)
-	if err != nil {
-		return 0, err
-	}
-	log.FromContext(ctx).
-		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
-		WithField("hwaddr", afPacketCreate.HwAddr).
-		WithField("hostIfName", afPacketCreate.HostIfName).
-		WithField("duration", time.Since(now)).
-		WithField("vppapi", "AfPacketCreate").Debug("completed")
-
-	if err := setMtu(ctx, vppConn, link, afPacketCreateRsp.SwIfIndex); err != nil {
-		return 0, err
-	}
-	return afPacketCreateRsp.SwIfIndex, nil
-}
-
 func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkIdx int) error {
 	neighList, err := netlink.NeighList(linkIdx, netlink.FAMILY_ALL)
 	if err != nil {
@@ -249,26 +226,8 @@ func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interf
 	return nil
 }
 
-func setMtu(ctx context.Context, vppConn api.Connection, link netlink.Link, swIfIndex interface_types.InterfaceIndex) error {
-	now := time.Now()
-	setMtu := &interfaces.HwInterfaceSetMtu{
-		SwIfIndex: swIfIndex,
-		Mtu:       uint16(link.Attrs().MTU),
-	}
-	_, err := interfaces.NewServiceClient(vppConn).HwInterfaceSetMtu(ctx, setMtu)
-	if err != nil {
-		return err
-	}
-	log.FromContext(ctx).
-		WithField("swIfIndex", setMtu.SwIfIndex).
-		WithField("MTU", setMtu.Mtu).
-		WithField("duration", time.Since(now)).
-		WithField("vppapi", "HwInterfaceSetMtu").Debug("completed")
-	return nil
-}
-
 func linkAddrsRoutes(ctx context.Context, tunnelIP net.IP) (netlink.Link, []netlink.Addr, []netlink.Route, error) {
-	link, err := linkByIP(ctx, tunnelIP)
+	link, err := initvpp.LinkByIP(ctx, tunnelIP)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -284,53 +243,4 @@ func linkAddrsRoutes(ctx context.Context, tunnelIP net.IP) (netlink.Link, []netl
 		return nil, nil, nil, errors.Wrapf(err, "could not find routes for link %s", link.Attrs().Name)
 	}
 	return link, addrs, routes, nil
-}
-
-func defaultRouteLink(ctx context.Context) (netlink.Link, error) {
-	now := time.Now()
-	routes, err := netlink.RouteList(nil, netlink.FAMILY_ALL)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to get routes")
-	}
-
-	log.FromContext(ctx).
-		WithField("duration", time.Since(now)).
-		WithField("netlink", "RouteList").Debug("completed")
-
-	for _, route := range routes {
-		// Is it a default route?
-		if route.Dst != nil {
-			ones, _ := route.Dst.Mask.Size()
-			if ones == 0 && (route.Dst.IP.Equal(net.IPv4zero) || route.Dst.IP.Equal(net.IPv6zero)) {
-				return netlink.LinkByIndex(route.LinkIndex)
-			}
-			continue
-		}
-		if route.Scope == netlink.SCOPE_UNIVERSE {
-			return netlink.LinkByIndex(route.LinkIndex)
-		}
-	}
-	return nil, errors.New("no link found for default route")
-}
-
-func linkByIP(ctx context.Context, ipaddress net.IP) (netlink.Link, error) {
-	if ipaddress == nil {
-		return defaultRouteLink(ctx)
-	}
-	links, err := netlink.LinkList()
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to get links")
-	}
-	for _, link := range links {
-		addrs, err := netlink.AddrList(link, netlink.FAMILY_ALL)
-		if err != nil {
-			return nil, errors.Wrap(err, "could not find links for default routes")
-		}
-		for _, addr := range addrs {
-			if addr.IPNet != nil && addr.IPNet.IP.Equal(ipaddress) {
-				return link, nil
-			}
-		}
-	}
-	return nil, nil
 }
