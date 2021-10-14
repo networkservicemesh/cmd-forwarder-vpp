@@ -100,14 +100,16 @@ func newVxlanVerifiableClient(
 	return &vxlanVerifiableClient{
 		ctx:     ctx,
 		vppConn: vppConn,
-		NetworkServiceClient: client.NewClientFactory(
+		NetworkServiceClient: client.NewClient(
+			ctx,
 			client.WithName("vxlanVerifiableClient"),
+			client.WithClientConn(sutCC),
 			client.WithAdditionalFunctionality(
 				connectioncontext.NewClient(vppConn),
 				pinhole.NewClient(vppConn),
 				vxlan.NewClient(vppConn, net.ParseIP(clientIP)),
 			),
-		)(ctx, sutCC),
+		),
 	}
 }
 

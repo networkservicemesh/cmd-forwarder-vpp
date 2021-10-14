@@ -162,7 +162,9 @@ func newKernelVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfa
 	rv := &kernelVerifiableClient{
 		ctx:            ctx,
 		clientNSHandle: clientNSHandle,
-		NetworkServiceClient: client.NewClientFactory(
+		NetworkServiceClient: client.NewClient(
+			ctx,
+			client.WithClientConn(sutCC),
 			client.WithName("kernelVerifiableClient"),
 			client.WithAdditionalFunctionality(
 				ns.NewClient(clientNSHandle),
@@ -170,7 +172,7 @@ func newKernelVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfa
 				sendfd.NewClient(),
 				ns.NewClient(rootNSHandle),
 			),
-		)(ctx, sutCC),
+		),
 	}
 	return rv
 }
