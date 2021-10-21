@@ -1,0 +1,22 @@
+---
+interfaces:
+  - name: eth1
+    matches:
+      - labelSelector:
+          - via: gw0
+  - name: eth2
+    matches:
+      - labelSelector:
+          - via: gw1
+      - labelSelector:
+          - via: gw2
+  - name: eth3
+    matches:
+      - labelSelector:
+          - via: gw2
+  - name: eth4
+    matches:
+      - labelSelector:
+          - via: gw2
+      - labelSelector:
+          - via: gw3
