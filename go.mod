@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	git.fd.io/govpp.git v0.3.6-0.20210927044411-385ccc0d8ba9
-	github.com/antonfisher/nested-logrus-formatter v1.3.0
+	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/debug v1.0.0
 	github.com/edwarnicke/exechelper v1.0.3
 	github.com/edwarnicke/govpp v0.0.0-20211023203533-76f2c92be8d5
@@ -13,10 +13,10 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.0.1-0.20210907194827-9a36433d7d6e
-	github.com/networkservicemesh/sdk v0.5.1-0.20211026195308-ace8d38c65db
+	github.com/networkservicemesh/sdk v0.5.1-0.20211102013519-0eabc52a2346
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20210923132245-8709b6f366a4
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20211014093500-f12ea1fa1fb9
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20211026195813-25124065cdb4
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20211102014016-af2a9b0326bf
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.2
