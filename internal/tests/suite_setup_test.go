@@ -168,7 +168,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	clientCreds := credentials.NewTLS(tlsconfig.MTLSClientConfig(f.x509source, f.x509bundle, tlsconfig.AuthorizeAny()))
 	clientCreds = grpcfd.TransportCredentials(clientCreds)
 	f.sutCC, err = grpc.DialContext(f.ctx,
-		regEndpoint.GetUrl(),
+		regEndpoint.NetworkServiceEndpoint.GetUrl(),
 		grpc.WithTransportCredentials(clientCreds),
 		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(
