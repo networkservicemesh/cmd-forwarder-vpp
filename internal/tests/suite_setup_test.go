@@ -57,7 +57,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	logrus.SetFormatter(&nested.Formatter{})
 	logrus.SetLevel(logrus.DebugLevel)
 	log.EnableTracing(true)
-	f.ctx, f.cancel = context.WithCancel(context.Background())
+	f.ctx, f.cancel = context.WithTimeout(context.Background(), time.Minute)
 	f.ctx = log.WithLog(f.ctx, logruslogger.New(f.ctx))
 
 	starttime := time.Now()
@@ -135,6 +135,8 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		memrg,
 	)
 
+	f.registryNSServer = memory.NewNetworkServiceRegistryServer()
+
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Get the regEndpoint from SUT (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
@@ -143,6 +145,8 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	server := grpc.NewServer(grpc.Creds(serverCreds))
 
 	registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
+	registry.RegisterNetworkServiceRegistryServer(server, f.registryNSServer)
+
 	ctx, cancel := context.WithCancel(f.ctx)
 	defer func(cancel context.CancelFunc, serverErrCh <-chan error) {
 		cancel()
@@ -162,6 +166,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.Require().NoError(err)
 	log.FromContext(ctx).Infof("Received regEndpoint: %+v (time since start: %s)", regEndpoint, time.Since(starttime))
 
+	f.listenOn = regEndpoint.GetNetworkServiceEndpoint().GetUrl()
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating grpc.ClientConn to SUT (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************

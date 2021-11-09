@@ -46,6 +46,7 @@ type ForwarderTestSuite struct {
 	spireErrCh <-chan error
 	x509source x509svid.Source
 	x509bundle x509bundle.Source
+	listenOn   string
 
 	// vppServer stuff
 	vppServerConn  vpphelper.Connection
@@ -58,7 +59,8 @@ type ForwarderTestSuite struct {
 	vppClientErrCh <-chan error
 
 	// registry server stuff
-	registryServer registry.NetworkServiceEndpointRegistryServer
+	registryServer   registry.NetworkServiceEndpointRegistryServer
+	registryNSServer registry.NetworkServiceRegistryServer
 }
 
 func TestForwarderTestSuite(t *testing.T) {

@@ -37,7 +37,7 @@ import (
 	"github.com/networkservicemesh/sdk-sriov/pkg/networkservice/common/resourcepool"
 	sriovconfig "github.com/networkservicemesh/sdk-sriov/pkg/sriov/config"
 	sriovtokens "github.com/networkservicemesh/sdk-sriov/pkg/tools/tokens"
-	vppxconnectns "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/xconnectns"
+	vppforwarder "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/forwarder"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/switchcase"
@@ -50,7 +50,7 @@ func NewServer(
 	name string,
 	authzServer networkservice.NetworkServiceServer,
 	tokenGenerator token.GeneratorFunc,
-	vppConn vppxconnectns.Connection,
+	vppConn vppforwarder.Connection,
 	tunnelIP net.IP,
 	tunnelPort uint16,
 	pciPool resourcepool.PCIPool,
@@ -60,7 +60,7 @@ func NewServer(
 	clientURL *url.URL,
 	clientDialOptions ...grpc.DialOption,
 ) endpoint.Endpoint {
-	vppForwarder := vppxconnectns.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, clientDialOptions...)
+	vppForwarder := vppforwarder.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, clientDialOptions...)
 	if sriovConfig == nil {
 		return vppForwarder
 	}
