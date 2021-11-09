@@ -234,7 +234,12 @@ func main() {
 
 	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx, &cfg.ConnectTo, registryclient.WithDialOptions(clientOptions...))
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
-		Name:                cfg.Name,
+		Name: cfg.Name,
+		NetworkServiceLabels: map[string]*registryapi.NetworkServiceLabels{
+			cfg.NSName: &registryapi.NetworkServiceLabels{
+				Labels: cfg.Labels,
+			},
+		},
 		NetworkServiceNames: []string{cfg.NSName},
 		Url:                 cfg.ListenOn.String(),
 	})
