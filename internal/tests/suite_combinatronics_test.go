@@ -134,7 +134,20 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							ctx = log.WithFields(ctx, map[string]interface{}{"test": t.Name()})
 							ctx = log.WithLog(ctx, logruslogger.New(ctx))
 							networkserviceName := "ns"
-							// Create testRequest
+
+							regEndpointClone := regEndpoint.Clone()
+							regEndpointClone.NetworkServiceNames = "ns"
+							_, err := adapters.NetworkServiceEndpointServerToClient(f.registryServer).Register(ctx, &registry.NetworkServiceEndpoint{
+								Name: "nse",
+								Url:  f.listenOn,
+							})
+							f.Require().NoError(err)
+
+							_, err := adapters.NetworkServiceServerToClient(f.registryNSServer).Register(ctx, &registry.NetworkService{
+								Name: "ns",
+							})
+							f.Require().NoError(err)
+
 							testRequest := &networkservice.NetworkServiceRequest{
 								Connection: &networkservice.Connection{
 									NetworkService: networkserviceName,
