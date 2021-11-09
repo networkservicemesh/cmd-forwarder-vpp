@@ -232,7 +232,7 @@ func main() {
 					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 	)
 
-	registryClient := registryclient.NewNetworkServiceEndpointRegistryInterposeClient(ctx, &cfg.ConnectTo, registryclient.WithDialOptions(clientOptions...))
+	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx, &cfg.ConnectTo, registryclient.WithDialOptions(clientOptions...))
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name:                cfg.Name,
 		NetworkServiceNames: []string{cfg.NSName},
