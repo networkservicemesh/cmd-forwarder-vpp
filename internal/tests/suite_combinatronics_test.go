@@ -138,7 +138,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							_, err = adapters.NetworkServiceEndpointServerToClient(f.registryServer).Register(ctx, &registry.NetworkServiceEndpoint{
 								Name:                "nse",
 								NetworkServiceNames: []string{"ns"},
-								Url:                 f.listenOn,
+								Url:                 f.config.ConnectTo.String(),
 							})
 							f.Require().NoError(err)
 

@@ -166,7 +166,6 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.Require().NoError(err)
 	log.FromContext(ctx).Infof("Received regEndpoint: %+v (time since start: %s)", regEndpoint, time.Since(starttime))
 
-	f.listenOn = regEndpoint.GetNetworkServiceEndpoint().GetUrl()
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating grpc.ClientConn to SUT (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
