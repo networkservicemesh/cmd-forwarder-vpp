@@ -32,13 +32,13 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/wireguard"
-	"github.com/networkservicemesh/api/pkg/api/registry"
-
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/memif"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/vxlan"
+	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/wireguard"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/payload"
+	"github.com/networkservicemesh/api/pkg/api/registry"
+	"github.com/networkservicemesh/sdk/pkg/registry/core/adapters"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
@@ -135,15 +135,14 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							ctx = log.WithLog(ctx, logruslogger.New(ctx))
 							networkserviceName := "ns"
 
-							regEndpointClone := regEndpoint.Clone()
-							regEndpointClone.NetworkServiceNames = "ns"
-							_, err := adapters.NetworkServiceEndpointServerToClient(f.registryServer).Register(ctx, &registry.NetworkServiceEndpoint{
-								Name: "nse",
-								Url:  f.listenOn,
+							_, err = adapters.NetworkServiceEndpointServerToClient(f.registryServer).Register(ctx, &registry.NetworkServiceEndpoint{
+								Name:                "nse",
+								NetworkServiceNames: []string{"ns"},
+								Url:                 f.listenOn,
 							})
 							f.Require().NoError(err)
 
-							_, err := adapters.NetworkServiceServerToClient(f.registryNSServer).Register(ctx, &registry.NetworkService{
+							_, err = adapters.NetworkServiceServerToClient(f.registryNSServer).Register(ctx, &registry.NetworkService{
 								Name: "ns",
 							})
 							f.Require().NoError(err)
