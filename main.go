@@ -236,7 +236,7 @@ func main() {
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name: cfg.Name,
 		NetworkServiceLabels: map[string]*registryapi.NetworkServiceLabels{
-			cfg.NSName: &registryapi.NetworkServiceLabels{
+			cfg.NSName: {
 				Labels: cfg.Labels,
 			},
 		},
