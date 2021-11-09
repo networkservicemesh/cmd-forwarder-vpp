@@ -152,6 +152,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							networkservice.RegisterNetworkServiceServer(server, ep)
 							networkservice.RegisterMonitorConnectionServer(server, ep)
 							registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
+							registry.RegisterNetworkServiceRegistryServer(server, f.registryNSServer)
 							serverErrCh := f.ListenAndServe(ctx, server)
 							log.FromContext(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
 

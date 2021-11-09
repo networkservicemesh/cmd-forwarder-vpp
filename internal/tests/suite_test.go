@@ -59,6 +59,8 @@ type ForwarderTestSuite struct {
 
 	// registry server stuff
 	registryServer registry.NetworkServiceEndpointRegistryServer
+	registryNSServer registry.NetworkServiceRegistryServer
+	
 }
 
 func TestForwarderTestSuite(t *testing.T) {

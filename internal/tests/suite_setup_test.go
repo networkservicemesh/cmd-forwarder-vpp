@@ -137,6 +137,8 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		memrg,
 	)
 
+	f.registryNSServer = memory.NewNetworkServiceRegistryServer()
+
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Get the regEndpoint from SUT (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
@@ -145,6 +147,8 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	server := grpc.NewServer(grpc.Creds(serverCreds))
 
 	registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
+	registry.RegisterNetworkServiceRegistryServer(server, f.registryNSServer)
+
 	ctx, cancel := context.WithCancel(f.ctx)
 	defer func(cancel context.CancelFunc, serverErrCh <-chan error) {
 		cancel()
