@@ -46,7 +46,6 @@ type ForwarderTestSuite struct {
 	spireErrCh <-chan error
 	x509source x509svid.Source
 	x509bundle x509bundle.Source
-	listenOn   string
 
 	// vppServer stuff
 	vppServerConn  vpphelper.Connection
