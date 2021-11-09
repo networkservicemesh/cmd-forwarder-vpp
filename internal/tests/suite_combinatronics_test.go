@@ -143,7 +143,8 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							f.Require().NoError(err)
 
 							_, err = adapters.NetworkServiceServerToClient(f.registryNSServer).Register(ctx, &registry.NetworkService{
-								Name: "ns",
+								Name:    "ns",
+								Payload: payloadName,
 							})
 							f.Require().NoError(err)
 
