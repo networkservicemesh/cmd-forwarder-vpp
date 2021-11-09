@@ -42,6 +42,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/registry/common/expire"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/memory"
 	registryrecvfd "github.com/networkservicemesh/sdk/pkg/registry/common/recvfd"
+	registrysendfd "github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
 	"github.com/networkservicemesh/sdk/pkg/registry/core/adapters"
 	registrychain "github.com/networkservicemesh/sdk/pkg/registry/core/chain"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
@@ -132,6 +133,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.registryServer = registrychain.NewNetworkServiceEndpointRegistryServer(
 		expire.NewNetworkServiceEndpointRegistryServer(f.ctx, time.Hour),
 		registryrecvfd.NewNetworkServiceEndpointRegistryServer(),
+		registrysendfd.NewNetworkServiceEndpointRegistryServer(),
 		memrg,
 	)
 
