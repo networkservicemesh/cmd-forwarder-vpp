@@ -34,7 +34,7 @@ import (
 // Config - configuration for cmd-forwarder-vpp
 type Config struct {
 	Name             string            `default:"forwarder" desc:"Name of Endpoint"`
-	Labels           map[string]string `desc:"Labels related to this forwarder-vpp instance"`
+	Labels           map[string]string `default:"p2p:true" desc:"Labels related to this forwarder-vpp instance"`
 	NSName           string            `default:"forwarder" desc:"Name of Network Service to Register with Registry"`
 	ConnectTo        url.URL           `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
 	ListenOn         url.URL           `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
