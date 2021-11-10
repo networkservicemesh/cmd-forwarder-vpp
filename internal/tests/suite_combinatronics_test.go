@@ -108,12 +108,12 @@ func (f *ForwarderTestSuite) TestCombinations() {
 		payload.IP: {
 			kernel.MECHANISM,
 			memif.MECHANISM,
-			wireguard.MECHANISM,
+			// wireguard.MECHANISM,
 		},
 		payload.Ethernet: {
 			kernel.MECHANISM,
 			memif.MECHANISM,
-			vxlan.MECHANISM,
+			// vxlan.MECHANISM,
 		},
 	}
 	for _, pl := range []string{payload.Ethernet, payload.IP} {
