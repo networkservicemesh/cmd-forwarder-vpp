@@ -40,6 +40,7 @@ type Config struct {
 	ListenOn         url.URL           `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
 	MaxTokenLifetime time.Duration     `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
 	LogLevel         string            `default:"INFO" desc:"Log level" split_words:"true"`
+	DialTimeout      time.Duration     `default:"50ms" desc:"Timeout for the dial the next endpoint" split_words:"true"`
 
 	TunnelIP     net.IP       `desc:"IP to use for tunnels" split_words:"true"`
 	VxlanPort    uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
