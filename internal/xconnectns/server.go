@@ -23,6 +23,7 @@ import (
 	"context"
 	"net"
 	"net/url"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -58,9 +59,10 @@ func NewServer(
 	sriovConfig *sriovconfig.Config,
 	vfioDir, cgroupBaseDir string,
 	clientURL *url.URL,
+	dialTimeout time.Duration,
 	clientDialOptions ...grpc.DialOption,
 ) endpoint.Endpoint {
-	vppForwarder := vppforwarder.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, clientDialOptions...)
+	vppForwarder := vppforwarder.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, dialTimeout, clientDialOptions...)
 	if sriovConfig == nil {
 		return vppForwarder
 	}
