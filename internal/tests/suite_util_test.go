@@ -21,6 +21,7 @@ package tests
 import (
 	"context"
 	"net"
+	"net/url"
 	"time"
 
 	"github.com/pkg/errors"
@@ -37,8 +38,8 @@ const (
 	serverIP       = "10.0.2.3"
 )
 
-func (f *ForwarderTestSuite) ListenAndServe(ctx context.Context, server *grpc.Server) <-chan error {
-	errCh := grpcutils.ListenAndServe(ctx, &f.config.ConnectTo, server)
+func (f *ForwarderTestSuite) ListenAndServe(ctx context.Context, listenOn *url.URL, server *grpc.Server) <-chan error {
+	errCh := grpcutils.ListenAndServe(ctx, listenOn, server)
 	select {
 	case err, ok := <-errCh:
 		f.Require().True(ok)
