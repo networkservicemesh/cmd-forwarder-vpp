@@ -187,10 +187,10 @@ func main() {
 		cfg.VFIOPath, cfg.CgroupPath,
 		&cfg.ConnectTo,
 		cfg.DialTimeout,
+		grpc.WithBlock(),
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 		grpc.WithDefaultCallOptions(
-			grpc.WaitForReady(true),
 			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime))),
 		),
 		grpcfd.WithChainStreamInterceptor(),
