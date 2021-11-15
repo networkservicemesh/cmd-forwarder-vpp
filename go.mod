@@ -13,10 +13,10 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.0.1-0.20211110183123-3038992da61a
-	github.com/networkservicemesh/sdk v0.5.1-0.20211112114907-d8010275c34d
+	github.com/networkservicemesh/sdk v0.5.1-0.20211115123645-9fa0d2f5661a
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20211103091718-33b5af79cf03
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20211103092011-23a720ab62a6
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20211112115620-8c1e22a78773
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20211115124331-57fc809c3438
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.2
