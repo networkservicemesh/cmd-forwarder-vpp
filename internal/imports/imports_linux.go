@@ -34,7 +34,6 @@ import (
 	_ "github.com/networkservicemesh/api/pkg/api/registry"
 	_ "github.com/networkservicemesh/sdk-k8s/pkg/tools/deviceplugin"
 	_ "github.com/networkservicemesh/sdk-k8s/pkg/tools/podresources"
-	_ "github.com/networkservicemesh/sdk-sriov/pkg/networkservice/chains/xconnectns"
 	_ "github.com/networkservicemesh/sdk-sriov/pkg/networkservice/common/resourcepool"
 	_ "github.com/networkservicemesh/sdk-sriov/pkg/sriov/config"
 	_ "github.com/networkservicemesh/sdk-sriov/pkg/sriov/pci"
