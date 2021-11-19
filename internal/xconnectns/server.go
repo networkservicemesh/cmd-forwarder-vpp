@@ -34,7 +34,7 @@ import (
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/vfio"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/vxlan"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/wireguard"
-	sriovxconnectns "github.com/networkservicemesh/sdk-sriov/pkg/networkservice/chains/xconnectns"
+	sriovforwarder "github.com/networkservicemesh/sdk-sriov/pkg/networkservice/chains/forwarder"
 	"github.com/networkservicemesh/sdk-sriov/pkg/networkservice/common/resourcepool"
 	sriovconfig "github.com/networkservicemesh/sdk-sriov/pkg/sriov/config"
 	sriovtokens "github.com/networkservicemesh/sdk-sriov/pkg/tools/tokens"
@@ -91,6 +91,6 @@ func NewServer(
 		})
 	},
 		vppForwarder,
-		sriovxconnectns.NewServer(ctx, name, authzServer, tokenGenerator, pciPool, resourcePool, sriovConfig, vfioDir, cgroupBaseDir, clientURL, clientDialOptions...),
+		sriovforwarder.NewServer(ctx, name, authzServer, tokenGenerator, pciPool, resourcePool, sriovConfig, vfioDir, cgroupBaseDir, clientURL, dialTimeout, clientDialOptions...),
 	)
 }
