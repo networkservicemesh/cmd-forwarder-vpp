@@ -23,6 +23,7 @@ import (
 	"github.com/edwarnicke/vpphelper"
 	"google.golang.org/grpc"
 
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/tests/routes"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
@@ -49,6 +50,7 @@ type wireguardVerifiableEndpoint struct {
 
 func newWireguardVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
+	srcRoutes, dstRoutes []*networkservice.Route,
 	tokenGenerator token.GeneratorFunc,
 	vppConn vpphelper.Connection) verifiableEndpoint {
 	rv := &vxlanVerifiableEndpoint{
@@ -64,6 +66,7 @@ func newWireguardVerifiableEndpoint(ctx context.Context,
 			metadata.NewServer(),
 			point2pointipam.NewServer(prefix1),
 			point2pointipam.NewServer(prefix2),
+			routes.NewServer(srcRoutes, dstRoutes),
 			up.NewServer(ctx, vppConn),
 			pinhole.NewServer(vppConn),
 			connectioncontext.NewServer(vppConn),

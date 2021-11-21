@@ -25,4 +25,5 @@ require (
 	github.com/vishvananda/netlink v1.1.0
 	github.com/vishvananda/netns v0.0.0-20200728191858-db3c7e526aae
 	google.golang.org/grpc v1.38.0
+	google.golang.org/protobuf v1.26.0
 )

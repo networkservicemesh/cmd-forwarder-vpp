@@ -23,6 +23,7 @@ import (
 	"git.fd.io/govpp.git/api"
 	"google.golang.org/grpc"
 
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/tests/routes"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/pinhole"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
@@ -48,6 +49,7 @@ type vxlanVerifiableEndpoint struct {
 
 func newVxlanVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
+	srcRoutes, dstRoutes []*networkservice.Route,
 	tokenGenerator token.GeneratorFunc,
 	vppConn api.Connection) verifiableEndpoint {
 	rv := &vxlanVerifiableEndpoint{
@@ -63,6 +65,7 @@ func newVxlanVerifiableEndpoint(ctx context.Context,
 			metadata.NewServer(),
 			point2pointipam.NewServer(prefix1),
 			point2pointipam.NewServer(prefix2),
+			routes.NewServer(srcRoutes, dstRoutes),
 			connectioncontext.NewServer(vppConn),
 			pinhole.NewServer(vppConn),
 			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
