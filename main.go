@@ -54,6 +54,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/config"
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/devicecfg"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/xconnectns"
 )
@@ -147,9 +148,13 @@ func main() {
 	// executing phases 3-5
 	// ********************************************************************************
 	sriovConfig, pciPool, resourcePool := setupSRIOV(ctx, cfg, starttime)
+
 	if sriovConfig == nil {
 		log.FromContext(ctx).Warn("SR-IOV is not enabled")
 	}
+
+	deviceMap := setupDeviceMap(ctx, cfg)
+	_ = vppinit.InitLinks(ctx, vppConn, deviceMap, cfg.TunnelIP)
 
 	// ********************************************************************************
 	log.FromContext(ctx).Infof("executing phase 6: retrieving svid, check spire agent logs if this is the last line you see (time since start: %s)", time.Since(starttime))
@@ -184,6 +189,7 @@ func main() {
 		pciPool,
 		resourcePool,
 		sriovConfig,
+		deviceMap,
 		cfg.VFIOPath, cfg.CgroupPath,
 		&cfg.ConnectTo,
 		cfg.DialTimeout,
@@ -256,6 +262,30 @@ func main() {
 	<-ctx.Done()
 	<-srvErrCh
 	<-vppErrCh
+}
+
+func setupDeviceMap(ctx context.Context, cfg *config.Config) map[string]string {
+	if cfg.DeviceSelectorFile == "" {
+		return nil
+	}
+	device2LabSel, err := devicecfg.ReadConfig(ctx, cfg.DeviceSelectorFile)
+	if err != nil {
+		log.FromContext(ctx).Fatalf("failed to get device selector configuration file: %+v", err)
+	}
+	if len(device2LabSel.Interfaces) == 0 {
+		log.FromContext(ctx).Warn("skipping matching labels to device names: empty interface list")
+		return nil
+	}
+	l2d := make(map[string]string)
+
+	for _, device := range device2LabSel.Interfaces {
+		for i := range device.Matches {
+			for j := range device.Matches[i].LabelSelector {
+				l2d[device.Matches[i].LabelSelector[j].Via] = device.Name
+			}
+		}
+	}
+	return l2d
 }
 
 func setupSRIOV(ctx context.Context, cfg *config.Config, starttime time.Time) (*sriovconfig.Config, resourcepool.PCIPool, resourcepool.ResourcePool) {

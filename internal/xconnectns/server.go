@@ -57,12 +57,13 @@ func NewServer(
 	pciPool resourcepool.PCIPool,
 	resourcePool resourcepool.ResourcePool,
 	sriovConfig *sriovconfig.Config,
+	deviceMap map[string]string,
 	vfioDir, cgroupBaseDir string,
 	clientURL *url.URL,
 	dialTimeout time.Duration,
 	clientDialOptions ...grpc.DialOption,
 ) endpoint.Endpoint {
-	vppForwarder := vppforwarder.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, dialTimeout, clientDialOptions...)
+	vppForwarder := vppforwarder.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, dialTimeout, deviceMap, clientDialOptions...)
 	if sriovConfig == nil {
 		return vppForwarder
 	}
