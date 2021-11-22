@@ -357,12 +357,12 @@ github.com/networkservicemesh/sdk v0.5.1-0.20211119122624-518ed724f8c6/go.mod h1
 github.com/networkservicemesh/sdk-k8s v0.0.0-20211103091718-33b5af79cf03 h1:zRQEYK50TYbPa3VKxNocm48kZex8v5EqVs+YThOFOb8=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20211103091718-33b5af79cf03/go.mod h1:00UFcAw3OeU3J6mOPUCXTwYIeraP4XbdM9DHFaGEr3I=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20211117075134-67cd16f0d5c7/go.mod h1:sOyzzsFfS7/vO4YmNahIwNFB8PDxJZHoKiwd/PmxPJ0=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20211122102352-6faea432d568 h1:hBkALZ3uOvQtOq6/71MsUFA1pVV0iGN6Yk4zdHEI4jc=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20211122102352-6faea432d568/go.mod h1:sDxemuiJE/VJIMNvj51Y5PFLoyBlQfz2sX7wmwe8aEQ=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20211122162902-8ac04fdcd0a8 h1:Qd9+K2vAlj9iCOHBnFzGTkUU9EldfLXrRWJ/pbO/zLA=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20211122162902-8ac04fdcd0a8/go.mod h1:sDxemuiJE/VJIMNvj51Y5PFLoyBlQfz2sX7wmwe8aEQ=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20211117213205-b1980f419277 h1:FzDi+Ogpm6GMlx8AupMuiPlw8RyKYmZpg2YLJQZ6vDw=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20211117213205-b1980f419277/go.mod h1:3/Fucpztn8a0jBk/JIFCLBG5rjkfwrsbFeN61G1DpZY=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20211122150920-7958db6def8c h1:us9NuzGJiga806TcW1HRiJEqppuwy59ya4LDi01wdT0=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20211122150920-7958db6def8c/go.mod h1:4Dg9ZW9JSIKVfRHr6JNFkJBhJ0YWIbbmXpXgpuSaXDk=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20211122163200-210bc45fb1bc h1:PTLk3jta+/59/R3UBHry+0ZBpr6WFDC6r9wdciUtMGo=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20211122163200-210bc45fb1bc/go.mod h1:3S1gVEw2n5hzMx7po84h0JdnaKFReYsT5LSjkgKflvQ=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
