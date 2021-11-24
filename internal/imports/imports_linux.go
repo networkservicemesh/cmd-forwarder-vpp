@@ -41,6 +41,7 @@ import (
 	_ "github.com/networkservicemesh/sdk-sriov/pkg/sriov/resource"
 	_ "github.com/networkservicemesh/sdk-sriov/pkg/sriov/token"
 	_ "github.com/networkservicemesh/sdk-sriov/pkg/tools/tokens"
+	_ "github.com/networkservicemesh/sdk-sriov/pkg/tools/yamlhelper"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/forwarder"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
 	_ "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/memif"
