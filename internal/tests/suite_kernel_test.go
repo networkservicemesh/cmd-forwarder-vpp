@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"runtime"
 
 	"github.com/edwarnicke/exechelper"
 	"github.com/pkg/errors"
@@ -80,14 +81,21 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 		panic(fmt.Sprintf("unable to get root netNs: %+v", err))
 	}
 	endpointNSName := fmt.Sprintf("nse-%s", randstr.Hex(4))
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	endpointNSHandle, err := netns.NewNamed(endpointNSName)
 	if err != nil {
 		panic(fmt.Sprintf("unable create netNs %s: %+v", endpointNSName, err))
 	}
-	go func(endpointNsName string) {
+	if err := netns.Set(rootNSHandle); err != nil {
+		panic(fmt.Sprintf("unable to set rootNs: %+v", err))
+	}
+	go func(endpointNsName string, endpointNSHandle netns.NsHandle) {
 		<-ctx.Done()
+		_ = endpointNSHandle.Close()
 		_ = netns.DeleteNamed(endpointNsName)
-	}(endpointNSName)
+	}(endpointNSName, endpointNSHandle)
+
 	return &kernelVerifiableEndpoint{
 		ctx:              ctx,
 		endpointNSName:   endpointNSName,
@@ -150,14 +158,20 @@ func newKernelVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfa
 		panic(fmt.Sprintf("unable to get root netNs: %+v", err))
 	}
 	clientNSName := fmt.Sprintf("client-%s", randstr.Hex(4))
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	clientNSHandle, err := netns.NewNamed(clientNSName)
 	if err != nil {
 		panic(fmt.Sprintf("unable create netNs %s: %+v", clientNSName, err))
 	}
-	go func(clientNSName string) {
+	if err := netns.Set(rootNSHandle); err != nil {
+		panic(fmt.Sprintf("unable to set rootNs: %+v", err))
+	}
+	go func(clientNSName string, clientNSHandle netns.NsHandle) {
 		<-ctx.Done()
+		_ = clientNSHandle.Close()
 		_ = netns.DeleteNamed(clientNSName)
-	}(clientNSName)
+	}(clientNSName, clientNSHandle)
 
 	rv := &kernelVerifiableClient{
 		ctx:            ctx,

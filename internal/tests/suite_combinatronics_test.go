@@ -20,7 +20,11 @@ package tests
 
 import (
 	"context"
+	"io/ioutil"
 	"net"
+	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -38,9 +42,9 @@ import (
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/wireguard"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/payload"
 	"github.com/networkservicemesh/api/pkg/api/registry"
-	"github.com/networkservicemesh/sdk/pkg/registry/core/adapters"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
+	"github.com/networkservicemesh/sdk/pkg/registry/core/adapters"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
@@ -108,13 +112,17 @@ func (f *ForwarderTestSuite) TestCombinations() {
 		payload.IP: {
 			kernel.MECHANISM,
 			memif.MECHANISM,
-			// wireguard.MECHANISM,
+			wireguard.MECHANISM,
 		},
 		payload.Ethernet: {
 			kernel.MECHANISM,
 			memif.MECHANISM,
-			// vxlan.MECHANISM,
+			vxlan.MECHANISM,
 		},
+	}
+	isRemote := map[string]bool{
+		wireguard.MECHANISM: true,
+		vxlan.MECHANISM:     true,
 	}
 	for _, pl := range []string{payload.Ethernet, payload.IP} {
 		payloadName := pl
@@ -133,21 +141,16 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							defer cancel()
 							ctx = log.WithFields(ctx, map[string]interface{}{"test": t.Name()})
 							ctx = log.WithLog(ctx, logruslogger.New(ctx))
-							networkserviceName := "ns"
+							networkserviceName := "ns" + t.Name()
 
-							_, err = adapters.NetworkServiceEndpointServerToClient(f.registryServer).Register(ctx, &registry.NetworkServiceEndpoint{
-								Name:                "nse",
-								NetworkServiceNames: []string{"ns"},
-								Url:                 f.config.ConnectTo.String(),
-							})
+							tmpDir, err := ioutil.TempDir("", "nse")
 							f.Require().NoError(err)
+							defer func(tmpDir string) { _ = os.Remove(tmpDir) }(tmpDir)
+							nseURL := url.URL{Scheme: "unix", Path: filepath.Join(tmpDir, "listen.on")}
 
-							_, err = adapters.NetworkServiceServerToClient(f.registryNSServer).Register(ctx, &registry.NetworkService{
-								Name:    "ns",
-								Payload: payloadName,
-							})
-							f.Require().NoError(err)
-
+							if isRemote[endpointMechanism] {
+								nseURL = url.URL{Scheme: "tcp", Host: "127.0.0.1:0"}
+							}
 							testRequest := &networkservice.NetworkServiceRequest{
 								Connection: &networkservice.Connection{
 									NetworkService: networkserviceName,
@@ -164,10 +167,25 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							ep := epFunc(ctx)
 							networkservice.RegisterNetworkServiceServer(server, ep)
 							networkservice.RegisterMonitorConnectionServer(server, ep)
-							registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
-							registry.RegisterNetworkServiceRegistryServer(server, f.registryNSServer)
-							serverErrCh := f.ListenAndServe(ctx, server)
+
+							serverErrCh := f.ListenAndServe(f.ctx, &nseURL, server)
+							f.Require().Len(serverErrCh, 0)
 							log.FromContext(ctx).Infof("Launching %s test server (took : %s)", t.Name(), time.Since(now))
+
+							_, err = adapters.NetworkServiceEndpointServerToClient(f.registryServer).Register(ctx, &registry.NetworkServiceEndpoint{
+								Name:                "nse-" + t.Name(),
+								NetworkServiceNames: []string{networkserviceName},
+								Url:                 nseURL.String(),
+							})
+							f.Require().NoError(err)
+
+							_, err = adapters.NetworkServiceServerToClient(f.registryNSServer).Register(ctx, &registry.NetworkService{
+								Name:    networkserviceName,
+								Payload: payloadName,
+							})
+							f.Require().NoError(err)
+
+							log.FromContext(ctx).Infof("Registered  ns and nse for server %s (took : %s)", t.Name(), time.Since(now))
 
 							// ********************************************************************************
 							log.FromContext(f.ctx).Infof("Sending Request to forwarder (time since start: %s)", time.Since(starttime))
@@ -207,9 +225,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							// ********************************************************************************
 							log.FromContext(f.ctx).Infof("Canceling ctx to end test (time since start: %s)", time.Since(starttime))
 							// ********************************************************************************
-							cancel()
-							err = <-serverErrCh
-							require.NoError(t, err)
+							require.Len(t, serverErrCh, 0)
 							// ********************************************************************************
 							log.FromContext(f.ctx).Infof("%s completed (time since start: %s)", t.Name(), time.Since(starttime))
 							// ********************************************************************************
