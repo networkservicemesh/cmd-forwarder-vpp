@@ -147,12 +147,8 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
 	registry.RegisterNetworkServiceRegistryServer(server, f.registryNSServer)
 
-	ctx, cancel := context.WithCancel(f.ctx)
-	defer func(cancel context.CancelFunc, serverErrCh <-chan error) {
-		cancel()
-		err = <-serverErrCh
-		f.Require().NoError(err)
-	}(cancel, f.ListenAndServe(ctx, server))
+	f.Require().Len(f.ListenAndServe(f.ctx, &f.config.ConnectTo, server), 0)
+	ctx := f.ctx
 
 	recv, err := adapters.NetworkServiceEndpointServerToClient(memrg).Find(ctx, &registry.NetworkServiceEndpointQuery{
 		NetworkServiceEndpoint: &registry.NetworkServiceEndpoint{
