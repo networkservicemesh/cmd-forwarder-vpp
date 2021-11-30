@@ -72,6 +72,7 @@ func main() {
 		syscall.SIGTERM,
 		syscall.SIGQUIT,
 	)
+
 	defer cancel()
 
 	// ********************************************************************************
