@@ -26,3 +26,5 @@ require (
 	github.com/vishvananda/netns v0.0.0-20200728191858-db3c7e526aae
 	google.golang.org/grpc v1.38.0
 )
+
+replace github.com/networkservicemesh/sdk-vpp => github.com/Mixaster995/sdk-vpp v0.0.0-20211130040717-d16d9def487d
