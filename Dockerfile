@@ -23,7 +23,7 @@ COPY . .
 RUN go build -o /bin/forwarder .
 
 FROM build as test
-CMD go test -test.v ./...
+CMD go test -run ForwarderTestSuite -count 1 ./internal/tests -testify.m TestCombinations
 
 FROM test as debug
 WORKDIR /build/internal/tests/

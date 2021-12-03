@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build linux
 // +build linux
 
 package tests
@@ -71,7 +72,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test bridge (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
-	f.Require().NoError(SetupBridge())
+	//f.Require().NoError(SetupBridge())
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test vpp Server (time since start: %s)", time.Since(starttime))
