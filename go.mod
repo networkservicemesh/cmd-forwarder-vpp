@@ -7,7 +7,7 @@ require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/debug v1.0.0
 	github.com/edwarnicke/exechelper v1.0.3
-	github.com/edwarnicke/govpp v0.0.0-20211126025848-29218cd40e80
+	github.com/edwarnicke/govpp v0.0.0-20211201170712-7828460e6d2f
 	github.com/edwarnicke/grpcfd v0.1.1
 	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
 	github.com/golang/protobuf v1.5.2
