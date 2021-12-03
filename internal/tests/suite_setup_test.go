@@ -26,6 +26,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 
 	"git.fd.io/govpp.git/binapi/vpe"
@@ -36,6 +37,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
@@ -55,6 +57,9 @@ import (
 )
 
 func (f *ForwarderTestSuite) SetupSuite() {
+}
+
+func (f *ForwarderTestSuite) SetupSuite1(t *testing.T) {
 	logrus.SetFormatter(&nested.Formatter{})
 	logrus.SetLevel(logrus.DebugLevel)
 	log.EnableTracing(true)
@@ -67,32 +72,32 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	log.FromContext(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	_ = os.Setenv("NSM_TUNNEL_IP", forwarderIP)
-	f.Require().NoError(f.config.Process())
+	require.NoError(t, f.config.Process())
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test bridge (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
-	//f.Require().NoError(SetupBridge())
+	require.NoError(t, SetupBridge())
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test vpp Server (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
-	f.vppServerConn, f.vppServerRoot, f.vppServerErrCh = f.createVpp(f.ctx, "vpp-server")
+	f.vppServerConn, f.vppServerRoot, f.vppServerErrCh = f.createVpp(t, f.ctx, "vpp-server")
 	_, err := vppinit.LinkToAfPacket(f.ctx, f.vppServerConn, net.ParseIP(serverIP))
-	f.Require().NoError(err)
+	require.NoError(t, err)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test vpp Client (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
-	f.vppClientConn, f.vppClientRoot, f.vppClientErrCh = f.createVpp(f.ctx, "vpp-client")
+	f.vppClientConn, f.vppClientRoot, f.vppClientErrCh = f.createVpp(t, f.ctx, "vpp-client")
 	_, err = vppinit.LinkToAfPacket(f.ctx, f.vppClientConn, net.ParseIP(clientIP))
-	f.Require().NoError(err)
+	require.NoError(t, err)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Running Spire (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	executable, err := os.Executable()
-	f.Require().NoError(err)
+	require.NoError(t, err)
 	f.spireErrCh = spire.Start(
 		spire.WithContext(f.ctx),
 		spire.WithEntry("spiffe://example.org/forwarder", "unix:path:/usr/bin/forwarder"),
@@ -100,7 +105,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 			fmt.Sprintf("unix:path:%s", executable),
 		),
 	)
-	f.Require().Len(f.spireErrCh, 0)
+	require.Len(t, f.spireErrCh, 0)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Getting X509Source (time since start: %s)", time.Since(starttime))
@@ -108,9 +113,9 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	source, err := workloadapi.NewX509Source(f.ctx)
 	f.x509source = source
 	f.x509bundle = source
-	f.Require().NoError(err)
+	require.NoError(t, err)
 	svid, err := f.x509source.GetX509SVID()
-	f.Require().NoError(err, "error getting x509 svid")
+	require.NoError(t, err, "error getting x509 svid")
 	log.FromContext(f.ctx).Infof("SVID: %q received (time since start: %s)", svid.ID, time.Since(starttime))
 
 	// ********************************************************************************
@@ -124,7 +129,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		exechelper.WithStderr(os.Stderr),
 		exechelper.WithGracePeriod(30*time.Second),
 	)
-	f.Require().Len(f.sutErrCh, 0)
+	require.Len(t, f.sutErrCh, 0)
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating registryServer and registryClient (time since start: %s)", time.Since(starttime))
@@ -148,7 +153,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	registry.RegisterNetworkServiceEndpointRegistryServer(server, f.registryServer)
 	registry.RegisterNetworkServiceRegistryServer(server, f.registryNSServer)
 
-	f.Require().Len(f.ListenAndServe(f.ctx, &f.config.ConnectTo, server), 0)
+	require.Len(t, f.ListenAndServe(f.ctx, &f.config.ConnectTo, server), 0)
 	ctx := f.ctx
 
 	recv, err := adapters.NetworkServiceEndpointServerToClient(memrg).Find(ctx, &registry.NetworkServiceEndpointQuery{
@@ -157,10 +162,10 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		},
 		Watch: true,
 	})
-	f.Require().NoError(err)
+	require.NoError(t, err)
 
 	regEndpoint, err := recv.Recv()
-	f.Require().NoError(err)
+	require.NoError(t, err)
 	log.FromContext(ctx).Infof("Received regEndpoint: %+v (time since start: %s)", regEndpoint, time.Since(starttime))
 
 	// ********************************************************************************
@@ -178,11 +183,11 @@ func (f *ForwarderTestSuite) SetupSuite() {
 		grpcfd.WithChainUnaryInterceptor(),
 		grpcfd.WithChainStreamInterceptor(),
 	)
-	f.Require().NoError(err)
+	require.NoError(t, err)
 
 	now := time.Now()
 	version, err := vpe.NewServiceClient(f.vppClientConn).ShowVersion(ctx, &vpe.ShowVersion{})
-	f.Require().NoError(err)
+	require.NoError(t, err)
 	log.FromContext(ctx).
 		WithField("duration", time.Since(now)).
 		WithField("vppName", "vpp-client").
@@ -190,7 +195,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 
 	now = time.Now()
 	version, err = vpe.NewServiceClient(f.vppServerConn).ShowVersion(ctx, &vpe.ShowVersion{})
-	f.Require().NoError(err)
+	require.NoError(t, err)
 	log.FromContext(ctx).
 		WithField("duration", time.Since(now)).
 		WithField("vppName", "vpp-server").
@@ -201,23 +206,23 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 }
 
-func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppConn vpphelper.Connection, vppRoot string, errCh <-chan error) {
+func (f *ForwarderTestSuite) createVpp(t *testing.T, ctx context.Context, name string) (vppConn vpphelper.Connection, vppRoot string, errCh <-chan error) {
 	now := time.Now()
 	var err error
 	vppRoot, err = ioutil.TempDir("", fmt.Sprintf("%s-", name))
-	f.Require().NoError(err)
+	require.NoError(t, err)
 
-	f.Require().NoError(err)
+	require.NoError(t, err)
 	vppConn, errCh = vpphelper.StartAndDialContext(
 		ctx,
 		vpphelper.WithRootDir(vppRoot),
 	)
-	f.Require().Len(errCh, 0)
+	require.Len(t, errCh, 0)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)
 	return vppConn, vppRoot, errCh
 }
 
-func (f *ForwarderTestSuite) TearDownSuite() {
+func (f *ForwarderTestSuite) TearDownSuite1() {
 	f.cancel()
 	for {
 		_, ok := <-f.sutErrCh

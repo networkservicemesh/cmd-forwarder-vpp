@@ -64,9 +64,14 @@ type ForwarderTestSuite struct {
 }
 
 func TestForwarderTestSuite(t *testing.T) {
-	SetupBridge()
+
+	f := new(ForwarderTestSuite)
+
+	f.SetupSuite1(t)
 
 	for i := 0; i < 100; i++ {
-		suite.Run(t, new(ForwarderTestSuite))
+		suite.Run(t, f)
 	}
+
+	f.TearDownSuite1()
 }
