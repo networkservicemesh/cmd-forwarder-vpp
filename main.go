@@ -80,8 +80,7 @@ func main() {
 	log.EnableTracing(true)
 	jaegerCloser := jaeger.InitJaeger(ctx, "cmd-forwarder-vpp")
 	defer func() { _ = jaegerCloser.Close() }()
-	ctx = log.WithFields(ctx, map[string]interface{}{"cmd": os.Args[0]})
-	ctx = log.WithLog(ctx, logruslogger.New(ctx))
+	ctx = log.WithLog(ctx, logruslogger.New(ctx, map[string]interface{}{"cmd": os.Args[0]}))
 
 	// ********************************************************************************
 	// Debug self if necessary
