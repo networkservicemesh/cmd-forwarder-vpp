@@ -139,8 +139,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							// Create ctx for test
 							ctx, cancel := context.WithTimeout(f.ctx, contextTimeout)
 							defer cancel()
-							ctx = log.WithFields(ctx, map[string]interface{}{"test": t.Name()})
-							ctx = log.WithLog(ctx, logruslogger.New(ctx))
+							ctx = log.WithLog(ctx, logruslogger.New(ctx, map[string]interface{}{"test": t.Name()}))
 							networkserviceName := "ns" + t.Name()
 
 							tmpDir, err := ioutil.TempDir("", "nse")
