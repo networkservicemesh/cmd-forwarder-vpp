@@ -21,6 +21,8 @@ package tests
 import (
 	"context"
 
+	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
@@ -30,7 +32,7 @@ import (
 func (f *ForwarderTestSuite) TestHealthCheck() {
 	ctx, cancel := context.WithTimeout(f.ctx, contextTimeout)
 	defer cancel()
-	ctx = log.WithFields(ctx, map[string]interface{}{"test": f.T().Name()})
+	ctx = log.WithLog(ctx, logruslogger.New(ctx, map[string]interface{}{"test": f.T().Name()}))
 	healthClient := grpc_health_v1.NewHealthClient(f.sutCC)
 	healthResponse, err := healthClient.Check(ctx,
 		&grpc_health_v1.HealthCheckRequest{
