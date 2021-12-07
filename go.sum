@@ -348,12 +348,12 @@ github.com/nats-io/nuid v1.0.1/go.mod h1:19wcPz3Ph3q0Jbyiqsd0kePYG7A95tJPxeL+1OS
 github.com/nats-io/stan.go v0.10.0/go.mod h1:0jEuBXKauB1HHJswHM/lx05K48TJ1Yxj6VIfM4k+aB4=
 github.com/networkservicemesh/api v1.0.1-0.20211110183123-3038992da61a h1:gSujYHmGiOpJyzPGZdW2ymMpmDHCMBdbUMXCVzOtrh8=
 github.com/networkservicemesh/api v1.0.1-0.20211110183123-3038992da61a/go.mod h1:B6meq/SWjWR6bGXZdXPfbOeaBK+T1JayLdtEJQCsXKU=
-github.com/networkservicemesh/sdk v0.5.1-0.20211126201711-e33b665d2e98/go.mod h1:9ZCaoauLu+52PLj/BXnYH5w9Pk9jdhaeMA14zb0PUxA=
 github.com/networkservicemesh/sdk v0.5.1-0.20211202071606-292c0c4ea23b/go.mod h1:9ZCaoauLu+52PLj/BXnYH5w9Pk9jdhaeMA14zb0PUxA=
-github.com/networkservicemesh/sdk v0.5.1-0.20211206072630-c6c78c35dd5f h1:CbFyKbIgdtY6qifUH/0/Sh2rdij4kzw7isCGUa0YS7E=
 github.com/networkservicemesh/sdk v0.5.1-0.20211206072630-c6c78c35dd5f/go.mod h1:9ZCaoauLu+52PLj/BXnYH5w9Pk9jdhaeMA14zb0PUxA=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20211201132700-45b6b3c1e9d5 h1:HOwE3Sz/KAy42uccFDhVy+DGV4aTLRSOsRhc2KiKR4E=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20211201132700-45b6b3c1e9d5/go.mod h1:k0S/6GO9/CDM9lOCQ9bQE2bV5JstuUc91Rg6KtuqNG4=
+github.com/networkservicemesh/sdk v0.5.1-0.20211207141050-23e4c36dc35d h1:CptaYCyCahSPKNO7MLrFCLZCBipV+17vWuBoogzbL2U=
+github.com/networkservicemesh/sdk v0.5.1-0.20211207141050-23e4c36dc35d/go.mod h1:9ZCaoauLu+52PLj/BXnYH5w9Pk9jdhaeMA14zb0PUxA=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20211207141841-2d58ed7b025e h1:cRp2II3ux81T6yELIeOpxP9p6HYyq8kOwn5JK01VvaQ=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20211207141841-2d58ed7b025e/go.mod h1:s9EGzNhS0Wo7sr89jA3Z1xrIzXhV4WuZrBf7f1rzRQs=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20211202071849-d81fc334ecf5/go.mod h1:THpAHEL81PBAmpYcWX5DJJGfjq6xHxu6YjVttxz2iEg=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20211206072902-447a3c017fab h1:wVxfj23blr3QsnPBrwZHdEc8Pfr2xDyLREbG7UM9nxI=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20211206072902-447a3c017fab/go.mod h1:BmOmyl6xEXW02wHGS2bKw4mFqNk9QSP96NVDO/0xIMQ=
