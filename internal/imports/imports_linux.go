@@ -92,6 +92,7 @@ import (
 	_ "google.golang.org/grpc"
 	_ "google.golang.org/grpc/credentials"
 	_ "google.golang.org/grpc/health/grpc_health_v1"
+	_ "google.golang.org/protobuf/types/known/emptypb"
 	_ "io/ioutil"
 	_ "net"
 	_ "net/url"

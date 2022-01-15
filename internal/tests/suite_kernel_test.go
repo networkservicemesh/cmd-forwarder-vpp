@@ -31,6 +31,9 @@ import (
 	"github.com/vishvananda/netns"
 	"google.golang.org/grpc"
 
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/tests/routes"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/utils/metadata"
+
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/cls"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
@@ -74,6 +77,7 @@ type kernelVerifiableEndpoint struct {
 
 func newKernelVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
+	srcRoutes, dstRoutes []*networkservice.Route,
 	tokenGenerator token.GeneratorFunc,
 ) verifiableEndpoint {
 	rootNSHandle, err := netns.Get()
@@ -108,6 +112,7 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 			endpoint.WithAdditionalFunctionality(
 				point2pointipam.NewServer(prefix1),
 				point2pointipam.NewServer(prefix2),
+				routes.NewServer(srcRoutes, dstRoutes),
 				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 					kernel.MECHANISM: chain.NewNetworkServiceServer(
 						kernelmechanism.NewServer(kernelmechanism.WithInterfaceName(endpointNSName)),
@@ -132,6 +137,9 @@ func (k *kernelVerifiableEndpoint) VerifyConnection(conn *networkservice.Connect
 		},
 	}
 	if err := checkKernelInterface(namingConn, conn.GetContext().GetIpContext().GetDstIPNets(), k.endpointNSHandle); err != nil {
+		return err
+	}
+	if err := checkRoutes(namingConn, k.endpointNSHandle, metadata.IsClient(k)); err != nil {
 		return err
 	}
 	for _, ip := range conn.GetContext().GetIpContext().GetSrcIPNets() {
@@ -193,6 +201,9 @@ func newKernelVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfa
 
 func (k *kernelVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
 	if err := checkKernelInterface(conn, conn.GetContext().GetIpContext().GetSrcIPNets(), k.clientNSHandle); err != nil {
+		return err
+	}
+	if err := checkRoutes(conn, k.clientNSHandle, metadata.IsClient(k)); err != nil {
 		return err
 	}
 	for _, ip := range conn.GetContext().GetIpContext().GetDstIPNets() {
@@ -274,6 +285,64 @@ func pingKernel(ipnet *net.IPNet, handle netns.NsHandle) error {
 		exechelper.WithNetNS(handle),
 	); err != nil {
 		return errors.Wrapf(err, "failed to ping with command %q", pingStr)
+	}
+	return nil
+}
+
+func checkRoutes(conn *networkservice.Connection, nsHandle netns.NsHandle, isClient bool) error {
+	if mechanism := kernel.ToMechanism(conn.GetMechanism()); mechanism != nil {
+		curNetNS, err := netns.Get()
+		if err != nil {
+			return errors.Wrap(err, "unable to get current netns")
+		}
+		netlinkHandle, err := netlink.NewHandleAtFrom(nsHandle, curNetNS)
+		if err != nil {
+			return errors.Wrap(err, "unable to get netlink Handle in target netNs")
+		}
+		kernelRoutes, err := netlinkHandle.RouteList(nil, netlink.FAMILY_ALL)
+		if err != nil {
+			return errors.Wrap(err, "unable to get routes")
+		}
+		nsmRoutes := conn.GetContext().GetIpContext().GetDstRoutesWithExplicitNextHop()
+		if isClient {
+			nsmRoutes = conn.GetContext().GetIpContext().GetSrcRoutesWithExplicitNextHop()
+		}
+
+		link, err := netlinkHandle.LinkByName((mechanism.GetInterfaceName()))
+		if err != nil {
+			return errors.Wrapf(err, "unable to find link %s", mechanism.GetInterfaceName())
+		}
+
+		for _, nsmRoute := range nsmRoutes {
+			routeFound := false
+			for i := range kernelRoutes {
+				if !(kernelRoutes[i].Dst.IP.Equal(nsmRoute.GetPrefixIPNet().IP.Mask(nsmRoute.GetPrefixIPNet().Mask))) {
+					continue
+				}
+				kernelOnes, kernelBit := kernelRoutes[i].Dst.Mask.Size()
+				nsmOnes, nsmBits := nsmRoute.GetPrefixIPNet().Mask.Size()
+				if kernelOnes != nsmOnes {
+					continue
+				}
+				if kernelBit != nsmBits {
+					continue
+				}
+
+				if !kernelRoutes[i].Gw.Equal(nsmRoute.GetNextHopIP()) {
+					continue
+				}
+
+				if kernelRoutes[i].LinkIndex != link.Attrs().Index {
+					continue
+				}
+
+				routeFound = true
+				break
+			}
+			if !routeFound {
+				return errors.Errorf("unable to find expected route: %s in routes %+v", nsmRoute, kernelRoutes)
+			}
+		}
 	}
 	return nil
 }

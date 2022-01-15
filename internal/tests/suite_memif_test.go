@@ -30,6 +30,7 @@ import (
 	"github.com/edwarnicke/vpphelper"
 	"github.com/pkg/errors"
 
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/tests/routes"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms/sendfd"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/core/chain"
@@ -61,6 +62,7 @@ type memifVerifiableEndpoint struct {
 
 func newMemifVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
+	srcRoutes, dstRoutes []*networkservice.Route,
 	tokenGenerator token.GeneratorFunc,
 	vppConn vpphelper.Connection,
 ) verifiableEndpoint {
@@ -76,6 +78,7 @@ func newMemifVerifiableEndpoint(ctx context.Context,
 				sendfd.NewServer(),
 				point2pointipam.NewServer(prefix1),
 				point2pointipam.NewServer(prefix2),
+				routes.NewServer(srcRoutes, dstRoutes),
 				mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
 					memif.MECHANISM: chain.NewNetworkServiceServer(
 						metadata.NewServer(),

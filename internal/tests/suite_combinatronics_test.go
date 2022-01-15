@@ -20,6 +20,7 @@ package tests
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/url"
@@ -53,30 +54,59 @@ import (
 func (f *ForwarderTestSuite) TestCombinations() {
 	_, prefix1, err := net.ParseCIDR("10.0.0.0/24")
 	f.Require().NoError(err)
-	_, prefix2, err := net.ParseCIDR("fc00::/7")
+	_, prefix2, err := net.ParseCIDR("fc00::/64")
 	f.Require().NoError(err)
+	srcRoutes := []*networkservice.Route{}
+	dstRoutes := []*networkservice.Route{}
+	for i := 1; i < 6; i++ {
+		srcRoutes = append(srcRoutes,
+			&networkservice.Route{
+				Prefix: fmt.Sprintf("10.0.%d.0/24", i),
+			},
+			&networkservice.Route{
+				Prefix: fmt.Sprintf("fc00:0:%d::/64", i),
+			},
+		)
+		dstRoutes = append(dstRoutes,
+			&networkservice.Route{
+				Prefix: fmt.Sprintf("10.0.%d.1/24", i),
+			},
+			&networkservice.Route{
+				Prefix: fmt.Sprintf("fc00:0:%d::1/64", i),
+			},
+		)
+	}
+
 	endpoints := map[string]func(ctx context.Context) verifiableEndpoint{
 		kernel.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newKernelVerifiableEndpoint(ctx,
 				prefix1,
 				prefix2,
+				srcRoutes,
+				dstRoutes,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 			)
 		},
 		memif.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newMemifVerifiableEndpoint(ctx, prefix1, prefix2,
+				srcRoutes,
+				dstRoutes,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
 			)
 		},
 		vxlan.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newVxlanVerifiableEndpoint(ctx, prefix1, prefix2,
+				srcRoutes,
+				dstRoutes,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
 			)
 		},
 		wireguard.MECHANISM: func(ctx context.Context) verifiableEndpoint {
 			return newWireguardVerifiableEndpoint(ctx, prefix1, prefix2,
+				srcRoutes,
+				dstRoutes,
 				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
 				f.vppServerConn,
 			)
