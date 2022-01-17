@@ -1,6 +1,6 @@
-// Copyright (c) 2020-2021 Cisco and/or its affiliates.
+// Copyright (c) 2020-2022 Cisco and/or its affiliates.
 //
-// Copyright (c) 2021 Doc.ai and/or its affiliates.
+// Copyright (c) 2021-2022 Doc.ai and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -16,6 +16,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build linux
 // +build linux
 
 // Package config - contain environment variables used by cmd-forwarder-vpp
@@ -33,14 +34,15 @@ import (
 
 // Config - configuration for cmd-forwarder-vpp
 type Config struct {
-	Name             string            `default:"forwarder" desc:"Name of Endpoint"`
-	Labels           map[string]string `default:"p2p:true" desc:"Labels related to this forwarder-vpp instance"`
-	NSName           string            `default:"forwarder" desc:"Name of Network Service to Register with Registry"`
-	ConnectTo        url.URL           `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
-	ListenOn         url.URL           `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
-	MaxTokenLifetime time.Duration     `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
-	LogLevel         string            `default:"INFO" desc:"Log level" split_words:"true"`
-	DialTimeout      time.Duration     `default:"50ms" desc:"Timeout for the dial the next endpoint" split_words:"true"`
+	Name                  string            `default:"forwarder" desc:"Name of Endpoint"`
+	Labels                map[string]string `default:"p2p:true" desc:"Labels related to this forwarder-vpp instance"`
+	NSName                string            `default:"forwarder" desc:"Name of Network Service to Register with Registry"`
+	ConnectTo             url.URL           `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
+	ListenOn              url.URL           `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
+	MaxTokenLifetime      time.Duration     `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
+	LogLevel              string            `default:"INFO" desc:"Log level" split_words:"true"`
+	DialTimeout           time.Duration     `default:"50ms" desc:"Timeout for the dial the next endpoint" split_words:"true"`
+	OpenTelemetryEndpoint string            `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
 
 	TunnelIP     net.IP       `desc:"IP to use for tunnels" split_words:"true"`
 	VxlanPort    uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
