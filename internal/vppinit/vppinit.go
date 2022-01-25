@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Cisco and/or its affiliates.
+// Copyright (c) 2020-2022 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -154,7 +154,8 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 			},
 		},
 	}
-	for _, route := range routes {
+	for i := range routes {
+		route := routes[i]
 		if route.Gw != nil {
 			routeIsIpv6 := route.Gw.To4() == nil
 			ipRouteAddDel.Route.Paths[0].Nh.Address = types.ToVppAddress(route.Gw).Un
@@ -297,7 +298,8 @@ func defaultRouteLink(ctx context.Context) (netlink.Link, error) {
 		WithField("duration", time.Since(now)).
 		WithField("netlink", "RouteList").Debug("completed")
 
-	for _, route := range routes {
+	for i := range routes {
+		route := routes[i]
 		// Is it a default route?
 		if route.Dst != nil {
 			ones, _ := route.Dst.Mask.Size()
