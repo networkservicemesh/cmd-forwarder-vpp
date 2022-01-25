@@ -69,7 +69,7 @@ func TestForwarderTestSuite(t *testing.T) {
 
 	f.SetupSuite1(t)
 
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 15; i++ {
 		suite.Run(t, f)
 	}
 
