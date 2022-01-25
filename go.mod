@@ -15,14 +15,14 @@ require (
 	github.com/networkservicemesh/api v1.1.2-0.20220119092736-21eda250c390
 	github.com/networkservicemesh/sdk v0.5.1-0.20220124073803-419fa7053a1a
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20220120084602-e17b3e54e603
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20220124074808-6eb537000575
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20220124162243-63c4025e5d02
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20220124162404-d41c26fbdf72
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20220125043716-fe7cf740f889
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.2
 	github.com/stretchr/testify v1.7.0
 	github.com/thanhpk/randstr v1.0.4
-	github.com/vishvananda/netlink v1.1.0
-	github.com/vishvananda/netns v0.0.0-20200728191858-db3c7e526aae
+	github.com/vishvananda/netlink v1.1.1-0.20220118170537-d6b03fdeb845
+	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
 	google.golang.org/grpc v1.42.0
 )
