@@ -46,6 +46,7 @@ import (
 	sriovtoken "github.com/networkservicemesh/sdk-sriov/pkg/sriov/token"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
@@ -251,8 +252,12 @@ func main() {
 				credentials.NewTLS(
 					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 	)
-
-	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx, &cfg.ConnectTo, registryclient.WithDialOptions(clientOptions...))
+	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx, &cfg.ConnectTo,
+		registryclient.WithDialOptions(clientOptions...),
+		registryclient.WithNSEAdditionalFunctionality(
+			sendfd.NewNetworkServiceEndpointRegistryClient(),
+		),
+	)
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name: cfg.Name,
 		NetworkServiceLabels: map[string]*registryapi.NetworkServiceLabels{
