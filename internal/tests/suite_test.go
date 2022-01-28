@@ -14,7 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build linux
 // +build linux
 
 package tests
@@ -64,14 +63,5 @@ type ForwarderTestSuite struct {
 }
 
 func TestForwarderTestSuite(t *testing.T) {
-
-	f := new(ForwarderTestSuite)
-
-	f.SetupSuite1(t)
-
-	for i := 0; i < 10; i++ {
-		suite.Run(t, f)
-	}
-
-	f.TearDownSuite1()
+	suite.Run(t, new(ForwarderTestSuite))
 }
