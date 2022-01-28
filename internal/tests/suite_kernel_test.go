@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Cisco and/or its affiliates.
+// Copyright (c) 2020-2022 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build linux
 // +build linux
 
 package tests
@@ -23,7 +24,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"runtime"
 
 	"github.com/edwarnicke/exechelper"
 	"github.com/pkg/errors"
@@ -81,8 +81,6 @@ func newKernelVerifiableEndpoint(ctx context.Context,
 		panic(fmt.Sprintf("unable to get root netNs: %+v", err))
 	}
 	endpointNSName := fmt.Sprintf("nse-%s", randstr.Hex(4))
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
 	endpointNSHandle, err := netns.NewNamed(endpointNSName)
 	if err != nil {
 		panic(fmt.Sprintf("unable create netNs %s: %+v", endpointNSName, err))
@@ -158,8 +156,6 @@ func newKernelVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterfa
 		panic(fmt.Sprintf("unable to get root netNs: %+v", err))
 	}
 	clientNSName := fmt.Sprintf("client-%s", randstr.Hex(4))
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
 	clientNSHandle, err := netns.NewNamed(clientNSName)
 	if err != nil {
 		panic(fmt.Sprintf("unable create netNs %s: %+v", clientNSName, err))

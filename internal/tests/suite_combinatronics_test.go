@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Cisco and/or its affiliates.
+// Copyright (c) 2020-2022 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build linux
 // +build linux
 
 package tests
@@ -25,6 +26,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -135,6 +137,9 @@ func (f *ForwarderTestSuite) TestCombinations() {
 						epFunc := endpoints[endpointMechanism]
 						clientFunc := clients[clientMechanism]
 						t.Run(strings.Title(strings.ToLower(endpointMechanism)), func(t *testing.T) {
+							runtime.LockOSThread()
+							defer runtime.UnlockOSThread()
+
 							starttime := time.Now()
 							// Create ctx for test
 							ctx, cancel := context.WithTimeout(f.ctx, contextTimeout)
