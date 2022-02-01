@@ -12,9 +12,9 @@ require (
 	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
 	github.com/golang/protobuf v1.5.2
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/api v1.1.2-0.20220119092736-21eda250c390
-	github.com/networkservicemesh/sdk v0.5.1-0.20220130184745-953f555cc4e0
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20220130185419-a13eef70f53b
+	github.com/networkservicemesh/api v1.2.0-rc.1
+	github.com/networkservicemesh/sdk v1.2.0-rc.1
+	github.com/networkservicemesh/sdk-k8s v1.2.0-rc.1
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20220130185553-2e516fa8a981
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20220130185711-0865427ebbd5
 	github.com/pkg/errors v0.9.1
