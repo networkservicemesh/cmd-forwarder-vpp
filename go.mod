@@ -7,7 +7,7 @@ require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/debug v1.0.0
 	github.com/edwarnicke/exechelper v1.0.3
-	github.com/edwarnicke/govpp v0.0.0-20211201170712-7828460e6d2f
+	github.com/edwarnicke/govpp v0.0.0-20220311182453-f32f292e0e91
 	github.com/edwarnicke/grpcfd v1.1.2
 	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
 	github.com/golang/protobuf v1.5.2
@@ -16,7 +16,7 @@ require (
 	github.com/networkservicemesh/sdk v0.5.1-0.20220314130317-113c4e40ec68
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20220314130908-e81f927abdbc
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20220314131655-667574bf10b0
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20220314105957-c298a65751ab
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20220314150153-10353b8bbd3b
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.2
