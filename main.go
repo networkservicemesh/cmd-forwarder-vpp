@@ -23,6 +23,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
 
@@ -45,6 +46,7 @@ import (
 	"github.com/networkservicemesh/sdk-sriov/pkg/sriov/resource"
 	sriovtoken "github.com/networkservicemesh/sdk-sriov/pkg/sriov/token"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/common/cleanup"
 	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
@@ -54,6 +56,9 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
+
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/vxlan"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/stats"
 
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/config"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/devicecfg"
@@ -146,14 +151,30 @@ func main() {
 
 	var vppConn vpphelper.Connection
 	var vppErrCh <-chan error
-	if cfg.VppAPISocket != "" { // If we have a VppAPISocket, use that
+	var statsOpts []stats.Option
+	cleanupDoneCh := make(chan struct{})
+	cleanupOpts := []cleanup.Option{
+		cleanup.WithoutGRPCCall(),
+	}
+
+	if fileExists(cfg.VppAPISocket) { // If we have an external VppAPISocket, use that
 		vppConn = vpphelper.DialContext(ctx, cfg.VppAPISocket)
 		errCh := make(chan error)
 		close(errCh)
 		vppErrCh = errCh
+		dir, _ := path.Split(cfg.VppAPISocket)
+		statsOpts = append(statsOpts, stats.WithSocket(path.Join(dir, "stats.sock")))
+		cleanupOpts = append(cleanupOpts, cleanup.WithDoneChan(cleanupDoneCh))
+
+		log.FromContext(ctx).Info("external vpp is being used")
 	} else { // If we don't have a VPPAPISocket, start VPP and use that
+		if err = cfg.VppInit.Decode("AF_PACKET"); err != nil {
+			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
+		}
 		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
 		exitOnErrCh(ctx, cancel, vppErrCh)
+		close(cleanupDoneCh)
+		log.FromContext(ctx).Info("local vpp is being used")
 	}
 
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
@@ -192,21 +213,7 @@ func main() {
 	// ********************************************************************************
 	now = time.Now()
 
-	endpoint := xconnectns.NewServer(
-		ctx,
-		cfg.Name,
-		authorize.NewServer(),
-		spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime),
-		vppConn,
-		vppinit.Must(cfg.VppInit.Execute(ctx, vppConn, cfg.TunnelIP)),
-		cfg.VxlanPort,
-		pciPool,
-		resourcePool,
-		sriovConfig,
-		deviceMap,
-		cfg.VFIOPath, cfg.CgroupPath,
-		&cfg.ConnectTo,
-		cfg.DialTimeout,
+	dialOptions := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
@@ -215,6 +222,26 @@ func main() {
 		),
 		grpcfd.WithChainStreamInterceptor(),
 		grpcfd.WithChainUnaryInterceptor(),
+	}
+
+	endpoint := xconnectns.NewServer(
+		ctx,
+		spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime),
+		vppConn,
+		vppinit.Must(cfg.VppInit.Execute(ctx, vppConn, cfg.TunnelIP)),
+		pciPool,
+		resourcePool,
+		sriovConfig,
+		cfg.VFIOPath, cfg.CgroupPath,
+		xconnectns.WithName(cfg.Name),
+		xconnectns.WithAuthorizeServer(authorize.NewServer()),
+		xconnectns.WithVlanDomain2Device(deviceMap),
+		xconnectns.WithClientURL(&cfg.ConnectTo),
+		xconnectns.WithDialTimeout(cfg.DialTimeout),
+		xconnectns.WithStatsOptions(statsOpts...),
+		xconnectns.WithCleanupOptions(cleanupOpts...),
+		xconnectns.WithVxlanOptions(vxlan.WithPort(cfg.VxlanPort)),
+		xconnectns.WithDialOptions(dialOptions...),
 	)
 
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 7: create xconnect network service endpoint")
@@ -276,10 +303,11 @@ func main() {
 
 	log.FromContext(ctx).Infof("Startup completed in %v", time.Since(starttime))
 
-	// TODO - cleaner shutdown across these three channels
+	// TODO - cleaner shutdown across these channels
 	<-ctx.Done()
 	<-srvErrCh
 	<-vppErrCh
+	<-cleanupDoneCh
 }
 
 func setupDeviceMap(ctx context.Context, cfg *config.Config) map[string]string {
@@ -382,4 +410,12 @@ func exitOnErrCh(ctx context.Context, cancel context.CancelFunc, errCh <-chan er
 		log.FromContext(ctx).Error(err)
 		cancel()
 	}(ctx, errCh)
+}
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }

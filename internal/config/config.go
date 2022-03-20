@@ -46,8 +46,8 @@ type Config struct {
 
 	TunnelIP     net.IP       `desc:"IP to use for tunnels" split_words:"true"`
 	VxlanPort    uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
-	VppAPISocket string       `default:"" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
-	VppInit      vppinit.Func `default:"AF_PACKET" desc:"type of VPP initialization.  Must be AF_PACKET or NONE" split_words:"true"`
+	VppAPISocket string       `default:"/var/run/vpp/vpp-api.sock" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
+	VppInit      vppinit.Func `default:"NONE" desc:"type of VPP initialization. Must be NONE or AF_PACKET" split_words:"true"`
 
 	ResourcePollTimeout time.Duration `default:"30s" desc:"device plugin polling timeout" split_words:"true"`
 	DevicePluginPath    string        `default:"/var/lib/kubelet/device-plugins/" desc:"path to the device plugin directory" split_words:"true"`

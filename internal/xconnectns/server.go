@@ -1,4 +1,6 @@
-// Copyright (c) 2021 Doc.ai and/or its affiliates.
+// Copyright (c) 2021-2022 Doc.ai and/or its affiliates.
+//
+// Copyright (c) 2022 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -25,7 +27,7 @@ import (
 	"net/url"
 	"time"
 
-	"google.golang.org/grpc"
+	"github.com/google/uuid"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
@@ -40,6 +42,7 @@ import (
 	sriovtokens "github.com/networkservicemesh/sdk-sriov/pkg/tools/tokens"
 	vppforwarder "github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/forwarder"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/switchcase"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
@@ -48,22 +51,36 @@ import (
 // NewServer - returns an implementation of the xconnectns network service
 func NewServer(
 	ctx context.Context,
-	name string,
-	authzServer networkservice.NetworkServiceServer,
 	tokenGenerator token.GeneratorFunc,
 	vppConn vppforwarder.Connection,
 	tunnelIP net.IP,
-	tunnelPort uint16,
 	pciPool resourcepool.PCIPool,
 	resourcePool resourcepool.ResourcePool,
 	sriovConfig *sriovconfig.Config,
-	deviceMap map[string]string,
 	vfioDir, cgroupBaseDir string,
-	clientURL *url.URL,
-	dialTimeout time.Duration,
-	clientDialOptions ...grpc.DialOption,
+	options ...Option,
 ) endpoint.Endpoint {
-	vppForwarder := vppforwarder.NewServer(ctx, name, authzServer, tokenGenerator, clientURL, vppConn, tunnelIP, tunnelPort, dialTimeout, deviceMap, clientDialOptions...)
+	xconnOpts := &xconnOptions{
+		name:            "forwarder-" + uuid.New().String(),
+		authorizeServer: authorize.NewServer(authorize.Any()),
+		clientURL:       &url.URL{Scheme: "unix", Host: "connect.to.socket"},
+		dialTimeout:     time.Millisecond * 200,
+		domain2Device:   make(map[string]string),
+	}
+	for _, opt := range options {
+		opt(xconnOpts)
+	}
+
+	vppForwarder := vppforwarder.NewServer(ctx, tokenGenerator, vppConn, tunnelIP,
+		vppforwarder.WithName(xconnOpts.name),
+		vppforwarder.WithAuthorizeServer(xconnOpts.authorizeServer),
+		vppforwarder.WithClientURL(xconnOpts.clientURL),
+		vppforwarder.WithDialTimeout(xconnOpts.dialTimeout),
+		vppforwarder.WithVlanDomain2Device(xconnOpts.domain2Device),
+		vppforwarder.WithCleanupOptions(xconnOpts.cleanupOpts...),
+		vppforwarder.WithStatsOptions(xconnOpts.statsOpts...),
+		vppforwarder.WithVxlanOptions(xconnOpts.vxlanOpts...),
+		vppforwarder.WithDialOptions(xconnOpts.dialOpts...))
 	if sriovConfig == nil {
 		return vppForwarder
 	}
@@ -92,6 +109,17 @@ func NewServer(
 		})
 	},
 		vppForwarder,
-		sriovforwarder.NewServer(ctx, name, authzServer, tokenGenerator, pciPool, resourcePool, sriovConfig, vfioDir, cgroupBaseDir, clientURL, dialTimeout, clientDialOptions...),
+		sriovforwarder.NewServer(ctx,
+			xconnOpts.name,
+			xconnOpts.authorizeServer,
+			tokenGenerator,
+			pciPool,
+			resourcePool,
+			sriovConfig,
+			vfioDir,
+			cgroupBaseDir,
+			xconnOpts.clientURL,
+			xconnOpts.dialTimeout,
+			xconnOpts.dialOpts...),
 	)
 }
