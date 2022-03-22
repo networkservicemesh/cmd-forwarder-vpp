@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"path"
@@ -171,7 +172,11 @@ func main() {
 		if err = cfg.VppInit.Decode("AF_PACKET"); err != nil {
 			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
 		}
-		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
+		tmpDir, err := ioutil.TempDir("", cfg.Name)
+		if err != nil {
+			logrus.Fatalf("error creating tmpDir %+v", err)
+		}
+		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx, vpphelper.WithRootDir(tmpDir))
 		exitOnErrCh(ctx, cancel, vppErrCh)
 		close(cleanupDoneCh)
 		log.FromContext(ctx).Info("local vpp is being used")
