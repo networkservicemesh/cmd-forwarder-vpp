@@ -172,7 +172,8 @@ func main() {
 		if err = cfg.VppInit.Decode("AF_PACKET"); err != nil {
 			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
 		}
-		tmpDir, err := ioutil.TempDir("", cfg.Name)
+		var tmpDir string
+		tmpDir, err = ioutil.TempDir("", cfg.Name)
 		if err != nil {
 			logrus.Fatalf("error creating tmpDir %+v", err)
 		}
