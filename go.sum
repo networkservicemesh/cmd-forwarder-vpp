@@ -384,10 +384,11 @@ github.com/networkservicemesh/sdk v0.5.1-0.20220321161040-57746e0ee944 h1:iBGlBY
 github.com/networkservicemesh/sdk v0.5.1-0.20220321161040-57746e0ee944/go.mod h1:fK/G5mfEDIefFXxRSNXqj1jjd8SEUeZMpQUdCuc7owY=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20220321161717-5570632d309d h1:/gstSR8BLl0hHpFgXau0zjOhIUBjO8wnLNkzqmYTh5M=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20220321161717-5570632d309d/go.mod h1:4dBplYpB+qWN6+ZW/cAUtWbLULPljWQgTqaaF0ReIvg=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20220323121020-854f9096edb8 h1:07FWpXF71zn2+dC+n4ZwRrTirtk23vF4PN3l/0uHDkA=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20220323121020-854f9096edb8/go.mod h1:zWPJB4bsUGqlRxfohrzONjeujHDXH+Rz0bBLf+IuEMA=
-github.com/networkservicemesh/sdk-sriov v0.0.0-20220323121512-9b3e8e42870e h1:Th3aMvlMefHBkPyqfk4tGVPTqO/yHOnnWeHc37gBxog=
-github.com/networkservicemesh/sdk-sriov v0.0.0-20220323121512-9b3e8e42870e/go.mod h1:+9sGekH+YFxA1/24JVoPtwxZwOEmbFX4eSYKl0JR9rg=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20220325163257-0ca41e9d343f h1:Tzv8DadYxeUZRkzStFvkNHyC4Lj2ccmx5y7dWB2GzjI=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20220325163257-0ca41e9d343f/go.mod h1:N4BsIW7quHneRj4j3MmIOQEdpjgcDGoTQbcg8kkT15E=
+github.com/networkservicemesh/sdk-sriov v0.0.0-20220325164335-f30227ce491a h1:2QLD9pxoki5HYxjKzrWyZctk/tFLHf4zCxLosphFm1w=
+github.com/networkservicemesh/sdk-sriov v0.0.0-20220325164335-f30227ce491a/go.mod h1:j35zXv4lVnP89PgUFsp6xRmqfgy9cDvEtLsDqvj2CRU=
 github.com/networkservicemesh/sdk-vpp v0.0.0-20220323121605-e09c347c0a99 h1:ZPEevYPaTmQSg8Y/N2m+MaoKQy8PBYl80VvNf/MEidQ=
 github.com/networkservicemesh/sdk-vpp v0.0.0-20220323121605-e09c347c0a99/go.mod h1:OQTgzhu7WiO25EgluvDUkM0nr3FVSrypfSJ+ktR0fXY=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
@@ -574,7 +575,6 @@ go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqe
 go.opentelemetry.io/proto/otlp v0.11.0 h1:cLDgIBTf4lLOlztkhzAEdQsJ4Lj+i5Wc9k6Nn0K1VyU=
 go.opentelemetry.io/proto/otlp v0.11.0/go.mod h1:QpEjXPrNQzrFDZgoTo49dgHR9RYRSrg3NAKnUGl9YpQ=
 go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
-go.uber.org/atomic v1.7.0 h1:ADUqmZGgLDDfbSL9ZmPxKTybcoEYHgpYfELNoN+7hsw=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
 go.uber.org/goleak v1.1.10/go.mod h1:8a7PlsEVH3e/a/GLqe5IIrQx6GzcnRmZEufDUTk4A7A=
 go.uber.org/goleak v1.1.12 h1:gZAh5/EyT/HQwlpkCy6wTpqfH9H8Lz8zbm3dZh+OyzA=
