@@ -189,7 +189,10 @@ func main() {
 	}
 
 	deviceMap := setupDeviceMap(ctx, cfg)
-	_ = vppinit.InitLinks(ctx, vppConn, deviceMap, cfg.TunnelIP)
+	err = vppinit.InitLinks(ctx, vppConn, deviceMap, cfg.TunnelIP)
+	if err != nil {
+		log.FromContext(ctx).Warnf("Link init failed %+v", err)
+	}
 
 	// ********************************************************************************
 	log.FromContext(ctx).Infof("executing phase 6: retrieving svid, check spire agent logs if this is the last line you see (time since start: %s)", time.Since(starttime))
