@@ -262,7 +262,7 @@ func pingKernel(ipnet *net.IPNet, handle netns.NsHandle) error {
 	if ipnet == nil {
 		return nil
 	}
-	pingStr := fmt.Sprintf("ping -c 1 %s", ipnet.IP.String())
+	pingStr := fmt.Sprintf("ping -c 1 -s 3000 %s", ipnet.IP.String())
 	if err := exechelper.Run(pingStr,
 		exechelper.WithEnvirons(os.Environ()...),
 		exechelper.WithStdout(os.Stdout),

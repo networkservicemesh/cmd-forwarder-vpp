@@ -264,7 +264,7 @@ func setMtu(ctx context.Context, vppConn api.Connection, link netlink.Link, swIf
 		WithField("swIfIndex", setMtu.SwIfIndex).
 		WithField("MTU", setMtu.Mtu).
 		WithField("duration", time.Since(now)).
-		WithField("vppapi", "HwInterfaceSetMtu").Debug("completed")
+		WithField("vppapi", "SwInterfaceSetMtu").Debug("completed")
 	return nil
 }
 
