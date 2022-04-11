@@ -252,11 +252,11 @@ func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interf
 
 func setMtu(ctx context.Context, vppConn api.Connection, link netlink.Link, swIfIndex interface_types.InterfaceIndex) error {
 	now := time.Now()
-	setMtu := &interfaces.HwInterfaceSetMtu{
+	setMtu := &interfaces.SwInterfaceSetMtu{
 		SwIfIndex: swIfIndex,
-		Mtu:       uint16(link.Attrs().MTU),
+		Mtu:       []uint32{uint32(link.Attrs().MTU), uint32(link.Attrs().MTU), uint32(link.Attrs().MTU), uint32(link.Attrs().MTU)},
 	}
-	_, err := interfaces.NewServiceClient(vppConn).HwInterfaceSetMtu(ctx, setMtu)
+	_, err := interfaces.NewServiceClient(vppConn).SwInterfaceSetMtu(ctx, setMtu)
 	if err != nil {
 		return err
 	}
