@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Cisco and/or its affiliates.
+// Copyright (c) 2020-2022 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build linux
 // +build linux
 
 package tests
@@ -64,7 +65,7 @@ func SetupBridge() error {
 	bridge := &netlink.Bridge{LinkAttrs: la}
 	err := netlink.LinkAdd(bridge)
 	if err != nil {
-		return errors.Wrapf(err, "could not add %s: %v\n", la.Name, err)
+		return errors.Wrapf(err, "could not add %s: %v", la.Name, err)
 	}
 	if err := netlink.LinkSetUp(bridge); err != nil {
 		return errors.Wrapf(err, "failure creating bridge")
