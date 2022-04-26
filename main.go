@@ -84,7 +84,6 @@ func main() {
 	// setup logging
 	// ********************************************************************************
 	logrus.SetFormatter(&nested.Formatter{})
-	log.EnableTracing(true)
 	ctx = log.WithLog(ctx, logruslogger.New(ctx, map[string]interface{}{"cmd": os.Args[0]}))
 
 	// ********************************************************************************
@@ -126,7 +125,7 @@ func main() {
 		logrus.Fatalf("invalid log level %s", cfg.LogLevel)
 	}
 	logrus.SetLevel(level)
-
+	log.EnableTracing(level == logrus.TraceLevel)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 1: get config from environment")
 
 	// ********************************************************************************
