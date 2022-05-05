@@ -388,8 +388,8 @@ github.com/networkservicemesh/sdk-kernel v0.0.0-20220505135539-cd6d5151610b h1:y
 github.com/networkservicemesh/sdk-kernel v0.0.0-20220505135539-cd6d5151610b/go.mod h1:oDYMR2sPpIhiFvtojhc3cfkwyoaK9ZXQB+dGfPRi9S8=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20220505140026-a0c110da4f69 h1:5Gi0XKhHDAvBymjl02BVXrXAIL8N7cr74VbVtR/xhCI=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20220505140026-a0c110da4f69/go.mod h1:JZv2kHl6t8fCgUWGYyVyekJ0jDK7rBFnGCNL+cwptQU=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20220505140013-fdb5bed3d9fd h1:/Gr0Iw5z0zvnTfMD1Ur5gEaY33lpVLLwObskpgslGwo=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20220505140013-fdb5bed3d9fd/go.mod h1:B53JeSz06zb4mRR2iXvM1lJaAo2n3rDdjXa0mVRZPjA=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20220505205012-4ed9f17729d9 h1:8YqXpnIu2MDAkDmKH2+o5LkvMwOqD9fnD9lqTtcJ+cQ=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20220505205012-4ed9f17729d9/go.mod h1:OyWnsKISCzJ1guBw7Skj8n25mJk83ZoTVbjOhDOz4as=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
