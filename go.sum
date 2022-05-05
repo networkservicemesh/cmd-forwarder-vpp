@@ -385,10 +385,11 @@ github.com/networkservicemesh/sdk v0.5.1-0.20220505102418-8d6762737896 h1:ApKny2
 github.com/networkservicemesh/sdk v0.5.1-0.20220505102418-8d6762737896/go.mod h1:G+NdPbtzcOWx1VljOj+L4kvZPQyYpiwCp84JYs+hGtc=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20220505103040-16488cbb4872 h1:RUQf8m04dH/FEtMgfqm8phRq0hYnYxY+s6mOQDWLMBs=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20220505103040-16488cbb4872/go.mod h1:+UMycFvzZ4DIa3Y82ylntwL2zjtM83LbTGfQwutYTLM=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20220504134411-4a57237faf7b h1:qPWGdecbHaCrBEMkUeLkRNfZFeW+YnTA9don9GYjKcA=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20220504134411-4a57237faf7b/go.mod h1:lzhToXkmA7YTLn7k05c4Tly+c+hl8R0eY7v1fO1X1bM=
-github.com/networkservicemesh/sdk-sriov v0.0.0-20220504134851-545a79cf58b3 h1:1q+P3iNFBF+AUwtEva9HID9XPJrXGf3mSXsg9tEsT+s=
-github.com/networkservicemesh/sdk-sriov v0.0.0-20220504134851-545a79cf58b3/go.mod h1:dmH96QH8vTLL+BxrFJWF9KGT86nh1/dd3BI2e67opxE=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20220505135539-cd6d5151610b h1:yrLmDz+806gEmvvqiINGuQtzPRjGWTHp45SgpteDy94=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20220505135539-cd6d5151610b/go.mod h1:oDYMR2sPpIhiFvtojhc3cfkwyoaK9ZXQB+dGfPRi9S8=
+github.com/networkservicemesh/sdk-sriov v0.0.0-20220505140026-a0c110da4f69 h1:5Gi0XKhHDAvBymjl02BVXrXAIL8N7cr74VbVtR/xhCI=
+github.com/networkservicemesh/sdk-sriov v0.0.0-20220505140026-a0c110da4f69/go.mod h1:JZv2kHl6t8fCgUWGYyVyekJ0jDK7rBFnGCNL+cwptQU=
 github.com/networkservicemesh/sdk-vpp v0.0.0-20220504135019-802bba8042ba h1:yfmzLLHEPILGJCOR8FyPBULpHu1UimZK5Mul4ZwuPoM=
 github.com/networkservicemesh/sdk-vpp v0.0.0-20220504135019-802bba8042ba/go.mod h1:G91PySBIGRTGbP0s8sEaFaOhVPKd/qKms5Gkp/x4QnY=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
@@ -500,6 +501,7 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
+github.com/tatsushid/go-fastping v0.0.0-20160109021039-d7bb493dee3e/go.mod h1:B4+Kq1u5FlULTjFSM707Q6e/cOHFv0z/6QRoxubDIQ8=
 github.com/thanhpk/randstr v1.0.4 h1:IN78qu/bR+My+gHCvMEXhR/i5oriVHcTB/BJJIRTsNo=
 github.com/thanhpk/randstr v1.0.4/go.mod h1:M/H2P1eNLZzlDwAzpkkkUvoyNNMbzRGhESZuEQk3r0U=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
