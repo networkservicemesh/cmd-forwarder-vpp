@@ -278,7 +278,8 @@ func main() {
 				credentials.NewTLS(
 					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 	)
-	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx, &cfg.ConnectTo,
+	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx,
+		registryclient.WithClientURL(&cfg.ConnectTo),
 		registryclient.WithDialOptions(clientOptions...),
 		registryclient.WithNSEAdditionalFunctionality(
 			sendfd.NewNetworkServiceEndpointRegistryClient(),
