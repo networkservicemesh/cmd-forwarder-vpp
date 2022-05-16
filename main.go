@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"os"
 	"os/signal"
 	"path"
@@ -212,10 +213,15 @@ func main() {
 	// ********************************************************************************
 	now = time.Now()
 
+	tlsClientConfig := tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())
+	tlsClientConfig.MinVersion = tls.VersionTLS12
+	tlsServerConfig := tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())
+	tlsServerConfig.MinVersion = tls.VersionTLS12
+
 	dialOptions := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(
-			grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
+			grpcfd.TransportCredentials(credentials.NewTLS(tlsClientConfig))),
 		grpc.WithDefaultCallOptions(
 			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime))),
 		),
@@ -254,8 +260,7 @@ func main() {
 		// TODO add serveroptions for tracing
 		grpc.Creds(
 			grpcfd.TransportCredentials(
-				credentials.NewTLS(
-					tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())))),
+				credentials.NewTLS(tlsServerConfig))),
 	)
 	endpoint.Register(server)
 
@@ -275,8 +280,7 @@ func main() {
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(
-				credentials.NewTLS(
-					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
+				credentials.NewTLS(tlsClientConfig))),
 	)
 	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx,
 		registryclient.WithClientURL(&cfg.ConnectTo),

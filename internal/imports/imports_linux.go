@@ -3,6 +3,7 @@ package imports
 
 import (
 	_ "context"
+	_ "crypto/tls"
 	_ "fmt"
 	_ "git.fd.io/govpp.git/api"
 	_ "git.fd.io/govpp.git/binapi/vpe"
