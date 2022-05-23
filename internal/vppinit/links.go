@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Nordix Foundation.
+// Copyright (c) 2021-2022 Nordix Foundation.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -48,9 +48,9 @@ func InitLinks(ctx context.Context, vppConn api.Connection, deviceNames map[stri
 		}
 
 		if !isTunnelLink(link, tunnelIP) {
-			err = createInterface(ctx, vppConn, link)
+			err = setupLinkVpp(ctx, vppConn, link)
 			if err != nil {
-				return errors.Errorf("error creating AF_PACKET for %s", device)
+				return errors.Wrapf(err, "error setting up device %s", device)
 			}
 		}
 		setPromiscHw(ctx, link)
@@ -71,33 +71,23 @@ func isTunnelLink(link netlink.Link, tunnelIP net.IP) bool {
 	return false
 }
 
-func createInterface(ctx context.Context, vppConn api.Connection, link netlink.Link) error {
-	now := time.Now()
+func setupLinkVpp(ctx context.Context, vppConn api.Connection, link netlink.Link) error {
 	swIfIndex, err := createAfPacket(ctx, vppConn, link)
 	if err != nil {
 		return err
 	}
-	log.FromContext(ctx).
-		WithField("duration", time.Since(now)).
-		WithField("SwIfIndex", swIfIndex).
-		WithField("vppapi", "CreateAfPacket").Debug("completed")
 
-	now = time.Now()
-	if aclErr := denyAllACLToInterface(ctx, vppConn, swIfIndex); aclErr != nil {
-		return aclErr
+	if mtuErr := setMtu(ctx, vppConn, link, swIfIndex); err != nil {
+		return mtuErr
 	}
-	log.FromContext(ctx).
-		WithField("duration", time.Since(now)).
-		WithField("SwIfIndex", swIfIndex).
-		WithField("vppapi", "DenyAllACLToInterface").Debug("completed")
 
-	now = time.Now()
+	now := time.Now()
 	_, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetFlags(ctx, &interfaces.SwInterfaceSetFlags{
 		SwIfIndex: swIfIndex,
 		Flags:     interface_types.IF_STATUS_API_FLAG_ADMIN_UP,
 	})
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to set interface admin UP")
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", swIfIndex).

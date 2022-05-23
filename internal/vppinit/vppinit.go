@@ -92,6 +92,10 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return nil, err
 	}
 
+	if mtuErr := setMtu(ctx, vppConn, link, swIfIndex); err != nil {
+		return nil, mtuErr
+	}
+
 	if aclErr := denyAllACLToInterface(ctx, vppConn, swIfIndex); aclErr != nil {
 		return nil, aclErr
 	}
@@ -209,9 +213,6 @@ func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Li
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "AfPacketCreate").Debug("completed")
 
-	if err := setMtu(ctx, vppConn, link, afPacketCreateRsp.SwIfIndex); err != nil {
-		return 0, err
-	}
 	return afPacketCreateRsp.SwIfIndex, nil
 }
 
