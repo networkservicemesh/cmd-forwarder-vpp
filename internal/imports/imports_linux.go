@@ -95,6 +95,8 @@ import (
 	_ "github.com/thanhpk/randstr"
 	_ "github.com/vishvananda/netlink"
 	_ "github.com/vishvananda/netns"
+	_ "golang.org/x/text/cases"
+	_ "golang.org/x/text/language"
 	_ "google.golang.org/grpc"
 	_ "google.golang.org/grpc/credentials"
 	_ "google.golang.org/grpc/health/grpc_health_v1"

@@ -31,6 +31,9 @@ import (
 	"testing"
 	"time"
 
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
 	"github.com/edwarnicke/grpcfd"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/stretchr/testify/assert"
@@ -128,15 +131,15 @@ func (f *ForwarderTestSuite) TestCombinations() {
 	}
 	for _, pl := range []string{payload.Ethernet, payload.IP} {
 		payloadName := pl
-		f.T().Run(strings.Title(strings.ToLower(payloadName)), func(t *testing.T) {
+		f.T().Run(cases.Title(language.English).String(strings.ToLower(payloadName)), func(t *testing.T) {
 			for _, cm := range payloads[payloadName] {
 				clientMechanism := cm
-				t.Run(strings.Title(strings.ToLower(clientMechanism)), func(t *testing.T) {
+				t.Run(cases.Title(language.English).String(strings.ToLower(clientMechanism)), func(t *testing.T) {
 					for _, em := range payloads[payloadName] {
 						endpointMechanism := em
 						epFunc := endpoints[endpointMechanism]
 						clientFunc := clients[clientMechanism]
-						t.Run(strings.Title(strings.ToLower(endpointMechanism)), func(t *testing.T) {
+						t.Run(cases.Title(language.English).String(strings.ToLower(endpointMechanism)), func(t *testing.T) {
 							runtime.LockOSThread()
 							defer runtime.UnlockOSThread()
 
