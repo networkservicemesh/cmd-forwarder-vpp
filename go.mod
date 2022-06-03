@@ -49,7 +49,7 @@ require (
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20220602005025-aeb8e5a41690 // indirect
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20220603151005-aa00631f2e0f // indirect
 	github.com/open-policy-agent/opa v0.16.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
