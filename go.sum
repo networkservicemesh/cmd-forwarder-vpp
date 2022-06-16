@@ -328,12 +328,12 @@ github.com/networkservicemesh/sdk v0.5.1-0.20220616114933-1bc512535563 h1:jAW5V5
 github.com/networkservicemesh/sdk v0.5.1-0.20220616114933-1bc512535563/go.mod h1:FdmGiefBBcj9HlV+poQSEAPOuBVp/hkwjWoDEN2a+jg=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20220616120210-be717200e822 h1:/41sLvhCs99MJ99slED9KrZqrLfmNStoahiou3rarIE=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20220616120210-be717200e822/go.mod h1:znmVtnAmYSl8jPOxUNxhfFPbxGO87jo7g3e9S1xMXvQ=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20220606222221-50547dc2e107 h1:c8TpvP+nXqG6hd0XSiS41pTUnLqahFSkaI78iJBDlt0=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20220606222221-50547dc2e107/go.mod h1:QPWvWoxeYHSuLYttIlgk85SZiomtN+o9Wweg2Pelc5g=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20220616145656-8e32a3bae6e5 h1:7LsDgo6RsD5Q+BHzPxvcWwOOBTGEb49De+KC2WIe9PU=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20220616145656-8e32a3bae6e5/go.mod h1:QPWvWoxeYHSuLYttIlgk85SZiomtN+o9Wweg2Pelc5g=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20220616114536-5eb8318c00cd h1:rPqW7p51fzyV8+dnCxVJNnkluIBhAPDaBkQ/t7aHpUM=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20220616114536-5eb8318c00cd/go.mod h1:O9H0K7+2lnf3YNhjJdK4vaiBj/8yiRazcruWMxp7ZwU=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20220606101321-55a6f5ad4ba5 h1:GOJrlyVnfgZ32slrufQgogd2V39UBDgbsiIOmKUHXfw=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20220606101321-55a6f5ad4ba5/go.mod h1:zq2PSBDkvIlGmvNR1Fi+VSlJruJyfso4lC6j1nwAV9I=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20220616150103-cfac383171bb h1:WczPKwBKEWSxxcL40n05ID+k+C6PvnXJVnbUzq4mSHU=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20220616150103-cfac383171bb/go.mod h1:ZuUCxhFHsFM9cE4kb1ItDQ6uUmRbUZbIkuFM6kj4lOQ=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
