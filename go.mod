@@ -14,9 +14,9 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.3.2-0.20220516230921-edaa6f46d6ab
-	github.com/networkservicemesh/sdk v0.5.1-0.20220629100133-a8211c59d6a6
+	github.com/networkservicemesh/sdk v0.5.1-0.20220704121245-6cf1b72d2395
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20220630163525-c363296e702c
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20220701101701-def85c9c0e95
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20220704122303-ad8159884864
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20220704101827-397232cf8808
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
@@ -49,7 +49,7 @@ require (
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20220704101431-3d5e9804eb12 // indirect
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20220704121914-75c5e0fd3acd // indirect
 	github.com/open-policy-agent/opa v0.16.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
