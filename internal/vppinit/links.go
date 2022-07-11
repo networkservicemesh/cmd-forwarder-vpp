@@ -32,28 +32,50 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 )
 
-// InitLinks creates AF_PACKET interface if needed and put the given interfaces in promisc mode
-func InitLinks(ctx context.Context, vppConn api.Connection, deviceNames map[string]string, tunnelIP net.IP) error {
-	for _, device := range deviceNames {
-		var link netlink.Link
-		link, err := netlink.LinkByName(device)
+func initDevice(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, device string, errChan chan error) {
+	link, err := netlink.LinkByName(device)
 
-		if err != nil {
-			return err
-		}
-
+	if err != nil {
+		err = errors.Wrapf(err, "init for device %s failed", device)
+	} else {
 		if link == nil {
-			setPromiscVpp(ctx, vppConn, device)
-			continue
-		}
-
-		if !isTunnelLink(link, tunnelIP) {
-			err = setupLinkVpp(ctx, vppConn, link)
+			err = setPromiscVpp(ctx, vppConn, device)
+		} else {
+			if !isTunnelLink(link, tunnelIP) {
+				err = setupLinkVpp(ctx, vppConn, link)
+			}
 			if err != nil {
-				return errors.Wrapf(err, "error setting up device %s", device)
+				err = errors.Wrapf(err, "error setting up device %s", device)
+			} else {
+				setPromiscHw(ctx, link)
 			}
 		}
-		setPromiscHw(ctx, link)
+	}
+	errChan <- err
+}
+
+// InitLinks creates AF_PACKET interface if needed and put the given interfaces in promisc mode
+func InitLinks(ctx context.Context, vppConn api.Connection, deviceNames map[string]string, tunnelIP net.IP) error {
+	ch := make(chan error)
+	defer func() {
+		go func() {
+			for range ch {
+			}
+		}()
+	}()
+
+	for _, device := range deviceNames {
+		go initDevice(ctx, vppConn, tunnelIP, device, ch)
+	}
+	for i := 0; i < len(deviceNames); i++ {
+		select {
+		case <-ctx.Done():
+			return errors.Wrapf(ctx.Err(), "timeout waiting for init links")
+		case err := <-ch:
+			if err != nil {
+				log.FromContext(ctx).Warnf("Link init failed (%v)", err)
+			}
+		}
 	}
 	return nil
 }
@@ -114,31 +136,28 @@ func setPromiscHw(ctx context.Context, link netlink.Link) {
 	}
 }
 
-func setPromiscVpp(ctx context.Context, vppConn api.Connection, hostIFName string) {
+func setPromiscVpp(ctx context.Context, vppConn api.Connection, hostIFName string) error {
 	client, err := interfaces.NewServiceClient(vppConn).SwInterfaceDump(ctx, &interfaces.SwInterfaceDump{
 		NameFilterValid: true,
 		NameFilter:      hostIFName,
 	})
+	if err != nil {
+		return err
+	}
+	var details *interfaces.SwInterfaceDetails
+	details, err = client.Recv()
 	if err == nil {
-		var details *interfaces.SwInterfaceDetails
-		details, err = client.Recv()
-		if err == nil {
-			now := time.Now()
-			if _, err := interfaces.NewServiceClient(vppConn).SwInterfaceSetPromisc(ctx, &interfaces.SwInterfaceSetPromisc{
-				SwIfIndex: details.SwIfIndex,
-				PromiscOn: true,
-			}); err != nil {
-				log.FromContext(ctx).
-					WithField("duration", time.Since(now)).
-					WithField("HostInterfaceName", hostIFName).
-					WithField("vppapi", "SwInterfaceSetPromisc").
-					Warn("Promiscuous mode not set!")
-			} else {
-				log.FromContext(ctx).
-					WithField("duration", time.Since(now)).
-					WithField("HostInterfaceName", hostIFName).
-					WithField("vppapi", "SwInterfaceSetPromisc").Debug("completed")
-			}
+		now := time.Now()
+		if _, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetPromisc(ctx, &interfaces.SwInterfaceSetPromisc{
+			SwIfIndex: details.SwIfIndex,
+			PromiscOn: true,
+		}); err == nil {
+			log.FromContext(ctx).
+				WithField("duration", time.Since(now)).
+				WithField("HostInterfaceName", hostIFName).
+				WithField("vppapi", "SwInterfaceSetPromisc").Debug("completed")
+			return nil
 		}
 	}
+	return err
 }
