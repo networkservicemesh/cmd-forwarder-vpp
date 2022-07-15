@@ -26,7 +26,7 @@ jobs:
     uses: networkservicemesh/.github/.github/workflows/check-gomod-deps.yaml@main
     with:
       tag: ${{ needs.get-tag.outputs.tag }}
-  
+
   create-release:
     needs: [get-tag, check-gomod-deps]
     uses: networkservicemesh/.github/.github/workflows/release.yaml@main
@@ -42,7 +42,7 @@ jobs:
       tag: ${{ needs.get-tag.outputs.tag }}
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
-    
+
   check-branch:
     name: Check release branch in deployments-k8s
     needs: [get-tag, create-release]

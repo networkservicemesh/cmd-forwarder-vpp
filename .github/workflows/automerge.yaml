@@ -8,15 +8,15 @@ on:
       - "ci"
 jobs:
   check-mergeability:
-     if: ${{ github.event.workflow_run.conclusion == 'success' && github.actor == 'nsmbot' }}
-     uses: networkservicemesh/.github/.github/workflows/check-mergeability.yaml@main
-     secrets:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.actor == 'nsmbot' }}
+    uses: networkservicemesh/.github/.github/workflows/check-mergeability.yaml@main
+    secrets:
       token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
 
   automerge:
     needs: [check-mergeability]
     uses: networkservicemesh/.github/.github/workflows/automerge.yaml@main
-  
+
   resolve_conflicts:
     needs: [check-mergeability]
     if: ${{ always() && needs.check-mergeability.result == 'failure' && needs.check-mergeability.outputs.pr_branch_ref != '' }}
