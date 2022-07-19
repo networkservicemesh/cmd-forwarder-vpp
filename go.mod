@@ -13,11 +13,11 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.2.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/api v1.4.1-0.20220705145838-0b96f94a2adb
-	github.com/networkservicemesh/sdk v0.5.1-0.20220706093325-9d885cffbc5c
+	github.com/networkservicemesh/api v1.4.1-0.20220711153918-a59689088578
+	github.com/networkservicemesh/sdk v0.5.1-0.20220718171414-dc978c4c85c0
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20220704121926-d88dd1974c29
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20220706094448-fe3d3b740841
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20220706094402-72181b4b3611
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20220719141214-54ad521a4694
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spiffe/go-spiffe/v2 v2.0.0
@@ -49,7 +49,7 @@ require (
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20220706093902-9d98b29132d8 // indirect
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20220719140715-5672a60b9aa3 // indirect
 	github.com/open-policy-agent/opa v0.16.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
