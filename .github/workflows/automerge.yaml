@@ -7,6 +7,12 @@ on:
     workflows:
       - "ci"
 jobs:
+  print-debug-info:
+    name: Print debug info
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hmarr/debug-action@v2
+
   check-mergeability:
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.actor == 'nsmbot' }}
     uses: networkservicemesh/.github/.github/workflows/check-mergeability.yaml@main
@@ -15,6 +21,7 @@ jobs:
 
   automerge:
     needs: [check-mergeability]
+    if: ${{ needs.check-mergeability.result == 'success' }}
     uses: networkservicemesh/.github/.github/workflows/automerge.yaml@main
 
   resolve_conflicts:
