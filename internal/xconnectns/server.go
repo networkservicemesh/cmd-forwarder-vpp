@@ -45,6 +45,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/switchcase"
+	authmonitor "github.com/networkservicemesh/sdk/pkg/tools/monitorconnection/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 )
 
@@ -61,11 +62,12 @@ func NewServer(
 	options ...Option,
 ) endpoint.Endpoint {
 	xconnOpts := &xconnOptions{
-		name:            "forwarder-" + uuid.New().String(),
-		authorizeServer: authorize.NewServer(authorize.Any()),
-		clientURL:       &url.URL{Scheme: "unix", Host: "connect.to.socket"},
-		dialTimeout:     time.Millisecond * 200,
-		domain2Device:   make(map[string]string),
+		name:                             "forwarder-" + uuid.New().String(),
+		authorizeServer:                  authorize.NewServer(authorize.Any()),
+		authorizeMonitorConnectionServer: authmonitor.NewMonitorConnectionServer(authmonitor.Any()),
+		clientURL:                        &url.URL{Scheme: "unix", Host: "connect.to.socket"},
+		dialTimeout:                      time.Millisecond * 200,
+		domain2Device:                    make(map[string]string),
 	}
 	for _, opt := range options {
 		opt(xconnOpts)
@@ -74,6 +76,7 @@ func NewServer(
 	vppForwarder := vppforwarder.NewServer(ctx, tokenGenerator, vppConn, tunnelIP,
 		vppforwarder.WithName(xconnOpts.name),
 		vppforwarder.WithAuthorizeServer(xconnOpts.authorizeServer),
+		vppforwarder.WithAuthorizeMonitorConnectionServer(xconnOpts.authorizeMonitorConnectionServer),
 		vppforwarder.WithClientURL(xconnOpts.clientURL),
 		vppforwarder.WithDialTimeout(xconnOpts.dialTimeout),
 		vppforwarder.WithVlanDomain2Device(xconnOpts.domain2Device),
@@ -112,6 +115,7 @@ func NewServer(
 		sriovforwarder.NewServer(ctx,
 			xconnOpts.name,
 			xconnOpts.authorizeServer,
+			xconnOpts.authorizeMonitorConnectionServer,
 			tokenGenerator,
 			pciPool,
 			resourcePool,
