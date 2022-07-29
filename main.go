@@ -53,8 +53,10 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
+	authmonitor "github.com/networkservicemesh/sdk/pkg/tools/monitorconnection/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
+	"github.com/networkservicemesh/sdk/pkg/tools/spire"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
 
@@ -231,7 +233,7 @@ func main() {
 		grpcfd.WithChainStreamInterceptor(),
 		grpcfd.WithChainUnaryInterceptor(),
 	}
-
+	spiffeIDConnMap := spire.SpiffeIDConnectionMap{}
 	endpoint := xconnectns.NewServer(
 		ctx,
 		spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime),
@@ -242,7 +244,8 @@ func main() {
 		sriovConfig,
 		cfg.VFIOPath, cfg.CgroupPath,
 		xconnectns.WithName(cfg.Name),
-		xconnectns.WithAuthorizeServer(authorize.NewServer()),
+		xconnectns.WithAuthorizeServer(authorize.NewServer(authorize.WithSpiffeIDConnectionMap(&spiffeIDConnMap))),
+		xconnectns.WithAuthorizeMonitorConnectionsServer(authmonitor.NewMonitorConnectionServer(authmonitor.WithSpiffeIDConnectionMap(&spiffeIDConnMap))),
 		xconnectns.WithVlanDomain2Device(deviceMap),
 		xconnectns.WithClientURL(&cfg.ConnectTo),
 		xconnectns.WithDialTimeout(cfg.DialTimeout),
