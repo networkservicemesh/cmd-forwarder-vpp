@@ -29,8 +29,9 @@ require (
 	google.golang.org/grpc v1.49.0
 )
 
+exclude cloud.google.com/go/compute v1.7.0
+
 require (
-	cloud.google.com/go/compute v1.10.0 // indirect
 	github.com/OneOfOne/xxhash v1.2.8 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
