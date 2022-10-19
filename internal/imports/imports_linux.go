@@ -17,6 +17,7 @@ import (
 	_ "github.com/edwarnicke/govpp/binapi/interface"
 	_ "github.com/edwarnicke/govpp/binapi/interface_types"
 	_ "github.com/edwarnicke/govpp/binapi/ip"
+	_ "github.com/edwarnicke/govpp/binapi/ip6_nd"
 	_ "github.com/edwarnicke/govpp/binapi/ip_neighbor"
 	_ "github.com/edwarnicke/govpp/binapi/ip_types"
 	_ "github.com/edwarnicke/grpcfd"
