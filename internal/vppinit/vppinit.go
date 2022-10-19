@@ -337,3 +337,39 @@ func linkByIP(ctx context.Context, ipaddress net.IP) (netlink.Link, error) {
 	}
 	return nil, nil
 }
+
+// TunnelIPtoIPv6 - Converts TunnelIP to IPv6
+//
+// In DualStack K8s, it is not currently possible to get the IPv6 PodIP
+// via the Downward API.  For this reason, we need a mechanism to support
+// taking the IPv4 Pod address received via the Downward API and replacing
+// it with the IPv6 IP on the same interface.  This function does so
+// by taking the first GlobalUnicast IPv6 address from the same interface and
+// returning it.
+func TunnelIPtoIPv6(ctx context.Context, tunnelIP net.IP) (net.IP, error) {
+	if tunnelIP == nil || tunnelIP.To4() == nil {
+		return tunnelIP, nil
+	}
+
+	link, err := linkByIP(ctx, tunnelIP)
+	if err != nil {
+		return nil, err
+	}
+	now := time.Now()
+	addrs, err := netlink.AddrList(link, netlink.FAMILY_ALL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not retrieve addresses for link %s", link.Attrs().Name)
+	}
+
+	log.FromContext(ctx).
+		WithField("duration", time.Since(now)).
+		WithField("link", link.Attrs().Name).
+		WithField("netlink", "AddrList").Debug("completed")
+
+	for _, addr := range addrs {
+		if addr.IP != nil && addr.IP.To4() == nil && addr.IP.IsGlobalUnicast() {
+			tunnelIP = addr.IP
+		}
+	}
+	return tunnelIP, nil
+}

@@ -171,6 +171,10 @@ issues:
       linters:
         - funlen
       text: "Function 'main'"
+    - path: main.go
+      linters:
+        - gocyclo
+      text: "cyclomatic complexity 17 of func `main` is high"
     - path: internal/vppinit/vppinit.go
       linters:
         - funlen
