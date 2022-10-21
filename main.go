@@ -190,6 +190,13 @@ func main() {
 		log.FromContext(ctx).Warn("SR-IOV is not enabled")
 	}
 
+	if cfg.TunnelIP != nil && cfg.TunnelIP.To4() != nil && cfg.TunnelIPToV6 {
+		cfg.TunnelIP, err = vppinit.TunnelIPtoIPv6(ctx, cfg.TunnelIP)
+		if err != nil {
+			logrus.Fatalf("error converting IPv4 TunnelIP to IPv6 TunnelIP: %+v", err)
+		}
+	}
+
 	deviceMap := setupDeviceMap(ctx, cfg)
 	err = vppinit.InitLinks(ctx, vppConn, deviceMap, cfg.TunnelIP)
 	if err != nil {

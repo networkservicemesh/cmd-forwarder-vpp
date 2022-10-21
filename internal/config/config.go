@@ -45,6 +45,7 @@ type Config struct {
 	OpenTelemetryEndpoint string            `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
 
 	TunnelIP     net.IP       `desc:"IP to use for tunnels" split_words:"true"`
+	TunnelIPToV6 bool         `desc:"If NSM_TUNNEL_IP set to IPv4 address, use IPv6 address from same interface" split_words:"true"`
 	VxlanPort    uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
 	VppAPISocket string       `default:"/var/run/vpp/external/vpp-api.sock" desc:"filename of socket to connect to existing VPP instance.  If empty a VPP instance is run in forwarder" split_words:"true"`
 	VppInit      vppinit.Func `default:"NONE" desc:"type of VPP initialization. Must be NONE or AF_PACKET" split_words:"true"`
