@@ -124,8 +124,8 @@ github.com/edwarnicke/debug v1.0.0/go.mod h1:cJAtt6sSqp7yUFpiIvSD2Xzyc7iUTUMx0MU
 github.com/edwarnicke/exechelper v1.0.2/go.mod h1:/T271jtNX/ND4De6pa2aRy2+8sNtyCDB1A2pp4M+fUs=
 github.com/edwarnicke/exechelper v1.0.3 h1:OY2ocGAITTqnEDvZk0dRQSeMIQvyH0SyL/4ncz+5GeQ=
 github.com/edwarnicke/exechelper v1.0.3/go.mod h1:R65OUPKns4bgeHkCmfSHbmqLBU8aHZxTgLmEyUBUk4U=
-github.com/edwarnicke/govpp v0.0.0-20221021110927-f85e734f437f h1:ahnfZSqohTrQwSETjt3lJgIij0+38f4kfdCUq3LdVnA=
-github.com/edwarnicke/govpp v0.0.0-20221021110927-f85e734f437f/go.mod h1:kHDnxA+SSNFeMEHz7xvhub1zvx4mOTRlWWRCay2n5NM=
+github.com/edwarnicke/govpp v0.0.0-20221023102301-7f28ecea5308 h1:Qk6LpIVYHwpnuiXfUc5h42Un3GIxwbGiS8dGaMVrVbo=
+github.com/edwarnicke/govpp v0.0.0-20221023102301-7f28ecea5308/go.mod h1:kHDnxA+SSNFeMEHz7xvhub1zvx4mOTRlWWRCay2n5NM=
 github.com/edwarnicke/grpcfd v1.1.2 h1:2b8kCABQ1+JjSKGDoHadqSW7whCeTXMqtyo6jmB5B8k=
 github.com/edwarnicke/grpcfd v1.1.2/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=
 github.com/edwarnicke/log v1.0.0 h1:T6uRNCmR99GTt/CpRr2Gz8eGW8fm0HMThDNGdNxPaGk=
