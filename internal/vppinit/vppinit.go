@@ -29,6 +29,7 @@ import (
 	interfaces "github.com/edwarnicke/govpp/binapi/interface"
 	"github.com/edwarnicke/govpp/binapi/interface_types"
 	"github.com/edwarnicke/govpp/binapi/ip"
+	"github.com/edwarnicke/govpp/binapi/ip6_nd"
 	"github.com/edwarnicke/govpp/binapi/ip_neighbor"
 	"github.com/edwarnicke/govpp/binapi/vlib"
 	"github.com/pkg/errors"
@@ -91,6 +92,22 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return nil, err
 	}
 
+	now := time.Now()
+	if tunnelIP.To4() == nil {
+		_, err = ip6_nd.NewServiceClient(vppConn).IP6ndSendRouterSolicitation(ctx, &ip6_nd.IP6ndSendRouterSolicitation{
+			SwIfIndex: swIfIndex,
+			Stop:      true,
+		})
+		if err != nil {
+			return nil, err
+		}
+		log.FromContext(ctx).
+			WithField("swIfIndex", swIfIndex).
+			WithField("stop", true).
+			WithField("duration", time.Since(now)).
+			WithField("vppapi", "IP6ndSendRouterSolicitation").Debug("completed")
+	}
+
 	if mtuErr := setMtu(ctx, vppConn, link, swIfIndex); err != nil {
 		return nil, mtuErr
 	}
@@ -99,7 +116,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return nil, aclErr
 	}
 
-	now := time.Now()
+	now = time.Now()
 	_, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetFlags(ctx, &interfaces.SwInterfaceSetFlags{
 		SwIfIndex: swIfIndex,
 		Flags:     interface_types.IF_STATUS_API_FLAG_ADMIN_UP,
