@@ -14,8 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build linux
-
 // Package vppinit contains initialization code for vpp
 package vppinit
 
@@ -32,6 +30,7 @@ import (
 	"github.com/edwarnicke/govpp/binapi/interface_types"
 	"github.com/edwarnicke/govpp/binapi/ip"
 	"github.com/edwarnicke/govpp/binapi/ip_neighbor"
+	"github.com/edwarnicke/govpp/binapi/vlib"
 	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
 
@@ -140,6 +139,15 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 				WithField("vppapi", "SwInterfaceAddDelAddress").Debug("completed")
 		}
 	}
+
+	// Disable Router Advertisement on IPv6 tunnels
+	if tunnelIP.To4() == nil {
+		err = disableIPv6RA(ctx, vppConn, link)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	ipRouteAddDel := &ip.IPRouteAddDel{
 		IsAdd: true,
 		Route: ip.IPRoute{
@@ -193,6 +201,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 			WithField("duration", time.Since(now)).
 			WithField("vppapi", "IPRouteAddDel").Debug("completed")
 	}
+
 	return tunnelIP, nil
 }
 
@@ -336,4 +345,22 @@ func linkByIP(ctx context.Context, ipaddress net.IP) (netlink.Link, error) {
 		}
 	}
 	return nil, nil
+}
+
+func disableIPv6RA(ctx context.Context, vppConn api.Connection, link netlink.Link) error {
+	var now = time.Now()
+
+	var reply, err = vlib.NewServiceClient(vppConn).CliInband(ctx, &vlib.CliInband{
+		Cmd: fmt.Sprintf("ip6 nd host-%s ra-cease", link.Attrs().Name),
+	})
+
+	if err == nil {
+		log.FromContext(ctx).
+			WithField("interface", fmt.Sprintf("host-%s", link.Attrs().Name)).
+			WithField("reply", reply.Reply).
+			WithField("duration", time.Since(now)).
+			WithField("vlib", "disable ipv6 ra").Debug("completed")
+	}
+
+	return err
 }

@@ -19,6 +19,7 @@ import (
 	_ "github.com/edwarnicke/govpp/binapi/ip"
 	_ "github.com/edwarnicke/govpp/binapi/ip_neighbor"
 	_ "github.com/edwarnicke/govpp/binapi/ip_types"
+	_ "github.com/edwarnicke/govpp/binapi/vlib"
 	_ "github.com/edwarnicke/grpcfd"
 	_ "github.com/edwarnicke/vpphelper"
 	_ "github.com/golang/protobuf/ptypes/empty"
