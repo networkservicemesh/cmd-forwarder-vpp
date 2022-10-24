@@ -112,12 +112,6 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetFlags").Debug("completed")
 
-	if tunnelIP.To4() == nil {
-		if err = disableIPv6RA(ctx, vppConn, link); err != nil {
-			return nil, err
-		}
-	}
-
 	err = addIPNeighbor(ctx, vppConn, swIfIndex, link.Attrs().Index)
 	if err != nil {
 		return nil, err
@@ -145,6 +139,15 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 				WithField("vppapi", "SwInterfaceAddDelAddress").Debug("completed")
 		}
 	}
+
+	// Disable Router Advertisement on IPv6 tunnels
+	if tunnelIP.To4() == nil {
+		err = disableIPv6RA(ctx, vppConn, link)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	ipRouteAddDel := &ip.IPRouteAddDel{
 		IsAdd: true,
 		Route: ip.IPRoute{
@@ -200,26 +203,6 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 	}
 
 	return tunnelIP, nil
-}
-
-func disableIPv6RA(ctx context.Context, vppConn api.Connection, link netlink.Link) error {
-	var vlibClient = vlib.NewServiceClient(vppConn)
-	var now = time.Now()
-
-	var replay, err = vlibClient.CliInband(ctx, &vlib.CliInband{
-		Cmd: fmt.Sprintf("ip6 nd host-%s ra-cease", link.Attrs().Name),
-	})
-
-	if err == nil {
-		log.FromContext(ctx).
-			WithField("linkName", link.Attrs().Name).
-			WithField("replay", replay.Reply).
-			WithField("isAdd", true).
-			WithField("duration", time.Since(now)).
-			WithField("vlib", "disable ipv6 ra").Debug("completed")
-	}
-
-	return err
 }
 
 func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
@@ -362,4 +345,22 @@ func linkByIP(ctx context.Context, ipaddress net.IP) (netlink.Link, error) {
 		}
 	}
 	return nil, nil
+}
+
+func disableIPv6RA(ctx context.Context, vppConn api.Connection, link netlink.Link) error {
+	var now = time.Now()
+
+	var reply, err = vlib.NewServiceClient(vppConn).CliInband(ctx, &vlib.CliInband{
+		Cmd: fmt.Sprintf("ip6 nd host-%s ra-cease", link.Attrs().Name),
+	})
+
+	if err == nil {
+		log.FromContext(ctx).
+			WithField("interface", fmt.Sprintf("host-%s", link.Attrs().Name)).
+			WithField("reply", reply.Reply).
+			WithField("duration", time.Since(now)).
+			WithField("vlib", "disable ipv6 ra").Debug("completed")
+	}
+
+	return err
 }
