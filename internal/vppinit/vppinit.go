@@ -99,6 +99,14 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return nil, aclErr
 	}
 
+	// Disable Router Advertisement on IPv6 tunnels
+	if tunnelIP.To4() == nil {
+		err = disableIPv6RA(ctx, vppConn, link)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	now := time.Now()
 	_, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetFlags(ctx, &interfaces.SwInterfaceSetFlags{
 		SwIfIndex: swIfIndex,
@@ -137,14 +145,6 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 				WithField("isAdd", true).
 				WithField("duration", time.Since(now)).
 				WithField("vppapi", "SwInterfaceAddDelAddress").Debug("completed")
-		}
-	}
-
-	// Disable Router Advertisement on IPv6 tunnels
-	if tunnelIP.To4() == nil {
-		err = disableIPv6RA(ctx, vppConn, link)
-		if err != nil {
-			return nil, err
 		}
 	}
 
@@ -348,19 +348,32 @@ func linkByIP(ctx context.Context, ipaddress net.IP) (netlink.Link, error) {
 }
 
 func disableIPv6RA(ctx context.Context, vppConn api.Connection, link netlink.Link) error {
-	var now = time.Now()
+	cmds := []string{
+		fmt.Sprintf("enable ip6 interface host-%s", link.Attrs().Name),
+		fmt.Sprintf("ip6 nd host-%s ra-cease ra-suppress", link.Attrs().Name),
+	}
+	for _, cmd := range cmds {
+		now := time.Now()
+		var reply, err = vlib.NewServiceClient(vppConn).CliInband(ctx, &vlib.CliInband{
+			Cmd: cmd,
+		})
 
-	var reply, err = vlib.NewServiceClient(vppConn).CliInband(ctx, &vlib.CliInband{
-		Cmd: fmt.Sprintf("ip6 nd host-%s ra-cease", link.Attrs().Name),
-	})
+		if err != nil {
+			log.FromContext(ctx).
+				WithField("interface", fmt.Sprintf("host-%s", link.Attrs().Name)).
+				WithField("duration", time.Since(now)).
+				WithField("cmd", cmd).
+				WithField("vppapi", "CliInband").Error(err)
+			return err
+		}
 
-	if err == nil {
 		log.FromContext(ctx).
 			WithField("interface", fmt.Sprintf("host-%s", link.Attrs().Name)).
+			WithField("cmd", cmd).
 			WithField("reply", reply.Reply).
 			WithField("duration", time.Since(now)).
-			WithField("vlib", "disable ipv6 ra").Debug("completed")
+			WithField("vppapi", "CliInband").Debug("completed")
 	}
 
-	return err
+	return nil
 }
