@@ -49,6 +49,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/cleanup"
 	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
+	registryauthorize "github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
@@ -283,17 +284,23 @@ func main() {
 	clientOptions := append(
 		tracing.WithTracingDial(),
 		grpc.WithBlock(),
-		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
+		grpc.WithDefaultCallOptions(
+			grpc.WaitForReady(true),
+			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime)))),
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(
 				credentials.NewTLS(tlsClientConfig))),
+		grpcfd.WithChainStreamInterceptor(),
+		grpcfd.WithChainUnaryInterceptor(),
 	)
+
 	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx,
 		registryclient.WithClientURL(&cfg.ConnectTo),
 		registryclient.WithDialOptions(clientOptions...),
 		registryclient.WithNSEAdditionalFunctionality(
 			sendfd.NewNetworkServiceEndpointRegistryClient(),
 		),
+		registryclient.WithAuthorizeNSERegistryClient(registryauthorize.NewNetworkServiceEndpointRegistryClient()),
 	)
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name: cfg.Name,
