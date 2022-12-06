@@ -15,7 +15,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.6.2-0.20221205183940-84c7ff837cdd
 	github.com/networkservicemesh/sdk v0.5.1-0.20221206103812-b6979bfe147d
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20221128102348-7b25c04bed9e
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20221206232124-a44ae6cddbad
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20221206105157-ce61d862f46f
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20221206112452-c9d7291b5e3b
 	github.com/pkg/errors v0.9.1
@@ -83,5 +83,5 @@ require (
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/kubelet v0.22.1 // indirect
+	k8s.io/kubelet v0.25.4 // indirect
 )
