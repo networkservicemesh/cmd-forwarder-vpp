@@ -41,6 +41,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	ipsecapi "github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/ipsec"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/memif"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/vxlan"
@@ -86,6 +87,12 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				f.vppServerConn,
 			)
 		},
+		ipsecapi.MECHANISM: func(ctx context.Context) verifiableEndpoint {
+			return newIpsecVerifiableEndpoint(ctx, prefix1, prefix2,
+				spiffejwt.TokenGeneratorFunc(f.x509source, f.config.MaxTokenLifetime),
+				f.vppServerConn,
+			)
+		},
 	}
 	clients := map[string]func(ctx context.Context) verifiableClient{
 		kernel.MECHANISM: func(ctx context.Context) verifiableClient {
@@ -111,6 +118,12 @@ func (f *ForwarderTestSuite) TestCombinations() {
 				f.vppClientConn,
 			)
 		},
+		ipsecapi.MECHANISM: func(ctx context.Context) verifiableClient {
+			return newIpsecVerifiableClient(ctx,
+				f.sutCC,
+				f.vppClientConn,
+			)
+		},
 	}
 
 	payloads := map[string][]string{
@@ -118,6 +131,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 			kernel.MECHANISM,
 			memif.MECHANISM,
 			wireguard.MECHANISM,
+			ipsecapi.MECHANISM,
 		},
 		payload.Ethernet: {
 			kernel.MECHANISM,
@@ -128,6 +142,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 	isRemote := map[string]bool{
 		wireguard.MECHANISM: true,
 		vxlan.MECHANISM:     true,
+		ipsecapi.MECHANISM:  true,
 	}
 	for _, pl := range []string{payload.Ethernet, payload.IP} {
 		payloadName := pl

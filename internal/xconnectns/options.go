@@ -37,6 +37,7 @@ type xconnOptions struct {
 	clientURL                        *url.URL
 	dialTimeout                      time.Duration
 	domain2Device                    map[string]string
+	prioriyMechanismList             []string
 	statsOpts                        []stats.Option
 	cleanupOpts                      []cleanup.Option
 	vxlanOpts                        []vxlan.Option
@@ -112,6 +113,13 @@ func WithCleanupOptions(opts ...cleanup.Option) Option {
 func WithVxlanOptions(opts ...vxlan.Option) Option {
 	return func(o *xconnOptions) {
 		o.vxlanOpts = opts
+	}
+}
+
+// WithPriorityMechanisms sets prioritymechanisms options
+func WithPriorityMechanisms(priorityList []string) Option {
+	return func(o *xconnOptions) {
+		o.prioriyMechanismList = priorityList
 	}
 }
 
