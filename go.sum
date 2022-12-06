@@ -124,8 +124,8 @@ github.com/edwarnicke/debug v1.0.0/go.mod h1:cJAtt6sSqp7yUFpiIvSD2Xzyc7iUTUMx0MU
 github.com/edwarnicke/exechelper v1.0.2/go.mod h1:/T271jtNX/ND4De6pa2aRy2+8sNtyCDB1A2pp4M+fUs=
 github.com/edwarnicke/exechelper v1.0.3 h1:OY2ocGAITTqnEDvZk0dRQSeMIQvyH0SyL/4ncz+5GeQ=
 github.com/edwarnicke/exechelper v1.0.3/go.mod h1:R65OUPKns4bgeHkCmfSHbmqLBU8aHZxTgLmEyUBUk4U=
-github.com/edwarnicke/govpp v0.0.0-20221023154218-ef9a6adf6930 h1:/gS3gW7jV6ljzWcnHGxu1Yn1guxtwq8IuwJpK5TUl1w=
-github.com/edwarnicke/govpp v0.0.0-20221023154218-ef9a6adf6930/go.mod h1:kHDnxA+SSNFeMEHz7xvhub1zvx4mOTRlWWRCay2n5NM=
+github.com/edwarnicke/govpp v0.0.0-20221205183833-306afd06cce5 h1:8EvgVD6lkOjoVQuKY3/iQV3ewu+uIqu8TZaAsvkJPIs=
+github.com/edwarnicke/govpp v0.0.0-20221205183833-306afd06cce5/go.mod h1:kHDnxA+SSNFeMEHz7xvhub1zvx4mOTRlWWRCay2n5NM=
 github.com/edwarnicke/grpcfd v1.1.2 h1:2b8kCABQ1+JjSKGDoHadqSW7whCeTXMqtyo6jmB5B8k=
 github.com/edwarnicke/grpcfd v1.1.2/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=
 github.com/edwarnicke/log v1.0.0 h1:T6uRNCmR99GTt/CpRr2Gz8eGW8fm0HMThDNGdNxPaGk=
@@ -364,8 +364,8 @@ github.com/munnerz/goautoneg v0.0.0-20120707110453-a547fc61f48d/go.mod h1:+n7T8m
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f/go.mod h1:ZdcZmHo+o7JKHSa8/e818NopupXU1YMK5fe1lsApnBw=
-github.com/networkservicemesh/api v1.6.2-0.20221123101008-30ff0ca88ee8 h1:243pLMg7+XD/794gnMlHRePyzxJJwECT+Gg9nAuiwTo=
-github.com/networkservicemesh/api v1.6.2-0.20221123101008-30ff0ca88ee8/go.mod h1:hOF2844BSstH1311oDMDgqqXS+kdc77htZNPRKl9mf8=
+github.com/networkservicemesh/api v1.6.2-0.20221205183940-84c7ff837cdd h1:26HR90HrJFZHIPPP3SCLGNRpPCMFoEnSSZfhHH8MPSo=
+github.com/networkservicemesh/api v1.6.2-0.20221205183940-84c7ff837cdd/go.mod h1:hOF2844BSstH1311oDMDgqqXS+kdc77htZNPRKl9mf8=
 github.com/networkservicemesh/sdk v0.5.1-0.20221205080356-9b1b773fbe13 h1:3iLQtkr1VoEwzDK2LemlTDtIGe8nyroDKD86FOtreYc=
 github.com/networkservicemesh/sdk v0.5.1-0.20221205080356-9b1b773fbe13/go.mod h1:KlA3LQ3lLDnV9Y1C3jOTX3GeOXdmk2oL6oPYz2slA88=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20221128102348-7b25c04bed9e h1:nN26aPrMTad/oo8IxcT/WE3zeLXHoar3ZncH8FYAUyk=
@@ -374,8 +374,8 @@ github.com/networkservicemesh/sdk-kernel v0.0.0-20221205081316-4df325defbcc h1:7
 github.com/networkservicemesh/sdk-kernel v0.0.0-20221205081316-4df325defbcc/go.mod h1:eOraIjlfLUPFngF9ii/gOib4sgLuBY7fbbMQ/F+QIjY=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20221205082526-61718a751d26 h1:n2XHW1jHaPa73irsE9pjkHB1+6sVyYd6EHKG/I1exOE=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20221205082526-61718a751d26/go.mod h1:kxCqwpBYzrfjUDpQtItaowjRwAkaa8WNHRs5pg2y4vg=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20221205082539-6668f53d0b3b h1:i5Rv6vNJfKuOwkMrx4nvdXcuWXHmFtZjg0hCI/RpTeA=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20221205082539-6668f53d0b3b/go.mod h1:iuH/XLkzLEaw03thr3MeSiYJvyKnXQusqlJMhs4gU6E=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20221206092944-1e7ed6b4c321 h1:fMiZHtERt84P9wJkhJeOqkixK64gFuoRIFUGM5mn4Gk=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20221206092944-1e7ed6b4c321/go.mod h1:87yFmsJzhziSxAOTml7TiEdY44fwFRp6XnsjY8IlHkc=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
