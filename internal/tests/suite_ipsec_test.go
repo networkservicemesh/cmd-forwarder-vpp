@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2022 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -24,39 +24,38 @@ import (
 	"github.com/edwarnicke/vpphelper"
 	"google.golang.org/grpc"
 
-	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
+	"github.com/networkservicemesh/api/pkg/api/networkservice"
+	ipsecapi "github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/ipsec"
 
+	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
+	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/ipam/point2pointipam"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/utils/metadata"
-
-	"github.com/networkservicemesh/api/pkg/api/networkservice"
-
-	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/endpoint"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/connectioncontext"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/wireguard"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/ipsec"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/pinhole"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/up"
 )
 
-type wireguardVerifiableEndpoint struct {
+type ipsecVerifiableEndpoint struct {
 	ctx     context.Context
 	vppConn vpphelper.Connection
 	endpoint.Endpoint
 }
 
-func newWireguardVerifiableEndpoint(ctx context.Context,
+func newIpsecVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
 	vppConn vpphelper.Connection) verifiableEndpoint {
-	rv := &wireguardVerifiableEndpoint{
+	rv := &ipsecVerifiableEndpoint{
 		ctx:     ctx,
 		vppConn: vppConn,
 	}
-	name := "wireguardVerifiableEndpoint"
+	name := "ipsecVerifiableEndpoint"
 	rv.Endpoint = endpoint.NewServer(ctx,
 		tokenGenerator,
 		endpoint.WithName(name),
@@ -69,14 +68,14 @@ func newWireguardVerifiableEndpoint(ctx context.Context,
 			pinhole.NewServer(vppConn),
 			connectioncontext.NewServer(vppConn),
 			mechanisms.NewServer(map[string]networkservice.NetworkServiceServer{
-				wireguard.MECHANISM: wireguard.NewServer(vppConn, net.ParseIP(serverIP)),
+				ipsecapi.MECHANISM: ipsec.NewServer(vppConn, net.ParseIP(serverIP)),
 			}),
 		),
 	)
 	return rv
 }
 
-func (v *wireguardVerifiableEndpoint) VerifyConnection(conn *networkservice.Connection) error {
+func (v *ipsecVerifiableEndpoint) VerifyConnection(conn *networkservice.Connection) error {
 	for _, ip := range conn.GetContext().GetIpContext().GetSrcIpAddrs() {
 		if err := pingVpp(v.ctx, v.vppConn, ip); err != nil {
 			return err
@@ -85,39 +84,39 @@ func (v *wireguardVerifiableEndpoint) VerifyConnection(conn *networkservice.Conn
 	return nil
 }
 
-func (v *wireguardVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
+func (v *ipsecVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
 	return nil
 }
 
-type wireguardVerifiableClient struct {
+type ipsecVerifiableClient struct {
 	ctx     context.Context
 	vppConn vpphelper.Connection
 	networkservice.NetworkServiceClient
 }
 
-func newWireguardVerifiableClient(
+func newIpsecVerifiableClient(
 	ctx context.Context,
 	sutCC grpc.ClientConnInterface,
 	vppConn vpphelper.Connection,
 ) verifiableClient {
-	return &wireguardVerifiableClient{
+	return &ipsecVerifiableClient{
 		ctx:     ctx,
 		vppConn: vppConn,
 		NetworkServiceClient: client.NewClient(
 			ctx,
-			client.WithName("wireguardVerifiableClient"),
+			client.WithName("ipsecVerifiableClient"),
 			client.WithClientConn(sutCC),
 			client.WithAdditionalFunctionality(
 				up.NewClient(ctx, vppConn),
 				connectioncontext.NewClient(vppConn),
-				wireguard.NewClient(vppConn, net.ParseIP(clientIP)),
+				ipsec.NewClient(vppConn, net.ParseIP(clientIP)),
 				pinhole.NewClient(vppConn),
 			),
 		),
 	}
 }
 
-func (v *wireguardVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
+func (v *ipsecVerifiableClient) VerifyConnection(conn *networkservice.Connection) error {
 	for _, ip := range conn.GetContext().GetIpContext().GetDstIpAddrs() {
 		if err := pingVpp(v.ctx, v.vppConn, ip); err != nil {
 			return err
@@ -126,6 +125,6 @@ func (v *wireguardVerifiableClient) VerifyConnection(conn *networkservice.Connec
 	return nil
 }
 
-func (v *wireguardVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
+func (v *ipsecVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
 	return nil
 }

@@ -80,6 +80,7 @@ func NewServer(
 		vppforwarder.WithClientURL(xconnOpts.clientURL),
 		vppforwarder.WithDialTimeout(xconnOpts.dialTimeout),
 		vppforwarder.WithVlanDomain2Device(xconnOpts.domain2Device),
+		vppforwarder.WithPriorityMechanisms(xconnOpts.prioriyMechanismList),
 		vppforwarder.WithCleanupOptions(xconnOpts.cleanupOpts...),
 		vppforwarder.WithStatsOptions(xconnOpts.statsOpts...),
 		vppforwarder.WithVxlanOptions(xconnOpts.vxlanOpts...),
