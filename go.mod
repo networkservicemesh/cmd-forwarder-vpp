@@ -15,7 +15,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.6.2-0.20221205183940-84c7ff837cdd
 	github.com/networkservicemesh/sdk v0.5.1-0.20221206103812-b6979bfe147d
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20221206232124-a44ae6cddbad
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20221206233229-0bd1359737d9
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20221206105157-ce61d862f46f
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20221206112452-c9d7291b5e3b
 	github.com/pkg/errors v0.9.1
@@ -25,7 +25,7 @@ require (
 	github.com/thanhpk/randstr v1.0.4
 	github.com/vishvananda/netlink v1.2.1-beta.2.0.20220630165224-c591ada0fb2b
 	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
-	golang.org/x/text v0.4.0
+	golang.org/x/text v0.5.0
 	google.golang.org/grpc v1.49.0
 )
 
