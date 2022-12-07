@@ -58,7 +58,7 @@ type Config struct {
 	PCIDriversPath      string        `default:"/sys/bus/pci/drivers" desc:"path to the PCI drivers directory" split_words:"true"`
 	CgroupPath          string        `default:"/host/sys/fs/cgroup/devices" desc:"path to the host cgroup directory" split_words:"true"`
 	VFIOPath            string        `default:"/host/dev/vfio" desc:"path to the host VFIO directory" split_words:"true"`
-	PriorityMechanisms  []string      `default:"" desc:"sets priorities for mechanisms" split_words:"true"`
+	MechanismPriority   []string      `default:"" desc:"sets priorities for mechanisms" split_words:"true"`
 }
 
 // Process reads config from env
