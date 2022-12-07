@@ -248,7 +248,7 @@ func main() {
 		xconnectns.WithAuthorizeServer(authorize.NewServer(authorize.WithSpiffeIDConnectionMap(&spiffeIDConnMap))),
 		xconnectns.WithAuthorizeMonitorConnectionsServer(authmonitor.NewMonitorConnectionServer(authmonitor.WithSpiffeIDConnectionMap(&spiffeIDConnMap))),
 		xconnectns.WithVlanDomain2Device(deviceMap),
-		xconnectns.WithPriorityMechanisms(cfg.PriorityMechanisms),
+		xconnectns.WithMechanismPriority(cfg.MechanismPriority),
 		xconnectns.WithClientURL(&cfg.ConnectTo),
 		xconnectns.WithDialTimeout(cfg.DialTimeout),
 		xconnectns.WithStatsOptions(statsOpts...),
