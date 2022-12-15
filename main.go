@@ -301,7 +301,8 @@ func main() {
 		registryclient.WithNSEAdditionalFunctionality(
 			sendfd.NewNetworkServiceEndpointRegistryClient(),
 		),
-		registryclient.WithAuthorizeNSERegistryClient(registryauthorize.NewNetworkServiceEndpointRegistryClient()),
+		registryclient.WithAuthorizeNSERegistryClient(registryauthorize.NewNetworkServiceEndpointRegistryClient(
+			registryauthorize.WithPolicies(cfg.RegistryClientPolicies...))),
 	)
 	_, err = registryClient.Register(ctx, &registryapi.NetworkServiceEndpoint{
 		Name: cfg.Name,
