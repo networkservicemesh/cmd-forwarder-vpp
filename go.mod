@@ -17,7 +17,7 @@ require (
 	github.com/networkservicemesh/sdk v0.5.1-0.20221219125240-465077a59741
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20221219130452-0350b7db25f0
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20221216224511-6d46975dc8ac
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20221216224321-5a6a13540d2d
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20221219130924-ea21aff332db
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0
@@ -51,7 +51,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20221216223852-a6e924f8aebb // indirect
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20221219130029-8ac148dbb54e // indirect
 	github.com/open-policy-agent/opa v0.44.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
