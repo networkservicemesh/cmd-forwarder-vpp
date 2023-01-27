@@ -16,8 +16,8 @@ require (
 	github.com/networkservicemesh/api v1.7.2-0.20230123083145-4a6c3ec589e1
 	github.com/networkservicemesh/sdk v0.5.1-0.20230124094906-637ce7074f92
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20230124095537-35703ac58677
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20230123085206-1baa83265e52
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20230123083241-1991351c5a9e
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20230124095744-ef9fa9e59995
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20230124100008-af4f93905aef
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0
