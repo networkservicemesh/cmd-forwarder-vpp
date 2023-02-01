@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -97,6 +97,7 @@ func ingressACLAddDelete() *acl.ACLAddReplace {
 				// Allow ingress ICMPv6 Router Advertisement Message
 				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
 				SrcPrefix:              ipv6zeroPrefix,
+				DstPrefix:              ipv6zeroPrefix,
 				Proto:                  ip_types.IP_API_PROTO_ICMP6,
 				DstportOrIcmpcodeFirst: 134,
 				DstportOrIcmpcodeLast:  134,
@@ -105,6 +106,7 @@ func ingressACLAddDelete() *acl.ACLAddReplace {
 				// Allow ingress ICMPv6 Neighbor Advertisement Message
 				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
 				SrcPrefix:              ipv6zeroPrefix,
+				DstPrefix:              ipv6zeroPrefix,
 				Proto:                  ip_types.IP_API_PROTO_ICMP6,
 				DstportOrIcmpcodeFirst: 136,
 				DstportOrIcmpcodeLast:  136,
@@ -112,10 +114,12 @@ func ingressACLAddDelete() *acl.ACLAddReplace {
 			{
 				IsPermit:  acl_types.ACL_ACTION_API_DENY,
 				SrcPrefix: ipV4zeroPrefix,
+				DstPrefix: ipV4zeroPrefix,
 			},
 			{
 				IsPermit:  acl_types.ACL_ACTION_API_DENY,
 				SrcPrefix: ipv6zeroPrefix,
+				DstPrefix: ipv6zeroPrefix,
 			},
 		},
 	}
@@ -130,6 +134,7 @@ func egressACLAddDelete() *acl.ACLAddReplace {
 				// Allow egress ICMPv6 Router Solicitation Message
 				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
 				Proto:                  ip_types.IP_API_PROTO_ICMP6,
+				SrcPrefix:              ipv6zeroPrefix,
 				DstPrefix:              ipv6zeroPrefix,
 				SrcportOrIcmptypeFirst: 133,
 				SrcportOrIcmptypeLast:  133,
@@ -139,15 +144,18 @@ func egressACLAddDelete() *acl.ACLAddReplace {
 				IsPermit:               acl_types.ACL_ACTION_API_PERMIT,
 				Proto:                  ip_types.IP_API_PROTO_ICMP6,
 				SrcPrefix:              ipv6zeroPrefix,
+				DstPrefix:              ipv6zeroPrefix,
 				SrcportOrIcmptypeFirst: 135,
 				SrcportOrIcmptypeLast:  135,
 			},
 			{
 				IsPermit:  acl_types.ACL_ACTION_API_DENY,
+				SrcPrefix: ipV4zeroPrefix,
 				DstPrefix: ipV4zeroPrefix,
 			},
 			{
 				IsPermit:  acl_types.ACL_ACTION_API_DENY,
+				SrcPrefix: ipv6zeroPrefix,
 				DstPrefix: ipv6zeroPrefix,
 			},
 		},

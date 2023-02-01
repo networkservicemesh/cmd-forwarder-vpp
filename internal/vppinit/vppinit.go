@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -206,21 +206,25 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 }
 
 func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
-	afPacketCreate := &af_packet.AfPacketCreate{
+	afPacketCreate := &af_packet.AfPacketCreateV3{
+		Mode:       af_packet.AF_PACKET_API_MODE_ETHERNET,
 		HwAddr:     types.ToVppMacAddress(&link.Attrs().HardwareAddr),
 		HostIfName: link.Attrs().Name,
+		Flags:      af_packet.AF_PACKET_API_FLAG_VERSION_2,
 	}
 	now := time.Now()
-	afPacketCreateRsp, err := af_packet.NewServiceClient(vppConn).AfPacketCreate(ctx, afPacketCreate)
+	afPacketCreateRsp, err := af_packet.NewServiceClient(vppConn).AfPacketCreateV3(ctx, afPacketCreate)
 	if err != nil {
 		return 0, err
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
+		WithField("mode", afPacketCreate.Mode).
 		WithField("hwaddr", afPacketCreate.HwAddr).
 		WithField("hostIfName", afPacketCreate.HostIfName).
+		WithField("flags", afPacketCreate.Flags).
 		WithField("duration", time.Since(now)).
-		WithField("vppapi", "AfPacketCreate").Debug("completed")
+		WithField("vppapi", "AfPacketCreateV3").Debug("completed")
 
 	return afPacketCreateRsp.SwIfIndex, nil
 }

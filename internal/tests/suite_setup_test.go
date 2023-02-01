@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -119,7 +119,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	cmdStr := "forwarder"
 	f.sutErrCh = exechelper.Start(cmdStr,
 		exechelper.WithContext(f.ctx),
-		exechelper.WithEnvirons(os.Environ()...),
+		exechelper.WithEnvirons(append(os.Environ(), "NSM_REGISTRY_CLIENT_POLICIES=\"\"")...),
 		exechelper.WithStdout(os.Stdout),
 		exechelper.WithStderr(os.Stderr),
 		exechelper.WithGracePeriod(30*time.Second),
