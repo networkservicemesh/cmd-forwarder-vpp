@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -30,9 +30,11 @@ import (
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/edwarnicke/debug"
+	"github.com/edwarnicke/genericsync"
 	"github.com/edwarnicke/grpcfd"
 	"github.com/edwarnicke/vpphelper"
 	"github.com/sirupsen/logrus"
+	"github.com/spiffe/go-spiffe/v2/spiffeid"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
 	"google.golang.org/grpc"
@@ -57,7 +59,6 @@ import (
 	authmonitor "github.com/networkservicemesh/sdk/pkg/tools/monitorconnection/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
-	"github.com/networkservicemesh/sdk/pkg/tools/spire"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
 
@@ -234,7 +235,7 @@ func main() {
 		grpcfd.WithChainStreamInterceptor(),
 		grpcfd.WithChainUnaryInterceptor(),
 	}
-	spiffeIDConnMap := spire.SpiffeIDConnectionMap{}
+	spiffeIDConnMap := genericsync.Map[spiffeid.ID, *genericsync.Map[string, struct{}]]{}
 	endpoint := xconnectns.NewServer(
 		ctx,
 		spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime),

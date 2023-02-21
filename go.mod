@@ -7,6 +7,7 @@ require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/debug v1.0.0
 	github.com/edwarnicke/exechelper v1.0.3
+	github.com/edwarnicke/genericsync v0.0.0-20220910010113-61a344f9bc29
 	github.com/edwarnicke/govpp v0.0.0-20230130211138-14ef5d20b1d0
 	github.com/edwarnicke/grpcfd v1.1.2
 	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
@@ -14,10 +15,10 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.7.2-0.20230123083145-4a6c3ec589e1
-	github.com/networkservicemesh/sdk v0.5.1-0.20230214013943-438ec051e69b
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20230214093953-233b1ac6214a
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20230214123342-528783e52303
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20230214123245-36ad9b74b357
+	github.com/networkservicemesh/sdk v0.5.1-0.20230221131021-bcd1eb0f52b4
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20230221132440-43b4f167f9de
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20230221132402-5b03677ef136
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20230221135914-b23aef5cb3e4
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0
@@ -35,7 +36,6 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/edwarnicke/genericsync v0.0.0-20220910010113-61a344f9bc29 // indirect
 	github.com/edwarnicke/log v1.0.0 // indirect
 	github.com/edwarnicke/serialize v1.0.7 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
@@ -52,7 +52,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20230214122858-b7a1313f02af // indirect
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20230221133432-0e73f4d59e95 // indirect
 	github.com/open-policy-agent/opa v0.44.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
