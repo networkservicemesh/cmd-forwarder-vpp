@@ -170,6 +170,7 @@ issues:
     - path: main.go
       linters:
         - revive
+      text: 'package-comments: should have a package comment'
     - path: main.go
       linters:
         - funlen
