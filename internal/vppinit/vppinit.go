@@ -207,10 +207,12 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 
 func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
 	afPacketCreate := &af_packet.AfPacketCreateV3{
-		Mode:       af_packet.AF_PACKET_API_MODE_ETHERNET,
-		HwAddr:     types.ToVppMacAddress(&link.Attrs().HardwareAddr),
-		HostIfName: link.Attrs().Name,
-		Flags:      af_packet.AF_PACKET_API_FLAG_VERSION_2,
+		Mode:        af_packet.AF_PACKET_API_MODE_ETHERNET,
+		HwAddr:      types.ToVppMacAddress(&link.Attrs().HardwareAddr),
+		HostIfName:  link.Attrs().Name,
+		RxFrameSize: 10240,
+		TxFrameSize: 10240,
+		Flags:       af_packet.AF_PACKET_API_FLAG_VERSION_2,
 	}
 	now := time.Now()
 	afPacketCreateRsp, err := af_packet.NewServiceClient(vppConn).AfPacketCreateV3(ctx, afPacketCreate)
