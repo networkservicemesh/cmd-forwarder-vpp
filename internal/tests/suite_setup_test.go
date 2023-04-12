@@ -67,7 +67,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	log.FromContext(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	_ = os.Setenv("NSM_TUNNEL_IP", forwarderIP)
-	// _ = os.Setenv("NSM_VPP_INIT", "AF_XDP")
+	_ = os.Setenv("NSM_VPP_INIT", "AF_XDP")
 	f.Require().NoError(f.config.Process())
 
 	// ********************************************************************************

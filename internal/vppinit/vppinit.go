@@ -73,13 +73,22 @@ func (f *Func) Execute(ctx context.Context, vppConn api.Connection, tunnelIP net
 // Decode for envconfig to select correct vpp initialization function
 func (f *Func) Decode(value string) error {
 	switch value {
+	case "AF_XDP":
+		ver, err := getKernelVer()
+		if err != nil {
+			return err
+		}
+		if ver[0] > afXdpMajorVer || (ver[0] == afXdpMajorVer && ver[1] >= afXdpMinorVer) {
+			f.f = func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+				return LinkToSocket(ctx, vppConn, tunnelIP, AfXDP)
+			}
+			return nil
+		}
+		log.FromContext(context.Background()).Warn("AF_XDP is not supported by this linux kernel version. AF_PACKET will be used")
+		fallthrough
 	case "AF_PACKET":
 		f.f = func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
 			return LinkToSocket(ctx, vppConn, tunnelIP, AfPacket)
-		}
-	case "AF_XDP":
-		f.f = func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
-			return LinkToSocket(ctx, vppConn, tunnelIP, AfXDP)
 		}
 	case "NONE":
 		f.f = None
@@ -103,12 +112,12 @@ func None(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP,
 }
 
 // Get Linux kernel version
-// Example: 5.11.0-25-generic -> 5.11
-func getKernelVer() []int {
+// Example: 5.11.0-25-generic -> [5,11]
+func getKernelVer() ([2]int, error) {
 	var uname syscall.Utsname
 	err := syscall.Uname(&uname)
 	if err != nil {
-		return nil
+		return [2]int{}, err
 	}
 
 	b := make([]byte, 0, len(uname.Release))
@@ -121,19 +130,19 @@ func getKernelVer() []int {
 	ver := strings.Split(string(b), ".")
 	maj, err := strconv.Atoi(ver[0])
 	if err != nil {
-		return nil
+		return [2]int{}, err
 	}
 	min, err := strconv.Atoi(ver[1])
 	if err != nil {
-		return nil
+		return [2]int{}, err
 	}
-	return []int{maj, min}
+	return [2]int{maj, min}, nil
 }
 
 // LinkToSocket - will link vpp via af_packet or af_xdp to the interface having the tunnelIP
 // if tunnelIP is nil, it will find the interface for the default route and use that instead.
 // It returns the resulting tunnelIP
-func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, tryFamily AfType) (net.IP, error) {
+func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, family AfType) (net.IP, error) {
 	link, addrs, routes, err := linkAddrsRoutes(ctx, tunnelIP)
 	if err != nil {
 		return nil, err
@@ -143,16 +152,8 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 	}
 
 	afFunc := createAfPacket
-	if tryFamily == AfXDP {
-		// Check if AF_XDP is supported
-		ver := getKernelVer()
-		if ver != nil {
-			if ver[0] > afXdpMajorVer || (ver[0] == afXdpMajorVer && ver[1] >= afXdpMinorVer) {
-				afFunc = createAfXDP
-			} else {
-				log.FromContext(ctx).Warn("AF_XDP is not supported for this linux kernel version. AF_PACKET will be used")
-			}
-		}
+	if family == AfXDP {
+		afFunc = createAfXDP
 	}
 
 	swIfIndex, err := afFunc(ctx, vppConn, link)
@@ -386,7 +387,6 @@ func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link)
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetMacAddress").Debug("completed")
 
-	go monitorNewNeighbours(ctx, vppConn, link, afXDPCreateRsp.SwIfIndex)
 	return afXDPCreateRsp.SwIfIndex, nil
 }
 
@@ -587,42 +587,4 @@ func addHostLinksAsNeighbours(ctx context.Context, vppConn api.Connection, link 
 		}
 	}
 	return err
-}
-
-func monitorNewNeighbours(ctx context.Context, vppConn api.Connection, link netlink.Link, swIfIndex interface_types.InterfaceIndex) {
-	ch := make(chan netlink.NeighUpdate)
-	done := make(chan struct{})
-	defer close(done)
-	err := netlink.NeighSubscribe(ch, done)
-	if err != nil {
-		log.FromContext(ctx).Errorf("netlink.NeighSubscribe error: %v", err.Error())
-		return
-	}
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case nei := <-ch:
-			if (nei.State != netlink.NUD_PERMANENT && nei.State != netlink.NUD_REACHABLE) ||
-				(nei.IP == nil) ||
-				(nei.LinkIndex != link.Attrs().Index) {
-				continue
-			}
-
-			ipNeighborAddDel := &ip_neighbor.IPNeighborAddDel{
-				IsAdd: true,
-				Neighbor: ip_neighbor.IPNeighbor{
-					SwIfIndex:  swIfIndex,
-					Flags:      ip_neighbor.IP_API_NEIGHBOR_FLAG_STATIC,
-					MacAddress: types.ToVppMacAddress(&nei.HardwareAddr),
-					IPAddress:  types.ToVppAddress(nei.IP),
-				},
-			}
-			_, err = ip_neighbor.NewServiceClient(vppConn).IPNeighborAddDel(ctx, ipNeighborAddDel)
-			if err != nil {
-				log.FromContext(ctx).Info("IPNeighborAddDel error: %v", err.Error())
-				continue
-			}
-		}
-	}
 }

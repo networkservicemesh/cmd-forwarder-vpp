@@ -25,6 +25,7 @@
 #define ntohs(x)        __constant_ntohs(x)
 #define MAX_NR_PORTS    65535
 
+// nsm_xdp_pinhole contains NSM UDP ports. It is filled by afxdppinhole chain element
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
     __uint(max_entries, MAX_NR_PORTS);
@@ -33,6 +34,8 @@ struct {
     __uint(pinning, LIBBPF_PIN_BY_NAME);
 } nsm_xdp_pinhole SEC(".maps");
 
+// xsks_map redirects raw XDP frames to AF_XDP sockets (XSKs). It is filled by VPP plugin
+// https://docs.kernel.org/bpf/map_xskmap.html
 struct {
     __uint(type, BPF_MAP_TYPE_XSKMAP);
     __uint(max_entries, 64);
@@ -46,7 +49,7 @@ int xdp_sock_prog(struct xdp_md *ctx) {
     const void *data_end = (void *)(long)ctx->data_end;
 
     if (data + sizeof(struct ethhdr) > data_end) {
-        // too small
+        // the packet is too small
         return XDP_PASS;
     }
 
