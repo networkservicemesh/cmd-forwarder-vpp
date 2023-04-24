@@ -28,6 +28,13 @@ WORKDIR /build/internal/tests/
 CMD dlv -l :40000 --headless=true --api-version=2 test -test.v .
 
 FROM ghcr.io/edwarnicke/govpp/vpp:${VPP_VERSION} as runtime
+ARG user=nsm-user
+ARG group=nsm-user
+ARG uid=10001
+ARG gid=10001
+RUN groupadd -g ${gid} ${user} && useradd -g ${gid} -l -M -u ${uid} ${user}
 COPY --from=build /bin/forwarder /bin/forwarder
+RUN setcap cap_dac_override,cap_sys_admin,cap_net_admin=eip /bin/forwarder
+RUN setcap cap_ipc_lock,cap_net_raw,cap_sys_ptrace,cap_dac_override,cap_sys_admin,cap_net_admin,cap_setgid=eip /usr/bin/vpp
 COPY --from=build /bin/grpc-health-probe /bin/grpc-health-probe
 ENTRYPOINT [ "/bin/forwarder" ]
