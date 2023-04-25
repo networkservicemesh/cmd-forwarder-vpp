@@ -178,7 +178,7 @@ issues:
     - path: internal/vppinit/vppinit.go
       linters:
         - funlen
-      text: "Function 'LinkToAfPacket'"
+      text: "Function 'LinkToSocket'"
     - path: internal/tests/suite_combinatronics_test.go
       linters:
         - funlen

@@ -12,10 +12,14 @@ ADD https://github.com/spiffe/spire/releases/download/v1.2.2/spire-1.2.2-linux-x
 RUN tar xzvf spire-1.2.2-linux-x86_64-glibc.tar.gz -C /bin --strip=2 spire-1.2.2/bin/spire-server spire-1.2.2/bin/spire-agent
 
 FROM go as build
+RUN apt update
+RUN apt install -f -y libbpf-dev clang
 WORKDIR /build
 COPY go.mod go.sum ./
 COPY ./local ./local
 COPY ./internal/imports ./internal/imports
+COPY ./internal/afxdp/afxdp.c ./internal/afxdp/
+RUN clang -O3 -g -Wextra -Wall -target bpf -I/usr/include/x86_64-linux-gnu -I/usr/include -c -o /bin/afxdp.o ./internal/afxdp/afxdp.c
 RUN go build ./internal/imports
 COPY . .
 RUN go build -o /bin/forwarder .
@@ -28,6 +32,9 @@ WORKDIR /build/internal/tests/
 CMD dlv -l :40000 --headless=true --api-version=2 test -test.v .
 
 FROM ghcr.io/edwarnicke/govpp/vpp:${VPP_VERSION} as runtime
+RUN apt-get update
+RUN apt install -f -y libbpf-dev
 COPY --from=build /bin/forwarder /bin/forwarder
+COPY --from=build /bin/afxdp.o /bin/afxdp.o
 COPY --from=build /bin/grpc-health-probe /bin/grpc-health-probe
 ENTRYPOINT [ "/bin/forwarder" ]

@@ -21,21 +21,43 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strconv"
+	"strings"
+	"syscall"
 	"time"
+
+	"github.com/go-ping/ping"
 
 	"git.fd.io/govpp.git/api"
 	"github.com/edwarnicke/govpp/binapi/af_packet"
+	"github.com/edwarnicke/govpp/binapi/af_xdp"
 	"github.com/edwarnicke/govpp/binapi/fib_types"
 	interfaces "github.com/edwarnicke/govpp/binapi/interface"
 	"github.com/edwarnicke/govpp/binapi/interface_types"
 	"github.com/edwarnicke/govpp/binapi/ip"
+	"github.com/edwarnicke/govpp/binapi/ip6_nd"
 	"github.com/edwarnicke/govpp/binapi/ip_neighbor"
-	"github.com/edwarnicke/govpp/binapi/vlib"
 	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/tools/types"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
+)
+
+// AfType represents socket address family
+type AfType uint32
+
+const (
+	// AfPacket - AF_PACKET
+	AfPacket AfType = 0
+	// AfXDP - AF_XDP
+	AfXDP AfType = 1
+)
+
+// Minimum required kernel version for AF_XDP
+const (
+	afXdpMajorVer = 5
+	afXdpMinorVer = 4
 )
 
 // Func - vpp initialization function
@@ -51,8 +73,23 @@ func (f *Func) Execute(ctx context.Context, vppConn api.Connection, tunnelIP net
 // Decode for envconfig to select correct vpp initialization function
 func (f *Func) Decode(value string) error {
 	switch value {
+	case "AF_XDP":
+		ver, err := getKernelVer()
+		if err != nil {
+			return err
+		}
+		if ver[0] > afXdpMajorVer || (ver[0] == afXdpMajorVer && ver[1] >= afXdpMinorVer) {
+			f.f = func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+				return LinkToSocket(ctx, vppConn, tunnelIP, AfXDP)
+			}
+			return nil
+		}
+		log.FromContext(context.Background()).Warn("AF_XDP is not supported by this linux kernel version. AF_PACKET will be used")
+		fallthrough
 	case "AF_PACKET":
-		f.f = LinkToAfPacket
+		f.f = func(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+			return LinkToSocket(ctx, vppConn, tunnelIP, AfPacket)
+		}
 	case "NONE":
 		f.f = None
 	default:
@@ -74,10 +111,38 @@ func None(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP,
 	return tunnelIP, nil
 }
 
-// LinkToAfPacket - will link vpp via af_packet to the interface having the tunnelIP
+// Get Linux kernel version
+// Example: 5.11.0-25-generic -> [5,11]
+func getKernelVer() ([2]int, error) {
+	var uname syscall.Utsname
+	err := syscall.Uname(&uname)
+	if err != nil {
+		return [2]int{}, err
+	}
+
+	b := make([]byte, 0, len(uname.Release))
+	for _, v := range uname.Release {
+		if v == 0x00 {
+			break
+		}
+		b = append(b, byte(v))
+	}
+	ver := strings.Split(string(b), ".")
+	maj, err := strconv.Atoi(ver[0])
+	if err != nil {
+		return [2]int{}, err
+	}
+	min, err := strconv.Atoi(ver[1])
+	if err != nil {
+		return [2]int{}, err
+	}
+	return [2]int{maj, min}, nil
+}
+
+// LinkToSocket - will link vpp via af_packet or af_xdp to the interface having the tunnelIP
 // if tunnelIP is nil, it will find the interface for the default route and use that instead.
 // It returns the resulting tunnelIP
-func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, family AfType) (net.IP, error) {
 	link, addrs, routes, err := linkAddrsRoutes(ctx, tunnelIP)
 	if err != nil {
 		return nil, err
@@ -86,7 +151,12 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		return tunnelIP, nil
 	}
 
-	swIfIndex, err := createAfPacket(ctx, vppConn, link)
+	afFunc := createAfPacket
+	if family == AfXDP {
+		afFunc = createAfXDP
+	}
+
+	swIfIndex, err := afFunc(ctx, vppConn, link)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +171,7 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 
 	// Disable Router Advertisement on IPv6 tunnels
 	if tunnelIP.To4() == nil {
-		err = disableIPv6RA(ctx, vppConn, link)
+		err = disableIPv6RA(ctx, vppConn, swIfIndex)
 		if err != nil {
 			return nil, err
 		}
@@ -121,6 +191,10 @@ func LinkToAfPacket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP
 		WithField("vppapi", "SwInterfaceSetFlags").Debug("completed")
 
 	err = addIPNeighbor(ctx, vppConn, swIfIndex, link.Attrs().Index)
+	if err != nil {
+		return nil, err
+	}
+	err = addHostLinksAsNeighbours(ctx, vppConn, link, swIfIndex)
 	if err != nil {
 		return nil, err
 	}
@@ -229,6 +303,91 @@ func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Li
 		WithField("vppapi", "AfPacketCreateV3").Debug("completed")
 
 	return afPacketCreateRsp.SwIfIndex, nil
+}
+
+func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
+	// Get all gateways for a given interface and send ping requests.
+	// This will allow us to resolve the neighbors.
+	rl, _ := netlink.RouteList(link, netlink.FAMILY_ALL)
+	for i := 0; i < len(rl); i++ {
+		if rl[i].Gw != nil {
+			continue
+		}
+		pi := ping.New(rl[i].Gw.String())
+		pi.Count = 1
+		pi.Timeout = time.Millisecond * 100
+		pi.SetPrivileged(true)
+		err := pi.Run()
+		if err == nil {
+			log.FromContext(ctx).Infof("Gateway %v was resolved", rl[0].Gw.String())
+		}
+	}
+
+	// Based on VPP guidelines
+	err := netlink.SetPromiscOn(link)
+	if err != nil {
+		return 0, err
+	}
+
+	// /sys/fs/bpf - the default dir of BPF filesystem
+	err = syscall.Mount("bpffs", "/sys/fs/bpf", "bpf", 0, "")
+	if err != nil {
+		panic(err)
+	}
+	afXDPCreate := &af_xdp.AfXdpCreate{
+		HostIf:  link.Attrs().Name,
+		RxqSize: 8192,
+		TxqSize: 8192,
+		Mode:    af_xdp.AF_XDP_API_MODE_AUTO,
+		Prog:    "/bin/afxdp.o",
+	}
+	now := time.Now()
+	afXDPCreateRsp, err := af_xdp.NewServiceClient(vppConn).AfXdpCreate(ctx, afXDPCreate)
+	if err != nil {
+		log.FromContext(ctx).
+			WithField("hostIfName", afXDPCreate.HostIf).
+			WithField("duration", time.Since(now)).
+			WithField("vppapi", "AfXdpCreate").Error(err)
+		return 0, err
+	}
+	log.FromContext(ctx).
+		WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+		WithField("hostIfName", afXDPCreate.HostIf).
+		WithField("duration", time.Since(now)).
+		WithField("vppapi", "AfXdpCreate").Debug("completed")
+
+	now = time.Now()
+	if _, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetRxMode(ctx, &interfaces.SwInterfaceSetRxMode{
+		SwIfIndex: afXDPCreateRsp.SwIfIndex,
+		Mode:      interface_types.RX_MODE_API_ADAPTIVE,
+	}); err != nil {
+		return 0, errors.Wrap(err, "vppapi SwInterfaceSetRxMode returned error")
+	}
+	log.FromContext(ctx).
+		WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+		WithField("mode", interface_types.RX_MODE_API_ADAPTIVE).
+		WithField("duration", time.Since(now)).
+		WithField("vppapi", "SwInterfaceSetRxMode").Debug("completed")
+
+	now = time.Now()
+	_, err = interfaces.NewServiceClient(vppConn).SwInterfaceSetMacAddress(ctx, &interfaces.SwInterfaceSetMacAddress{
+		SwIfIndex:  afXDPCreateRsp.SwIfIndex,
+		MacAddress: types.ToVppMacAddress(&link.Attrs().HardwareAddr),
+	})
+	if err != nil {
+		log.FromContext(ctx).
+			WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+			WithField("duration", time.Since(now)).
+			WithField("vppapi", "SwInterfaceSetMacAddress").Error(err)
+		return 0, err
+	}
+	log.FromContext(ctx).
+		WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+		WithField("hwaddr", types.ToVppMacAddress(&link.Attrs().HardwareAddr)).
+		WithField("duration", time.Since(now)).
+		WithField("vppapi", "SwInterfaceSetMacAddress").Debug("completed")
+
+	return afXDPCreateRsp.SwIfIndex, nil
 }
 
 func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkIdx int) error {
@@ -353,33 +512,79 @@ func linkByIP(ctx context.Context, ipaddress net.IP) (netlink.Link, error) {
 	return nil, nil
 }
 
-func disableIPv6RA(ctx context.Context, vppConn api.Connection, link netlink.Link) error {
-	cmds := []string{
-		fmt.Sprintf("enable ip6 interface host-%s", link.Attrs().Name),
-		fmt.Sprintf("ip6 nd host-%s ra-cease ra-suppress", link.Attrs().Name),
-	}
-	for _, cmd := range cmds {
-		now := time.Now()
-		var reply, err = vlib.NewServiceClient(vppConn).CliInband(ctx, &vlib.CliInband{
-			Cmd: cmd,
-		})
-
-		if err != nil {
-			log.FromContext(ctx).
-				WithField("interface", fmt.Sprintf("host-%s", link.Attrs().Name)).
-				WithField("duration", time.Since(now)).
-				WithField("cmd", cmd).
-				WithField("vppapi", "CliInband").Error(err)
-			return err
-		}
-
+func disableIPv6RA(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex) error {
+	now := time.Now()
+	_, err := ip.NewServiceClient(vppConn).SwInterfaceIP6EnableDisable(ctx,
+		&ip.SwInterfaceIP6EnableDisable{
+			SwIfIndex: swIfIndex,
+			Enable:    true,
+		},
+	)
+	if err != nil {
 		log.FromContext(ctx).
-			WithField("interface", fmt.Sprintf("host-%s", link.Attrs().Name)).
-			WithField("cmd", cmd).
-			WithField("reply", reply.Reply).
 			WithField("duration", time.Since(now)).
-			WithField("vppapi", "CliInband").Debug("completed")
+			WithField("swIfIndex", swIfIndex).
+			WithField("vppapi", "SwInterfaceIP6Enable").Error(err)
+		return err
 	}
+	log.FromContext(ctx).
+		WithField("duration", time.Since(now)).
+		WithField("swIfIndex", swIfIndex).
+		WithField("vppapi", "SwInterfaceIP6Enable").Debug("completed")
+
+	now = time.Now()
+	_, err = ip6_nd.NewServiceClient(vppConn).SwInterfaceIP6ndRaConfig(ctx, &ip6_nd.SwInterfaceIP6ndRaConfig{
+		SwIfIndex: swIfIndex,
+		Suppress:  1,
+		Cease:     1,
+	})
+	if err != nil {
+		log.FromContext(ctx).
+			WithField("duration", time.Since(now)).
+			WithField("swIfIndex", swIfIndex).
+			WithField("vppapi", "SwInterfaceIP6ndRaConfig").Error(err)
+		return err
+	}
+	log.FromContext(ctx).
+		WithField("duration", time.Since(now)).
+		WithField("swIfIndex", swIfIndex).
+		WithField("vppapi", "SwInterfaceIP6ndRaConfig").Debug("completed")
 
 	return nil
+}
+
+func addHostLinksAsNeighbours(ctx context.Context, vppConn api.Connection, link netlink.Link, swIfIndex interface_types.InterfaceIndex) error {
+	// Add host links as neighbors. We have no other way to make an ARP request
+	hostLinks, err := netlink.LinkList()
+	if err != nil {
+		return err
+	}
+
+	for _, hl := range hostLinks {
+		if link.Attrs().Index == hl.Attrs().Index || len(hl.Attrs().HardwareAddr) == 0 {
+			continue
+		}
+		var ips []netlink.Addr
+		ips, err = netlink.AddrList(hl, netlink.FAMILY_ALL)
+		if err != nil {
+			return err
+		}
+		for _, hlIP := range ips {
+			ipNeighborAddDel := &ip_neighbor.IPNeighborAddDel{
+				IsAdd: true,
+				Neighbor: ip_neighbor.IPNeighbor{
+					SwIfIndex:  swIfIndex,
+					Flags:      ip_neighbor.IP_API_NEIGHBOR_FLAG_STATIC,
+					MacAddress: types.ToVppMacAddress(&hl.Attrs().HardwareAddr),
+					IPAddress:  types.ToVppAddress(hlIP.IP),
+				},
+			}
+			_, err = ip_neighbor.NewServiceClient(vppConn).IPNeighborAddDel(ctx, ipNeighborAddDel)
+			if err != nil {
+				return err
+			}
+			log.FromContext(ctx).Infof("host link was added as a neighbor: IP: %v, MAC: %v", hlIP.IP.String(), hl.Attrs().HardwareAddr.String())
+		}
+	}
+	return err
 }
