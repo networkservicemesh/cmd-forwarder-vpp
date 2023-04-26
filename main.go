@@ -225,16 +225,17 @@ func main() {
 	tlsServerConfig := tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())
 	tlsServerConfig.MinVersion = tls.VersionTLS12
 
-	dialOptions := []grpc.DialOption{
-		grpc.WithBlock(),
-		grpc.WithTransportCredentials(
-			grpcfd.TransportCredentials(credentials.NewTLS(tlsClientConfig))),
+	dialOptions := append(
+		tracing.WithTracingDial(),
 		grpc.WithDefaultCallOptions(
-			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime))),
-		),
+			grpc.WaitForReady(true),
+			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime)))),
+		grpc.WithTransportCredentials(
+			grpcfd.TransportCredentials(
+				credentials.NewTLS(tlsClientConfig))),
 		grpcfd.WithChainStreamInterceptor(),
 		grpcfd.WithChainUnaryInterceptor(),
-	}
+	)
 	spiffeIDConnMap := genericsync.Map[spiffeid.ID, *genericsync.Map[string, struct{}]]{}
 	endpoint := xconnectns.NewServer(
 		ctx,
@@ -266,10 +267,13 @@ func main() {
 	now = time.Now()
 
 	server := grpc.NewServer(
-		// TODO add serveroptions for tracing
-		grpc.Creds(
-			grpcfd.TransportCredentials(
-				credentials.NewTLS(tlsServerConfig))),
+		append(
+			tracing.WithTracing(),
+			grpc.Creds(
+				grpcfd.TransportCredentials(
+					credentials.NewTLS(tlsServerConfig)),
+			),
+		)...,
 	)
 	endpoint.Register(server)
 
@@ -282,23 +286,9 @@ func main() {
 	log.FromContext(ctx).Infof("executing phase 9: register %s with the registry (time since start: %s)", cfg.NSName, time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
-
-	clientOptions := append(
-		tracing.WithTracingDial(),
-		grpc.WithBlock(),
-		grpc.WithDefaultCallOptions(
-			grpc.WaitForReady(true),
-			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime)))),
-		grpc.WithTransportCredentials(
-			grpcfd.TransportCredentials(
-				credentials.NewTLS(tlsClientConfig))),
-		grpcfd.WithChainStreamInterceptor(),
-		grpcfd.WithChainUnaryInterceptor(),
-	)
-
 	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx,
 		registryclient.WithClientURL(&cfg.ConnectTo),
-		registryclient.WithDialOptions(clientOptions...),
+		registryclient.WithDialOptions(dialOptions...),
 		registryclient.WithNSEAdditionalFunctionality(
 			sendfd.NewNetworkServiceEndpointRegistryClient(),
 		),
