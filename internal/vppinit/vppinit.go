@@ -406,7 +406,6 @@ func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interf
 			IsAdd: true,
 			Neighbor: ip_neighbor.IPNeighbor{
 				SwIfIndex:  swIfIndex,
-				Flags:      ip_neighbor.IP_API_NEIGHBOR_FLAG_STATIC,
 				MacAddress: types.ToVppMacAddress(&entry.HardwareAddr),
 				IPAddress:  types.ToVppAddress(entry.IP),
 			},
@@ -574,7 +573,6 @@ func addHostLinksAsNeighbours(ctx context.Context, vppConn api.Connection, link 
 				IsAdd: true,
 				Neighbor: ip_neighbor.IPNeighbor{
 					SwIfIndex:  swIfIndex,
-					Flags:      ip_neighbor.IP_API_NEIGHBOR_FLAG_STATIC,
 					MacAddress: types.ToVppMacAddress(&hl.Attrs().HardwareAddr),
 					IPAddress:  types.ToVppAddress(hlIP.IP),
 				},
