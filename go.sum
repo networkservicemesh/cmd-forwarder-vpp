@@ -245,8 +245,8 @@ github.com/networkservicemesh/sdk-kernel v0.0.0-20230501005646-bfd86b518964 h1:h
 github.com/networkservicemesh/sdk-kernel v0.0.0-20230501005646-bfd86b518964/go.mod h1:e1DfoKdlCeEC1glTzTGFiA/OiufzGWUlpW5oybsZJ14=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20230502013735-a0f7ec5fb4de h1:q0GuQpP2UnerDZwBMGsZiN4xBdQPwLsTlHta/pGCw0s=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20230502013735-a0f7ec5fb4de/go.mod h1:V8YlJIvbnYI+8lrp42820NELDZ0CHGvH5UBwa0dfEwM=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20230427104501-e6c9ca81ba8e h1:SCQISahwuRllsuP1qhp4V8jmp6gF+IfKO/1oplyptrU=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20230427104501-e6c9ca81ba8e/go.mod h1:XVJbBHGnJLDKsOiQFQQEgr4FJ9d50TvF3baHd5lEUX8=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20230502013652-8471f7f9634d h1:5EvRrR0oFxYc/397CABwBUg664ew1BqWzD1WslUWeTc=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20230502013652-8471f7f9634d/go.mod h1:qJC3nS+UoW+jXGv4ShRo+2aiNzD+khS70xFSHJdLQwU=
 github.com/onsi/ginkgo v1.8.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v1.1.0 h1:e3YP4dN/HYPpGh29X1ZkcxcEICsOls9huyVCRBaxjq8=
 github.com/onsi/gomega v1.1.0/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
