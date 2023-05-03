@@ -99,8 +99,8 @@ func ingressACLAddDelete() *acl.ACLAddReplace {
 				SrcPrefix:              ipv6zeroPrefix,
 				DstPrefix:              ipv6zeroPrefix,
 				Proto:                  ip_types.IP_API_PROTO_ICMP6,
-				DstportOrIcmpcodeFirst: 134,
-				DstportOrIcmpcodeLast:  134,
+				SrcportOrIcmptypeFirst: 134,
+				SrcportOrIcmptypeLast:  134,
 			},
 			{
 				// Allow ingress ICMPv6 Neighbor Advertisement Message
@@ -108,8 +108,8 @@ func ingressACLAddDelete() *acl.ACLAddReplace {
 				SrcPrefix:              ipv6zeroPrefix,
 				DstPrefix:              ipv6zeroPrefix,
 				Proto:                  ip_types.IP_API_PROTO_ICMP6,
-				DstportOrIcmpcodeFirst: 136,
-				DstportOrIcmpcodeLast:  136,
+				SrcportOrIcmptypeFirst: 136,
+				SrcportOrIcmptypeLast:  136,
 			},
 			{
 				IsPermit:  acl_types.ACL_ACTION_API_DENY,
