@@ -22,7 +22,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/edwarnicke/vpphelper"
 	"github.com/spiffe/go-spiffe/v2/bundle/x509bundle"
 	"github.com/spiffe/go-spiffe/v2/svid/x509svid"
 	"github.com/stretchr/testify/suite"
@@ -48,12 +47,12 @@ type ForwarderTestSuite struct {
 	x509bundle x509bundle.Source
 
 	// vppServer stuff
-	vppServerConn  vpphelper.Connection
+	vppServerConn  vppconnection.Connection
 	vppServerRoot  string
 	vppServerErrCh <-chan error
 
 	// vppClient stuff
-	vppClientConn  vpphelper.Connection
+	vppClientConn  vppconnection.Connection
 	vppClientRoot  string
 	vppClientErrCh <-chan error
 

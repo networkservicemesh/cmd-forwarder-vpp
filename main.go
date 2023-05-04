@@ -32,7 +32,6 @@ import (
 	"github.com/edwarnicke/debug"
 	"github.com/edwarnicke/genericsync"
 	"github.com/edwarnicke/grpcfd"
-	"github.com/edwarnicke/vpphelper"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffeid"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
@@ -64,6 +63,7 @@ import (
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/vxlan"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/stats"
+	"github.com/networkservicemesh/sdk-vpp/pkg/tools/vppconnection"
 
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/config"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/devicecfg"
@@ -153,7 +153,7 @@ func main() {
 	// ********************************************************************************
 	now = time.Now()
 
-	var vppConn vpphelper.Connection
+	var vppConn vppconnection.Connection
 	var vppErrCh <-chan error
 	var statsOpts []stats.Option
 	cleanupDoneCh := make(chan struct{})
@@ -162,7 +162,7 @@ func main() {
 	}
 
 	if fileExists(cfg.VppAPISocket) { // If we have an external VppAPISocket, use that
-		vppConn = vpphelper.DialContext(ctx, cfg.VppAPISocket)
+		vppConn = vppconnection.DialContext(ctx, cfg.VppAPISocket)
 		errCh := make(chan error)
 		close(errCh)
 		vppErrCh = errCh
@@ -175,7 +175,7 @@ func main() {
 			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
 		}
 	} else { // If we don't have a VPPAPISocket, start VPP and use that
-		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
+		vppConn, vppErrCh = vppconnection.StartAndDialContext(ctx)
 		exitOnErrCh(ctx, cancel, vppErrCh)
 		close(cleanupDoneCh)
 		log.FromContext(ctx).Info("local vpp is being used")

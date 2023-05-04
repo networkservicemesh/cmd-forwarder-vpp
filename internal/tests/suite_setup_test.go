@@ -31,7 +31,6 @@ import (
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/edwarnicke/exechelper"
 	"github.com/edwarnicke/grpcfd"
-	"github.com/edwarnicke/vpphelper"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
@@ -203,16 +202,16 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 }
 
-func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppConn vpphelper.Connection, vppRoot string, errCh <-chan error) {
+func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppConn vppconnection.Connection, vppRoot string, errCh <-chan error) {
 	now := time.Now()
 	var err error
 	vppRoot, err = ioutil.TempDir("", fmt.Sprintf("%s-", name))
 	f.Require().NoError(err)
 
 	f.Require().NoError(err)
-	vppConn, errCh = vpphelper.StartAndDialContext(
+	vppConn, errCh = vppconnection.StartAndDialContext(
 		ctx,
-		vpphelper.WithRootDir(vppRoot),
+		vppconnection.WithRootDir(vppRoot),
 	)
 	f.Require().Len(errCh, 0)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)

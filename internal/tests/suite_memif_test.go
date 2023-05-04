@@ -27,7 +27,6 @@ import (
 
 	"git.fd.io/govpp.git/api"
 	"git.fd.io/govpp.git/binapi/vpe"
-	"github.com/edwarnicke/vpphelper"
 	"github.com/pkg/errors"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
@@ -62,7 +61,7 @@ type memifVerifiableEndpoint struct {
 func newMemifVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
-	vppConn vpphelper.Connection,
+	vppConn vppconnection.Connection,
 ) verifiableEndpoint {
 	return &memifVerifiableEndpoint{
 		ctx:     ctx,
@@ -109,7 +108,7 @@ type memifVerifiableClient struct {
 	networkservice.NetworkServiceClient
 }
 
-func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface, vppConn vpphelper.Connection) verifiableClient {
+func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface, vppConn vppconnection.Connection) verifiableClient {
 	rv := &memifVerifiableClient{
 		ctx:     ctx,
 		vppConn: vppConn,

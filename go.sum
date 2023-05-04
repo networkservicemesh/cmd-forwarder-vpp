@@ -92,13 +92,9 @@ github.com/edwarnicke/govpp v0.0.0-20230130211138-14ef5d20b1d0 h1:3qXBk0lN7PhPrS
 github.com/edwarnicke/govpp v0.0.0-20230130211138-14ef5d20b1d0/go.mod h1:kHDnxA+SSNFeMEHz7xvhub1zvx4mOTRlWWRCay2n5NM=
 github.com/edwarnicke/grpcfd v1.1.2 h1:2b8kCABQ1+JjSKGDoHadqSW7whCeTXMqtyo6jmB5B8k=
 github.com/edwarnicke/grpcfd v1.1.2/go.mod h1:rHihB9YvNMixz8rS+ZbwosI2kj65VLkeyYAI2M+/cGA=
-github.com/edwarnicke/log v1.0.0 h1:T6uRNCmR99GTt/CpRr2Gz8eGW8fm0HMThDNGdNxPaGk=
-github.com/edwarnicke/log v1.0.0/go.mod h1:eWsQQlQ0IU5wHlJvyXFH3dS8s2g9GzN7JnXodo6yaIY=
 github.com/edwarnicke/serialize v0.0.0-20200705214914-ebc43080eecf/go.mod h1:XvbCO/QGsl3X8RzjBMoRpkm54FIAZH5ChK2j+aox7pw=
 github.com/edwarnicke/serialize v1.0.7 h1:geX8vmyu8Ij2S5fFIXjy9gBDkKxXnrMIzMoDvV0Ddac=
 github.com/edwarnicke/serialize v1.0.7/go.mod h1:y79KgU2P7ALH/4j37uTSIdNavHFNttqN7pzO6Y8B2aw=
-github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679 h1:TQGpOyiM1EZtGzKN5vwN5RLHc0Mskk9uh+aNsdynb1k=
-github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679/go.mod h1:2KXgJqOUUCh9S4Zs2jAycQLqAcRGge3q+GXV2rN55ZQ=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=

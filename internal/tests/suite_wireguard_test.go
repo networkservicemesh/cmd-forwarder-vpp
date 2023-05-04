@@ -21,7 +21,6 @@ import (
 	"context"
 	"net"
 
-	"github.com/edwarnicke/vpphelper"
 	"google.golang.org/grpc"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
@@ -40,18 +39,19 @@ import (
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/wireguard"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/pinhole"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/up"
+	"github.com/networkservicemesh/sdk-vpp/pkg/tools/vppconnection"
 )
 
 type wireguardVerifiableEndpoint struct {
 	ctx     context.Context
-	vppConn vpphelper.Connection
+	vppConn vppconnection.Connection
 	endpoint.Endpoint
 }
 
 func newWireguardVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
-	vppConn vpphelper.Connection) verifiableEndpoint {
+	vppConn vppconnection.Connection) verifiableEndpoint {
 	rv := &wireguardVerifiableEndpoint{
 		ctx:     ctx,
 		vppConn: vppConn,
@@ -91,14 +91,14 @@ func (v *wireguardVerifiableEndpoint) VerifyClose(conn *networkservice.Connectio
 
 type wireguardVerifiableClient struct {
 	ctx     context.Context
-	vppConn vpphelper.Connection
+	vppConn vppconnection.Connection
 	networkservice.NetworkServiceClient
 }
 
 func newWireguardVerifiableClient(
 	ctx context.Context,
 	sutCC grpc.ClientConnInterface,
-	vppConn vpphelper.Connection,
+	vppConn vppconnection.Connection,
 ) verifiableClient {
 	return &wireguardVerifiableClient{
 		ctx:     ctx,

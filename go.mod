@@ -10,7 +10,6 @@ require (
 	github.com/edwarnicke/genericsync v0.0.0-20220910010113-61a344f9bc29
 	github.com/edwarnicke/govpp v0.0.0-20230130211138-14ef5d20b1d0
 	github.com/edwarnicke/grpcfd v1.1.2
-	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
 	github.com/go-ping/ping v1.0.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.2.0
@@ -38,7 +37,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cilium/ebpf v0.10.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/edwarnicke/log v1.0.0 // indirect
 	github.com/edwarnicke/serialize v1.0.7 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/ftrvxmtrx/fd v0.0.0-20150925145434-c6d800382fff // indirect
