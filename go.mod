@@ -10,7 +10,7 @@ require (
 	github.com/edwarnicke/genericsync v0.0.0-20220910010113-61a344f9bc29
 	github.com/edwarnicke/govpp v0.0.0-20230130211138-14ef5d20b1d0
 	github.com/edwarnicke/grpcfd v1.1.2
-	github.com/edwarnicke/vpphelper v0.0.0-20210512223648-f914b171f679
+	github.com/edwarnicke/vpphelper v0.2.0
 	github.com/go-ping/ping v1.0.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.2.0
