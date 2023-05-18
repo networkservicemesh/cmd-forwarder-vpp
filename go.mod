@@ -16,8 +16,8 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.7.2-0.20230123083145-4a6c3ec589e1
-	github.com/networkservicemesh/sdk v0.5.1-0.20230518132831-ad70c1f00af9
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20230501010159-b0342e1dea56
+	github.com/networkservicemesh/sdk v0.5.1-0.20230518133110-63043b293cea
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20230518160028-d63696e0df16
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230502013735-a0f7ec5fb4de
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230518133635-a1da1fd63d53
 	github.com/pkg/errors v0.9.1
