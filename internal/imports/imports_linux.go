@@ -92,6 +92,7 @@ import (
 	_ "github.com/networkservicemesh/sdk/pkg/tools/token"
 	_ "github.com/networkservicemesh/sdk/pkg/tools/tracing"
 	_ "github.com/pkg/errors"
+	_ "github.com/safchain/ethtool"
 	_ "github.com/sirupsen/logrus"
 	_ "github.com/spiffe/go-spiffe/v2/bundle/x509bundle"
 	_ "github.com/spiffe/go-spiffe/v2/spiffeid"

@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/go-ping/ping"
+	"github.com/safchain/ethtool"
 
 	"git.fd.io/govpp.git/api"
 	"github.com/edwarnicke/govpp/binapi/af_packet"
@@ -54,10 +55,13 @@ const (
 	AfXDP AfType = 1
 )
 
-// Minimum required kernel version for AF_XDP
 const (
+	// Minimum required kernel version for AF_XDP
 	afXdpMajorVer = 5
 	afXdpMinorVer = 4
+
+	// Maximum AF_XDP MTU
+	afXdpMaxMTU = 3498
 )
 
 // Func - vpp initialization function
@@ -306,41 +310,21 @@ func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Li
 }
 
 func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
-	// Get all gateways for a given interface and send ping requests.
-	// This will allow us to resolve the neighbors.
-	rl, _ := netlink.RouteList(link, netlink.FAMILY_ALL)
-	for i := 0; i < len(rl); i++ {
-		if rl[i].Gw != nil {
-			continue
-		}
-		pi := ping.New(rl[i].Gw.String())
-		pi.Count = 1
-		pi.Timeout = time.Millisecond * 100
-		pi.SetPrivileged(true)
-		err := pi.Run()
-		if err == nil {
-			log.FromContext(ctx).Infof("Gateway %v was resolved", rl[0].Gw.String())
-		}
-	}
-
-	// Based on VPP guidelines
-	err := netlink.SetPromiscOn(link)
+	// AF_XDP requires some tweaks on the host side
+	rxqNum, err := afxdpHostSettings(ctx, link)
 	if err != nil {
 		return 0, err
 	}
 
-	// /sys/fs/bpf - the default dir of BPF filesystem
-	err = syscall.Mount("bpffs", "/sys/fs/bpf", "bpf", 0, "")
-	if err != nil {
-		panic(err)
-	}
 	afXDPCreate := &af_xdp.AfXdpCreate{
 		HostIf:  link.Attrs().Name,
 		RxqSize: 8192,
 		TxqSize: 8192,
+		RxqNum:  rxqNum,
 		Mode:    af_xdp.AF_XDP_API_MODE_AUTO,
 		Prog:    "/bin/afxdp.o",
 	}
+
 	now := time.Now()
 	afXDPCreateRsp, err := af_xdp.NewServiceClient(vppConn).AfXdpCreate(ctx, afXDPCreate)
 	if err != nil {
@@ -388,6 +372,79 @@ func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link)
 		WithField("vppapi", "SwInterfaceSetMacAddress").Debug("completed")
 
 	return afXDPCreateRsp.SwIfIndex, nil
+}
+
+func afxdpHostSettings(ctx context.Context, link netlink.Link) (uint16, error) {
+	// Get all gateways for a given interface and send ping requests.
+	// This will allow us to resolve the neighbors.
+	rl, _ := netlink.RouteList(link, netlink.FAMILY_ALL)
+	for i := 0; i < len(rl); i++ {
+		if rl[i].Gw != nil {
+			continue
+		}
+		pi := ping.New(rl[i].Gw.String())
+		pi.Count = 1
+		pi.Timeout = time.Millisecond * 100
+		pi.SetPrivileged(true)
+		err := pi.Run()
+		if err == nil {
+			log.FromContext(ctx).Infof("Gateway %v was resolved", rl[0].Gw.String())
+		}
+	}
+
+	// /sys/fs/bpf - the default dir of BPF filesystem
+	err := syscall.Mount("bpffs", "/sys/fs/bpf", "bpf", 0, "")
+	if err != nil {
+		log.FromContext(ctx).WithField("func", "syscall.Mount").Error(err)
+		return 0, err
+	}
+
+	// Based on VPP guidelines
+	err = netlink.SetPromiscOn(link)
+	if err != nil {
+		log.FromContext(ctx).WithField("func", "netlink.SetPromiscOn").Error(err)
+		return 0, err
+	}
+
+	// Limit MTU
+	if link.Attrs().MTU > afXdpMaxMTU {
+		link.Attrs().MTU = afXdpMaxMTU
+		err = netlink.LinkSetMTU(link, afXdpMaxMTU)
+		if err != nil {
+			log.FromContext(ctx).WithField("func", "netlink.LinkSetMTU").Error(err)
+			return 0, err
+		}
+	}
+
+	// Set the number of queues. We got an error on AWS cluster:
+	// # dmesg
+	// # Failed to set xdp program, the Rx/Tx channel count should be at most half of the maximum allowed channel count. The current queue count (4), the maximal queue count (4)
+	etht, err := ethtool.NewEthtool()
+	if err != nil {
+		log.FromContext(ctx).WithField("func", "ethtool.NewEthtool").Error(err)
+		return 0, err
+	}
+	channels, err := etht.GetChannels(link.Attrs().Name)
+	if err != nil {
+		log.FromContext(ctx).WithField("func", "ethtool.GetChannels").Error(err)
+		return 0, err
+	}
+	if channels.MaxTx > 1 && channels.TxCount*2 > channels.MaxTx {
+		channels.TxCount = channels.MaxTx / 2
+	}
+	if channels.MaxRx > 1 && channels.RxCount*2 > channels.MaxRx {
+		channels.RxCount = channels.MaxRx / 2
+	}
+	if channels.MaxCombined > 1 && channels.CombinedCount*2 > channels.MaxCombined {
+		channels.CombinedCount = channels.MaxCombined / 2
+	}
+	_, err = etht.SetChannels(link.Attrs().Name, channels)
+	if err != nil {
+		log.FromContext(ctx).WithField("func", "ethtool.SetChannels").Error(err)
+		return 0, err
+	}
+
+	return uint16(channels.CombinedCount), err
 }
 
 func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkIdx int) error {
