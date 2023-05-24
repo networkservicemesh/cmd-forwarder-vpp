@@ -21,6 +21,7 @@ require (
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230502013735-a0f7ec5fb4de
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230518133635-a1da1fd63d53
 	github.com/pkg/errors v0.9.1
+	github.com/safchain/ethtool v0.3.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0
 	github.com/stretchr/testify v1.8.0
@@ -78,7 +79,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20200609130330-bd2cb7843e1b // indirect
 	google.golang.org/genproto v0.0.0-20220915135415-7fd63a7952de // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
