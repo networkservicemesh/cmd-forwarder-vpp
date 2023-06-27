@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -21,7 +21,6 @@ package tests
 
 import (
 	"context"
-	"io/ioutil"
 	"net"
 	"net/url"
 	"os"
@@ -165,7 +164,7 @@ func (f *ForwarderTestSuite) TestCombinations() {
 							ctx = log.WithLog(ctx, logruslogger.New(ctx, map[string]interface{}{"test": t.Name()}))
 							networkserviceName := "ns" + t.Name()
 
-							tmpDir, err := ioutil.TempDir("", "nse")
+							tmpDir, err := os.MkdirTemp("", "nse")
 							f.Require().NoError(err)
 							defer func(tmpDir string) { _ = os.Remove(tmpDir) }(tmpDir)
 							nseURL := url.URL{Scheme: "unix", Path: filepath.Join(tmpDir, "listen.on")}

@@ -21,7 +21,6 @@ package tests
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -206,7 +205,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppConn vpphelper.Connection, vppRoot string, errCh <-chan error) {
 	now := time.Now()
 	var err error
-	vppRoot, err = ioutil.TempDir("", fmt.Sprintf("%s-", name))
+	vppRoot, err = os.MkdirTemp("", fmt.Sprintf("%s-", name))
 	f.Require().NoError(err)
 
 	f.Require().NoError(err)
