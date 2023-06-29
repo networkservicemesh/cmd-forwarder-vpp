@@ -17,7 +17,7 @@ require (
 	github.com/networkservicemesh/api v1.7.2-0.20230123083145-4a6c3ec589e1
 	github.com/networkservicemesh/govpp v0.0.0-20230626092821-fc47696d971b
 	github.com/networkservicemesh/sdk v0.5.1-0.20230620142740-a8c394e69c4e
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20230629131303-2066af3cdb38
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20230629190902-83122c30aad4
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230629162853-517dec7cabb0
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230626125723-f7a0e989a2b3
 	github.com/pkg/errors v0.9.1
@@ -78,7 +78,6 @@ require (
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	golang.org/x/crypto v0.10.0 // indirect
 	golang.org/x/net v0.11.0 // indirect
-	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20200609130330-bd2cb7843e1b // indirect
 	google.golang.org/genproto v0.0.0-20220915135415-7fd63a7952de // indirect
