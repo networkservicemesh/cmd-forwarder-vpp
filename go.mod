@@ -18,7 +18,7 @@ require (
 	github.com/networkservicemesh/govpp v0.0.0-20230626092821-fc47696d971b
 	github.com/networkservicemesh/sdk v0.5.1-0.20230620142740-a8c394e69c4e
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20230629131303-2066af3cdb38
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20230620143514-7a5d4745f6c6
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20230629162853-517dec7cabb0
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230626125723-f7a0e989a2b3
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
@@ -28,7 +28,7 @@ require (
 	github.com/thanhpk/randstr v1.0.4
 	github.com/vishvananda/netlink v1.2.1-beta.2.0.20220630165224-c591ada0fb2b
 	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
-	golang.org/x/text v0.7.0
+	golang.org/x/text v0.10.0
 	google.golang.org/grpc v1.49.0
 )
 
@@ -76,10 +76,10 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v0.31.0 // indirect
 	go.opentelemetry.io/otel/trace v1.9.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
-	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/crypto v0.10.0 // indirect
+	golang.org/x/net v0.11.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/sys v0.9.0 // indirect
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20200609130330-bd2cb7843e1b // indirect
 	google.golang.org/genproto v0.0.0-20220915135415-7fd63a7952de // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
