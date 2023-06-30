@@ -1,7 +1,7 @@
 ---
 run:
   # concurrency: 6
-  go: "1.19"
+  go: "1.20"
   timeout: 2m
   issues-exit-code: 1
   tests: true
@@ -127,7 +127,6 @@ linters-settings:
 linters:
   disable-all: true
   enable:
-    # - rowserrcheck
     - goheader
     - bodyclose
     - deadcode
@@ -147,7 +146,6 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    # - lll
     - misspell
     - nakedret
     - exportloopref
@@ -157,7 +155,6 @@ linters:
     - typecheck
     - unconvert
     - unparam
-    # - unused
     - varcheck
     - whitespace
 issues:
