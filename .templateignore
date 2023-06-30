@@ -1,3 +1,4 @@
 README.md
 .github/workflows/update-cmd-repositories.yaml
 .golangci.yml
+.github/workflows/ci.yaml
