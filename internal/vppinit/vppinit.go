@@ -112,7 +112,7 @@ func Must(tunnelIP net.IP, err error) net.IP {
 }
 
 // None - will perform no VPP initialization
-func None(ctx context.Context, vppConn api.Connection, tunnelIP net.IP) (net.IP, error) {
+func None(_ context.Context, _ api.Connection, tunnelIP net.IP) (net.IP, error) {
 	return tunnelIP, nil
 }
 

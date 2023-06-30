@@ -62,8 +62,6 @@ func InitLinks(ctx context.Context, vppConn api.Connection, deviceNames map[stri
 	ch := make(chan error)
 	defer func() {
 		go func() {
-			for range ch {
-			}
 		}()
 	}()
 

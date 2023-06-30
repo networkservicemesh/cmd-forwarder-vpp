@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -85,7 +85,7 @@ func (v *wireguardVerifiableEndpoint) VerifyConnection(conn *networkservice.Conn
 	return nil
 }
 
-func (v *wireguardVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
+func (v *wireguardVerifiableEndpoint) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }
 
@@ -126,6 +126,6 @@ func (v *wireguardVerifiableClient) VerifyConnection(conn *networkservice.Connec
 	return nil
 }
 
-func (v *wireguardVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
+func (v *wireguardVerifiableClient) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }

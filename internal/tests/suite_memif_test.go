@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -99,7 +99,7 @@ func (k *memifVerifiableEndpoint) VerifyConnection(conn *networkservice.Connecti
 	return nil
 }
 
-func (k *memifVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
+func (k *memifVerifiableEndpoint) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }
 
@@ -139,7 +139,7 @@ func (m *memifVerifiableClient) VerifyConnection(conn *networkservice.Connection
 	return nil
 }
 
-func (m *memifVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
+func (m *memifVerifiableClient) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }
 
