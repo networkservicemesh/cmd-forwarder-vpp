@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Cisco and/or its affiliates.
+// Copyright (c) 2022-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -84,7 +84,7 @@ func (v *ipsecVerifiableEndpoint) VerifyConnection(conn *networkservice.Connecti
 	return nil
 }
 
-func (v *ipsecVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
+func (v *ipsecVerifiableEndpoint) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }
 
@@ -125,6 +125,6 @@ func (v *ipsecVerifiableClient) VerifyConnection(conn *networkservice.Connection
 	return nil
 }
 
-func (v *ipsecVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
+func (v *ipsecVerifiableClient) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }

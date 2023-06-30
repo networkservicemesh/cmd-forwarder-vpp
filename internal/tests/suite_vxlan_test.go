@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -82,7 +82,7 @@ func (v *vxlanVerifiableEndpoint) VerifyConnection(conn *networkservice.Connecti
 	return nil
 }
 
-func (v *vxlanVerifiableEndpoint) VerifyClose(conn *networkservice.Connection) error {
+func (v *vxlanVerifiableEndpoint) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }
 
@@ -122,6 +122,6 @@ func (v *vxlanVerifiableClient) VerifyConnection(conn *networkservice.Connection
 	return nil
 }
 
-func (v *vxlanVerifiableClient) VerifyClose(conn *networkservice.Connection) error {
+func (v *vxlanVerifiableClient) VerifyClose(_ *networkservice.Connection) error {
 	return nil
 }

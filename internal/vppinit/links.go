@@ -60,12 +60,7 @@ func initDevice(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, de
 // InitLinks creates AF_PACKET interface if needed and put the given interfaces in promisc mode
 func InitLinks(ctx context.Context, vppConn api.Connection, deviceNames map[string]string, tunnelIP net.IP) error {
 	ch := make(chan error)
-	defer func() {
-		go func() {
-			for range ch {
-			}
-		}()
-	}()
+	defer close(ch)
 
 	for _, device := range deviceNames {
 		go initDevice(ctx, vppConn, tunnelIP, device, ch)
