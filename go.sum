@@ -174,7 +174,6 @@ github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.4.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
-github.com/google/go-cmp v0.5.3/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
@@ -241,10 +240,10 @@ github.com/networkservicemesh/sdk v0.5.1-0.20230701165706-df93376cea42 h1:uDtDDe
 github.com/networkservicemesh/sdk v0.5.1-0.20230701165706-df93376cea42/go.mod h1:r9XRbQ6UlS0+hefduzFb1cX9j3W/XNOqFqUlcQk7xYM=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20230701170421-45dcba17e39b h1:79PX/z32rpZ0Lo/7tsF4itAXwnPEiyuEHtGyiMNbZ10=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20230701170421-45dcba17e39b/go.mod h1:mnWuKmu78c/ClJAgg/HT/dP3UG/nLU+a56/3oawsyCk=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20230630120427-3487ee610336 h1:kPeGiWTvDzzErj/Vne0H+FjjU9zme73O9qeD/kp/22k=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20230630120427-3487ee610336/go.mod h1:7sh6xxwDUZrnHIKoIB1v3rj70M1aMwiYiiiblaiG/YM=
-github.com/networkservicemesh/sdk-sriov v0.0.0-20230629162853-517dec7cabb0 h1:cJO3sll/o7+Btszr2HwD58aA0wM+KtxpePA6y8FifN0=
-github.com/networkservicemesh/sdk-sriov v0.0.0-20230629162853-517dec7cabb0/go.mod h1:05zMTOIle9N096LdS9G1Pet8aubYQc5jBlm+kixcT78=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20230701170142-85e373d5a542 h1:pzxypOZo/iI399NjkkbnPsFc4ZiH/X6472E+hZkub8Y=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20230701170142-85e373d5a542/go.mod h1:BFPvi3csGph/efpop49nlEyHAqL5jVmSE+scilOJDEo=
+github.com/networkservicemesh/sdk-sriov v0.0.0-20230701170631-e4329a7cd2cd h1:kDWbUPdzenoIhbgH48N+aiAbiTWVBYkANG5d4G/nZsY=
+github.com/networkservicemesh/sdk-sriov v0.0.0-20230701170631-e4329a7cd2cd/go.mod h1:0wl8WZNCLiz9NQvo8Ha7zfqaXoxcA8gsNUYm3+ONPLU=
 github.com/networkservicemesh/sdk-vpp v0.0.0-20230630120920-9142289a2fe0 h1:CuNcF27gXeBjsCr0cPy2MmzCOeIlFxCmhQvDWMxwBfc=
 github.com/networkservicemesh/sdk-vpp v0.0.0-20230630120920-9142289a2fe0/go.mod h1:Gvfc9+4rclayyD43Qi028z4wa0D3Ao/cfR45PcaKw6k=
 github.com/onsi/ginkgo v1.8.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
@@ -411,7 +410,6 @@ golang.org/x/net v0.0.0-20200707034311-ab3426394381/go.mod h1:/O7V0waA8r7cgGh81R
 golang.org/x/net v0.0.0-20200822124328-c89045814202/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
 golang.org/x/net v0.0.0-20200904194848-62affa334b73/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
 golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
-golang.org/x/net v0.0.0-20201110031124-69a78807bb2b/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
 golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
 golang.org/x/net v0.11.0 h1:Gi2tvZIJyBtO9SDr1q9h5hEQCp/4L2RQ+ar0qjx2oNU=
 golang.org/x/net v0.11.0/go.mod h1:2L/ixqYpgIVXmeoSA/4Lu7BzTG4KIyPIryS4IsOd1oQ=
