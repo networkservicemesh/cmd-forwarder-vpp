@@ -17,8 +17,8 @@ require (
 	github.com/networkservicemesh/api v1.9.1-0.20230627143611-9785eacf9687
 	github.com/networkservicemesh/govpp v0.0.0-20230630105900-092690d52a97
 	github.com/networkservicemesh/sdk v0.5.1-0.20230701165706-df93376cea42
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20230629190902-83122c30aad4
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20230701170631-e4329a7cd2cd
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20230701170421-45dcba17e39b
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20230629162853-517dec7cabb0
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230630120920-9142289a2fe0
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
@@ -63,7 +63,6 @@ require (
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/yashtewari/glob-intersection v0.1.0 // indirect
 	github.com/zeebo/errs v1.2.2 // indirect
-	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.42.0 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.16.0 // indirect
