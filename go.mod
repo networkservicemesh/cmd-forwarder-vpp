@@ -16,8 +16,8 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.9.1-0.20230627143611-9785eacf9687
 	github.com/networkservicemesh/govpp v0.0.0-20230630105900-092690d52a97
-	github.com/networkservicemesh/sdk v0.5.1-0.20230703092623-0ba94eaa823e
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20230703143537-e865f6861373
+	github.com/networkservicemesh/sdk v0.5.1-0.20230704094111-f349173882f2
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20230704094829-38011cfdee11
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230701170631-e4329a7cd2cd
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230630120920-9142289a2fe0
 	github.com/pkg/errors v0.9.1
@@ -75,6 +75,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v0.39.0 // indirect
 	go.opentelemetry.io/otel/trace v1.16.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.10.0 // indirect
 	golang.org/x/net v0.11.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
