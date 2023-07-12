@@ -19,7 +19,7 @@ COPY go.mod go.sum ./
 COPY ./local ./local
 COPY ./internal/imports ./internal/imports
 COPY ./internal/afxdp/afxdp.c ./internal/afxdp/
-RUN clang -O3 -g -Wextra -Wall -target bpf -I/usr/include/x86_64-linux-gnu -I/usr/include -c -o /bin/afxdp.o ./internal/afxdp/afxdp.c
+RUN clang -O3 -g -Wextra -Wall -target bpf -I/usr/include/$(uname -m)-linux-gnu -I/usr/include -c -o /bin/afxdp.o ./internal/afxdp/afxdp.c
 RUN go build ./internal/imports
 COPY . .
 RUN go build -o /bin/forwarder .
