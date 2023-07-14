@@ -211,7 +211,7 @@ func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppCon
 	f.Require().NoError(err)
 	vppConn, errCh = vpphelper.StartAndDialContext(
 		ctx,
-		vpphelper.WithRootDir(vppRoot),
+		append(vppinit.GetVppHelperOptions(), vpphelper.WithRootDir(vppRoot))...,
 	)
 	f.Require().Len(errCh, 0)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)

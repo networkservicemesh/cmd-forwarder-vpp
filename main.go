@@ -175,7 +175,7 @@ func main() {
 			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
 		}
 	} else { // If we don't have a VPPAPISocket, start VPP and use that
-		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
+		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx, vppinit.GetVppHelperOptions()...)
 		exitOnErrCh(ctx, cancel, vppErrCh)
 		close(cleanupDoneCh)
 		log.FromContext(ctx).Info("local vpp is being used")
