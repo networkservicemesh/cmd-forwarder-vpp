@@ -22,7 +22,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/edwarnicke/vpphelper"
+	"github.com/networkservicemesh/vpphelper"
 	"github.com/spiffe/go-spiffe/v2/bundle/x509bundle"
 	"github.com/spiffe/go-spiffe/v2/svid/x509svid"
 	"github.com/stretchr/testify/suite"

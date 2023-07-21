@@ -27,7 +27,7 @@ import (
 
 	"git.fd.io/govpp.git/api"
 	"git.fd.io/govpp.git/binapi/vpe"
-	"github.com/edwarnicke/vpphelper"
+	"github.com/networkservicemesh/vpphelper"
 	"github.com/pkg/errors"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
