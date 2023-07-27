@@ -21,8 +21,9 @@ import (
 	"context"
 	"net"
 
-	"github.com/edwarnicke/vpphelper"
 	"google.golang.org/grpc"
+
+	"github.com/networkservicemesh/vpphelper"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/chains/client"
 

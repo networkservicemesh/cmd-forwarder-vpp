@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -22,11 +22,12 @@ import (
 	"context"
 	"testing"
 
-	"github.com/edwarnicke/vpphelper"
 	"github.com/spiffe/go-spiffe/v2/bundle/x509bundle"
 	"github.com/spiffe/go-spiffe/v2/svid/x509svid"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
+
+	"github.com/networkservicemesh/vpphelper"
 
 	"github.com/networkservicemesh/api/pkg/api/registry"
 

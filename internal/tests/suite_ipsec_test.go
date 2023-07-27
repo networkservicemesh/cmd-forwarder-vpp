@@ -21,8 +21,9 @@ import (
 	"context"
 	"net"
 
-	"github.com/edwarnicke/vpphelper"
 	"google.golang.org/grpc"
+
+	"github.com/networkservicemesh/vpphelper"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	ipsecapi "github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/ipsec"

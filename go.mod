@@ -9,7 +9,6 @@ require (
 	github.com/edwarnicke/exechelper v1.0.3
 	github.com/edwarnicke/genericsync v0.0.0-20220910010113-61a344f9bc29
 	github.com/edwarnicke/grpcfd v1.1.2
-	github.com/edwarnicke/vpphelper v0.2.0
 	github.com/go-ping/ping v1.0.0
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.0
@@ -20,6 +19,7 @@ require (
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20230719113449-b526a89fe52d
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230714102638-b47a7bbbf12e
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230720104235-e1184e20bfcf
+	github.com/networkservicemesh/vpphelper v0.0.0-20230721092715-212fb5b09cc2
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
 	github.com/sirupsen/logrus v1.9.0

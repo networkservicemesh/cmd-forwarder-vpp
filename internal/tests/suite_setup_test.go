@@ -30,12 +30,13 @@ import (
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/edwarnicke/exechelper"
 	"github.com/edwarnicke/grpcfd"
-	"github.com/edwarnicke/vpphelper"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	"github.com/networkservicemesh/vpphelper"
 
 	"github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/begin"
@@ -211,7 +212,7 @@ func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppCon
 	f.Require().NoError(err)
 	vppConn, errCh = vpphelper.StartAndDialContext(
 		ctx,
-		append(vppinit.GetVppHelperOptions(), vpphelper.WithRootDir(vppRoot))...,
+		vpphelper.WithRootDir(vppRoot),
 	)
 	f.Require().Len(errCh, 0)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("Launched vpp %q. Access with vppctl -s /tmp/%s/var/run/vpp/cli.sock", vppRoot, vppRoot)

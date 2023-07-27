@@ -32,13 +32,14 @@ import (
 	"github.com/edwarnicke/debug"
 	"github.com/edwarnicke/genericsync"
 	"github.com/edwarnicke/grpcfd"
-	"github.com/edwarnicke/vpphelper"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffeid"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	"github.com/networkservicemesh/vpphelper"
 
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/deviceplugin"
@@ -175,7 +176,7 @@ func main() {
 			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
 		}
 	} else { // If we don't have a VPPAPISocket, start VPP and use that
-		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx, vppinit.GetVppHelperOptions()...)
+		vppConn, vppErrCh = vpphelper.StartAndDialContext(ctx)
 		exitOnErrCh(ctx, cancel, vppErrCh)
 		close(cleanupDoneCh)
 		log.FromContext(ctx).Info("local vpp is being used")
