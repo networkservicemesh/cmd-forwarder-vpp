@@ -23,7 +23,6 @@ import (
 
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
@@ -38,7 +37,6 @@ func (f *ForwarderTestSuite) TestHealthCheck() {
 		&grpc_health_v1.HealthCheckRequest{
 			Service: "networkservice.NetworkService",
 		},
-		grpc.WaitForReady(true),
 	)
 	f.NoError(err)
 	f.Require().NotNil(healthResponse)
