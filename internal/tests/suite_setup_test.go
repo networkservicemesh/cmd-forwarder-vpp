@@ -173,6 +173,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	f.sutCC, err = grpc.DialContext(f.ctx,
 		regEndpoint.NetworkServiceEndpoint.GetUrl(),
 		grpc.WithTransportCredentials(clientCreds),
+		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(
 			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, f.config.MaxTokenLifetime))),
 		),
