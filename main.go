@@ -228,7 +228,9 @@ func main() {
 
 	dialOptions := append(
 		tracing.WithTracingDial(),
+		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(
+			grpc.WaitForReady(true),
 			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime)))),
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(
