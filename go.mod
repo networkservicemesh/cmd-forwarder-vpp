@@ -14,7 +14,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.9.1-0.20230627143611-9785eacf9687
-	github.com/networkservicemesh/govpp v0.0.0-20230630105900-092690d52a97
+	github.com/networkservicemesh/govpp v0.0.0-20230901132304-614d6d6fb8a6
 	github.com/networkservicemesh/sdk v0.5.1-0.20230801094133-aeae47c771a6
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20230802052926-7e6b96695a1a
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230801095340-7452850dc144
@@ -63,6 +63,7 @@ require (
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/yashtewari/glob-intersection v0.1.0 // indirect
 	github.com/zeebo/errs v1.2.2 // indirect
+	go.fd.io/govpp v0.8.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.42.0 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.16.0 // indirect
