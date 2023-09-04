@@ -3,7 +3,6 @@ module github.com/networkservicemesh/cmd-forwarder-vpp
 go 1.20
 
 require (
-	git.fd.io/govpp.git v0.3.6-0.20210927044411-385ccc0d8ba9
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/debug v1.0.0
 	github.com/edwarnicke/exechelper v1.0.3
@@ -13,13 +12,13 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/api v1.9.1-0.20230627143611-9785eacf9687
-	github.com/networkservicemesh/govpp v0.0.0-20230630105900-092690d52a97
-	github.com/networkservicemesh/sdk v0.5.1-0.20230801094133-aeae47c771a6
+	github.com/networkservicemesh/api v1.10.1-0.20230822145124-c4a3ece88804
+	github.com/networkservicemesh/govpp v0.0.0-20230901132304-614d6d6fb8a6
+	github.com/networkservicemesh/sdk v0.5.1-0.20230828163119-f96fdf637a63
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20230802052926-7e6b96695a1a
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230801095340-7452850dc144
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20230810003715-0633e49fc885
-	github.com/networkservicemesh/vpphelper v0.0.0-20230721092715-212fb5b09cc2
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20230904082310-8a9c97efea32
+	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
 	github.com/sirupsen/logrus v1.9.0
@@ -28,6 +27,7 @@ require (
 	github.com/thanhpk/randstr v1.0.4
 	github.com/vishvananda/netlink v1.2.1-beta.2.0.20220630165224-c591ada0fb2b
 	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
+	go.fd.io/govpp v0.8.0
 	golang.org/x/text v0.10.0
 	google.golang.org/grpc v1.55.0
 )
@@ -54,7 +54,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20230801094449-a44938ecb60d // indirect
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20230829144358-77e8a631e818 // indirect
 	github.com/open-policy-agent/opa v0.44.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
