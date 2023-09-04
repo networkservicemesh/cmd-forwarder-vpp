@@ -20,7 +20,7 @@ import (
 	"context"
 	"net"
 
-	"git.fd.io/govpp.git/api"
+	"go.fd.io/govpp/api"
 	"google.golang.org/grpc"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/pinhole"

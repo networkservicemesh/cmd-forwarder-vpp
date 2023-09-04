@@ -25,9 +25,9 @@ import (
 	"strings"
 	"time"
 
-	"git.fd.io/govpp.git/api"
-	"git.fd.io/govpp.git/binapi/vpe"
 	"github.com/pkg/errors"
+	"go.fd.io/govpp/api"
+	"go.fd.io/govpp/binapi/vlib"
 
 	"github.com/networkservicemesh/vpphelper"
 
@@ -149,13 +149,13 @@ func pingVpp(ctx context.Context, vppConn api.Connection, ipaddress string) erro
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	pingCmd := &vpe.CliInband{
+	pingCmd := &vlib.CliInband{
 		Cmd: fmt.Sprintf("ping %s interval 0.1 repeat 1 verbose", ip.String()),
 	}
 
 	// Prime the pump, vpp doesn't arp until needed, and so the first ping will fail
 	now := time.Now()
-	pingRsp, err := vpe.NewServiceClient(vppConn).CliInband(ctx, pingCmd)
+	pingRsp, err := vlib.NewServiceClient(vppConn).CliInband(ctx, pingCmd)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -166,7 +166,7 @@ func pingVpp(ctx context.Context, vppConn api.Connection, ipaddress string) erro
 		WithField("duration", time.Since(now)).Debug("completed")
 
 	now = time.Now()
-	if pingRsp, err = vpe.NewServiceClient(vppConn).CliInband(ctx, pingCmd); err != nil {
+	if pingRsp, err = vlib.NewServiceClient(vppConn).CliInband(ctx, pingCmd); err != nil {
 		return errors.WithStack(err)
 	}
 	log.FromContext(ctx).

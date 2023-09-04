@@ -26,13 +26,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"git.fd.io/govpp.git/binapi/vpe"
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/edwarnicke/exechelper"
 	"github.com/edwarnicke/grpcfd"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
+	"go.fd.io/govpp/binapi/vpe"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 

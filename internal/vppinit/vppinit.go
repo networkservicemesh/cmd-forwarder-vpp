@@ -29,9 +29,9 @@ import (
 	"github.com/go-ping/ping"
 	"github.com/safchain/ethtool"
 
-	"git.fd.io/govpp.git/api"
 	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
+	"go.fd.io/govpp/api"
 
 	"github.com/networkservicemesh/govpp/binapi/af_packet"
 	"github.com/networkservicemesh/govpp/binapi/af_xdp"

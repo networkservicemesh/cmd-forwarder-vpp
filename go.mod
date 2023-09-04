@@ -3,7 +3,6 @@ module github.com/networkservicemesh/cmd-forwarder-vpp
 go 1.20
 
 require (
-	git.fd.io/govpp.git v0.3.6-0.20210927044411-385ccc0d8ba9
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/debug v1.0.0
 	github.com/edwarnicke/exechelper v1.0.3
@@ -19,7 +18,7 @@ require (
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20230802052926-7e6b96695a1a
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230801095340-7452850dc144
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230904082310-8a9c97efea32
-	github.com/networkservicemesh/vpphelper v0.0.0-20230721092715-212fb5b09cc2
+	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
 	github.com/sirupsen/logrus v1.9.0
@@ -28,6 +27,7 @@ require (
 	github.com/thanhpk/randstr v1.0.4
 	github.com/vishvananda/netlink v1.2.1-beta.2.0.20220630165224-c591ada0fb2b
 	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
+	go.fd.io/govpp v0.8.0
 	golang.org/x/text v0.10.0
 	google.golang.org/grpc v1.55.0
 )
@@ -63,7 +63,6 @@ require (
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/yashtewari/glob-intersection v0.1.0 // indirect
 	github.com/zeebo/errs v1.2.2 // indirect
-	go.fd.io/govpp v0.8.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.42.0 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.16.0 // indirect
