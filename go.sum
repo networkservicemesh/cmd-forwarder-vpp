@@ -247,12 +247,12 @@ github.com/networkservicemesh/sdk v0.5.1-0.20230915092224-d68a6f4ada08 h1:Lj5T68
 github.com/networkservicemesh/sdk v0.5.1-0.20230915092224-d68a6f4ada08/go.mod h1:WrQdP/NEx+2knCVIL0X/dlAkg4y/RFvcXBhRwcz5M2Q=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20230915092923-b2217adabcc2 h1:nFn+b/8NmLySNgo2SXXWIB1pfG21mMdc4AEB3BYiL3k=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20230915092923-b2217adabcc2/go.mod h1:zxPvhpmLN+9/c/8a3lMnGNWDm82SZlVltsSU851Imjg=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20230829144358-77e8a631e818 h1:6a6/zAj3PogXknn09mUlaf2Qvaiaph3aOGq97kIJZlM=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20230829144358-77e8a631e818/go.mod h1:5INtH34Tgf9m7jJ22HI9OWptZOrG9h2eS38bavLQ2Hk=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20230918050655-3bfb4799332a h1:T5mFdjuaYlTCSB8HG4o2KLCdGjIyFRJEpN1kR5nL72Y=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20230918050655-3bfb4799332a/go.mod h1:62xs1tBM4AqnuZ4UfWvJEqFrOzpD7j0gWk6XNLMyGks=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20230801095340-7452850dc144 h1:MjNd4Ka67lit27b4JgINUC7Ctp95V5pi5Q0l8Uyq/Yc=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20230801095340-7452850dc144/go.mod h1:Jt36ORe1BNDR5hQOvrfcGI/Puc5875raB1ciNQlh+TA=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20230915092124-8a47f25f1d3f h1:IK5l68zee6pIhXqWAkV1lurcc4BgK6iMlHgWXGNemok=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20230915092124-8a47f25f1d3f/go.mod h1:F4wMvh1LhJKR24AZ/MWVguxsZJqIQpdeypYVebw6FI0=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20230918051204-11a7f0417055 h1:qij0qL5C8idTbI8RpMRk7cOtIYoGTzPUi4njqIwVnJw=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20230918051204-11a7f0417055/go.mod h1:iCVV/HJoMLNGWnF4RHby8y7vN84/CXR8a4wrN23YzLo=
 github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb h1:SETtZ12eYPkUGafW1DwGb8kSOR8O4OniSuZnqn2bOOw=
 github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb/go.mod h1:gHuTaUs1uFvyOY0Cy9DXvyAR2MtwmlPD2NTyYfr6kLc=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
