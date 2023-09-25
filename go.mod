@@ -15,7 +15,7 @@ require (
 	github.com/networkservicemesh/api v1.10.1-0.20230822145124-c4a3ece88804
 	github.com/networkservicemesh/govpp v0.0.0-20230922102554-a46e6ced9b14
 	github.com/networkservicemesh/sdk v0.5.1-0.20230919032539-bec8a85cfbdc
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20230919044941-eae83db21370
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20230925073619-39381337eb10
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20230918051046-c7721596ebad
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20230919113300-d37df12b0ec6
 	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
@@ -28,7 +28,7 @@ require (
 	github.com/vishvananda/netlink v1.2.1-beta.2.0.20220630165224-c591ada0fb2b
 	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
 	go.fd.io/govpp v0.8.0
-	golang.org/x/text v0.10.0
+	golang.org/x/text v0.11.0
 	google.golang.org/grpc v1.55.0
 )
 
@@ -76,9 +76,9 @@ require (
 	go.opentelemetry.io/otel/trace v1.16.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/crypto v0.10.0 // indirect
-	golang.org/x/net v0.11.0 // indirect
-	golang.org/x/sys v0.9.0 // indirect
+	golang.org/x/crypto v0.11.0 // indirect
+	golang.org/x/net v0.13.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20200609130330-bd2cb7843e1b // indirect
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
@@ -86,5 +86,5 @@ require (
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/kubelet v0.25.4 // indirect
+	k8s.io/kubelet v0.28.2 // indirect
 )
