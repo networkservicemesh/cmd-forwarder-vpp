@@ -131,7 +131,7 @@ func main() {
 		logrus.Fatalf("invalid log level %s", cfg.LogLevel)
 	}
 	logrus.SetLevel(level)
-	log.EnableTracing(level == logrus.TraceLevel)
+	log.EnableTracing(true)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 1: get config from environment")
 
 	// ********************************************************************************
