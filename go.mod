@@ -15,7 +15,7 @@ require (
 	github.com/networkservicemesh/api v1.10.1-0.20230822145124-c4a3ece88804
 	github.com/networkservicemesh/govpp v0.0.0-20230922102554-a46e6ced9b14
 	github.com/networkservicemesh/sdk v0.5.1-0.20231002103215-f2a585e95092
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20230928141340-a06239569412
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20231002110307-5f8fc223e31a
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20231002104040-e1b86f8daa03
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20231002104338-c5aa8c256465
 	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
