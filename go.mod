@@ -29,7 +29,7 @@ require (
 	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
 	go.fd.io/govpp v0.8.0
 	golang.org/x/text v0.11.0
-	google.golang.org/grpc v1.58.0
+	google.golang.org/grpc v1.58.3
 )
 
 require (
