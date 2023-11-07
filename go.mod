@@ -15,7 +15,7 @@ require (
 	github.com/networkservicemesh/api v1.11.1-0.20231031152153-730abd666985
 	github.com/networkservicemesh/govpp v0.0.0-20230922102554-a46e6ced9b14
 	github.com/networkservicemesh/sdk v0.5.1-0.20231031174426-85ca154d11a8
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20231031205004-c3171bf0cf3f
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20231107040757-d5d1aba25a3a
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20231031175612-0e655752bf94
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20231031175704-0330acc8f95d
 	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
@@ -95,5 +95,5 @@ require (
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/kubelet v0.28.2 // indirect
+	k8s.io/kubelet v0.28.3 // indirect
 )
