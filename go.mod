@@ -13,7 +13,7 @@ require (
 	github.com/google/uuid v1.3.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.11.1-0.20231031152153-730abd666985
-	github.com/networkservicemesh/govpp v0.0.0-20230922102554-a46e6ced9b14
+	github.com/networkservicemesh/govpp v0.0.0-20231108193829-2484aa7cd5d9
 	github.com/networkservicemesh/sdk v0.5.1-0.20231108095252-20150d65bae2
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20231108145615-733102635b64
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20231031175612-0e655752bf94
