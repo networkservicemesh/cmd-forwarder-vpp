@@ -67,3 +67,9 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/networkservicemesh/cmd-forwarder-vpp:v1.11.1-fix.1"
+ 
+  print-debug-info:
+    name: Print debug info
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hmarr/debug-action@v2
