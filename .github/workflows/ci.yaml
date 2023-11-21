@@ -56,8 +56,8 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: networkservicemesh
-          password: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
+          username: "networkservicemesh"
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Build and push"
         uses: docker/build-push-action@v2
