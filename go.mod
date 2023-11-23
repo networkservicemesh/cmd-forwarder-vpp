@@ -17,7 +17,7 @@ require (
 	github.com/networkservicemesh/sdk v0.5.1-0.20231123111633-d10933795bd9
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20231123112133-3a307c41ee71
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20231122111612-d0604b634b7c
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20231122111632-e932e1e7f850
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20231123112254-6bf4ae39545c
 	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
@@ -58,7 +58,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20231122111254-249e5a95b0da // indirect
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20231123111918-aa126f9142bb // indirect
 	github.com/open-policy-agent/opa v0.44.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.17.0 // indirect
