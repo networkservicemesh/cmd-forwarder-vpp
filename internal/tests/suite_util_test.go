@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Cisco and/or its affiliates.
+// Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -36,6 +36,8 @@ const (
 	forwarderIP    = "10.0.2.1"
 	clientIP       = "10.0.2.2"
 	serverIP       = "10.0.2.3"
+
+	forwarderName = "forwarder"
 )
 
 func (f *ForwarderTestSuite) ListenAndServe(ctx context.Context, listenOn *url.URL, server *grpc.Server) <-chan error {
@@ -58,16 +60,16 @@ func (f *ForwarderTestSuite) ListenAndServe(ctx context.Context, listenOn *url.U
 	return returnErrCh
 }
 
-func SetupBridge() error {
+func SetupBridge() (cancelFn func(), err error) {
 	la := netlink.NewLinkAttrs()
 	la.Name = "bridge"
 	bridge := &netlink.Bridge{LinkAttrs: la}
-	err := netlink.LinkAdd(bridge)
+	err = netlink.LinkAdd(bridge)
 	if err != nil {
-		return errors.Wrapf(err, "could not add %s: %v", la.Name, err)
+		return nil, errors.Wrapf(err, "could not add %s: %v", la.Name, err)
 	}
 	if err := netlink.LinkSetUp(bridge); err != nil {
-		return errors.Wrapf(err, "failure creating bridge")
+		return nil, errors.Wrapf(err, "failure creating bridge")
 	}
 
 	ifaceMap := map[string]*net.IPNet{
@@ -75,6 +77,8 @@ func SetupBridge() error {
 		"client":   {IP: net.ParseIP(clientIP), Mask: net.CIDRMask(24, 32)},
 		"server":   {IP: net.ParseIP(serverIP), Mask: net.CIDRMask(24, 32)},
 	}
+
+	var linkList []netlink.Link
 	for ifaceName, netIP := range ifaceMap {
 		la := netlink.NewLinkAttrs()
 		la.Name = ifaceName
@@ -83,25 +87,31 @@ func SetupBridge() error {
 			PeerName:  la.Name + "-veth",
 		}
 		if err := netlink.LinkAdd(l); err != nil {
-			return errors.Wrapf(err, "unable to create link %s", l.PeerName)
+			return nil, errors.Wrapf(err, "unable to create link %s", l.PeerName)
 		}
 		peer, err := netlink.LinkByName(l.PeerName)
 		if err != nil {
-			return errors.Wrapf(err, "unable to get link %s", l.PeerName)
+			return nil, errors.Wrapf(err, "unable to get link %s", l.PeerName)
 		}
 		if err := netlink.LinkSetUp(l); err != nil {
-			return errors.Wrapf(err, "unable to up link %s", l.Attrs().Name)
+			return nil, errors.Wrapf(err, "unable to up link %s", l.Attrs().Name)
 		}
 		if err := netlink.LinkSetUp(peer); err != nil {
-			return errors.Wrapf(err, "unable to up link %s", peer.Attrs().Name)
+			return nil, errors.Wrapf(err, "unable to up link %s", peer.Attrs().Name)
 		}
 		if err := netlink.AddrAdd(l, &netlink.Addr{IPNet: netIP}); err != nil {
-			return errors.Wrapf(err, "unable to add address %s to link %s", netIP, l.Attrs().Name)
+			return nil, errors.Wrapf(err, "unable to add address %s to link %s", netIP, l.Attrs().Name)
 		}
 
 		if err := netlink.LinkSetMaster(peer, bridge); err != nil {
-			return errors.Wrapf(err, "unable to add link %s to bridge %s", peer.Attrs().Name, bridge.LinkAttrs.Name)
+			return nil, errors.Wrapf(err, "unable to add link %s to bridge %s", peer.Attrs().Name, bridge.LinkAttrs.Name)
 		}
+		linkList = append(linkList, l)
 	}
-	return nil
+	return func() {
+		for _, l := range linkList {
+			_ = netlink.LinkDel(l)
+		}
+		_ = netlink.LinkDel(bridge)
+	}, nil
 }

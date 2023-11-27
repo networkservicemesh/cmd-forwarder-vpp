@@ -178,6 +178,10 @@ issues:
       linters:
         - funlen
       text: "Function 'TestCombinations'"
+    - path: internal/tests/vppinit_test.go
+      linters:
+        - funlen
+      text: "Function 'Test_VppInit_AfPacket'"
     - path: internal/tests/suite_setup_test.go
       linters:
         - funlen

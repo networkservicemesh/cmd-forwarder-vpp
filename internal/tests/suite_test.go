@@ -40,6 +40,8 @@ type ForwarderTestSuite struct {
 	cancel context.CancelFunc
 	config config.Config
 
+	bridgeCancel func()
+
 	sutErrCh <-chan error
 	sutCC    grpc.ClientConnInterface
 
