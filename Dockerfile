@@ -1,3 +1,4 @@
+asdasdasdasd
 ARG VPP_VERSION=v23.10-rc0-167-g509e36aea
 FROM ghcr.io/networkservicemesh/govpp/vpp:${VPP_VERSION} as go
 COPY --from=golang:1.20.11 /usr/local/go/ /go
