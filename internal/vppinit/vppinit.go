@@ -195,7 +195,7 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetFlags").Debug("completed")
 
-	err = addIPNeighbor(ctx, vppConn, swIfIndex, link.Attrs().Index)
+	err = addIPNeighbor(ctx, vppConn, swIfIndex, link.Attrs().Index, routes)
 	if err != nil {
 		return nil, err
 	}
@@ -376,23 +376,6 @@ func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link)
 }
 
 func afxdpHostSettings(ctx context.Context, link netlink.Link) (uint16, error) {
-	// Get all gateways for a given interface and send ping requests.
-	// This will allow us to resolve the neighbors.
-	rl, _ := netlink.RouteList(link, netlink.FAMILY_ALL)
-	for i := 0; i < len(rl); i++ {
-		if rl[i].Gw != nil {
-			continue
-		}
-		pi := ping.New(rl[i].Gw.String())
-		pi.Count = 1
-		pi.Timeout = time.Millisecond * 100
-		pi.SetPrivileged(true)
-		err := pi.Run()
-		if err == nil {
-			log.FromContext(ctx).Infof("Gateway %v was resolved", rl[0].Gw.String())
-		}
-	}
-
 	// /sys/fs/bpf - the default dir of BPF filesystem
 	err := syscall.Mount("bpffs", "/sys/fs/bpf", "bpf", 0, "")
 	if err != nil {
@@ -448,7 +431,23 @@ func afxdpHostSettings(ctx context.Context, link netlink.Link) (uint16, error) {
 	return uint16(channels.CombinedCount), err
 }
 
-func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkIdx int) error {
+func addIPNeighbor(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkIdx int, routes []netlink.Route) error {
+	// Get all gateways for a given interface and send ping requests.
+	// This will allow us to resolve the neighbors.
+	for i := 0; i < len(routes); i++ {
+		if routes[i].Gw == nil {
+			continue
+		}
+		pi := ping.New(routes[i].Gw.String())
+		pi.Count = 1
+		pi.Timeout = time.Millisecond * 100
+		pi.SetPrivileged(true)
+		err := pi.Run()
+		if err == nil {
+			log.FromContext(ctx).Infof("Gateway %v was resolved", routes[0].Gw.String())
+		}
+	}
+
 	neighList, err := netlink.NeighList(linkIdx, netlink.FAMILY_ALL)
 	if err != nil {
 		return err
