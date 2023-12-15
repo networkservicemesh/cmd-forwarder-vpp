@@ -1,5 +1,7 @@
 // Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
+// Copyright (c) 2024 Nordix Foundation.
+//
 // SPDX-License-Identifier: Apache-2.0
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,9 +43,10 @@ import (
 	"github.com/networkservicemesh/govpp/binapi/ip"
 	"github.com/networkservicemesh/govpp/binapi/ip6_nd"
 	"github.com/networkservicemesh/govpp/binapi/ip_neighbor"
-
 	"github.com/networkservicemesh/sdk-vpp/pkg/tools/types"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
+
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit/apiparams"
 )
 
 // AfType represents socket address family
@@ -285,13 +288,18 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 }
 
 func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
-	afPacketCreate := &af_packet.AfPacketCreateV3{
-		Mode:        af_packet.AF_PACKET_API_MODE_ETHERNET,
-		HwAddr:      types.ToVppMacAddress(&link.Attrs().HardwareAddr),
-		HostIfName:  link.Attrs().Name,
-		RxFrameSize: 10240,
-		TxFrameSize: 10240,
-		Flags:       af_packet.AF_PACKET_API_FLAG_VERSION_2,
+	var c apiparams.AfPacketParams = *apiparams.GetAfPacketValues(ctx)
+	var afPacketCreate *af_packet.AfPacketCreateV3 = &af_packet.AfPacketCreateV3{
+		Mode:             c.Mode,
+		HwAddr:           types.ToVppMacAddress(&link.Attrs().HardwareAddr),
+		HostIfName:       link.Attrs().Name,
+		RxFrameSize:      c.RxFrameSize,
+		TxFrameSize:      c.TxFrameSize,
+		RxFramesPerBlock: c.RxFramesPerBlock,
+		TxFramesPerBlock: c.TxFramesPerBlock,
+		NumRxQueues:      c.NumRxQueues,
+		NumTxQueues:      c.NumTxQueues,
+		Flags:            c.Flags,
 	}
 	now := time.Now()
 	afPacketCreateRsp, err := af_packet.NewServiceClient(vppConn).AfPacketCreateV3(ctx, afPacketCreate)
@@ -316,13 +324,14 @@ func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link)
 	if err != nil {
 		return 0, err
 	}
-
+	var c apiparams.AfXDPParams = *apiparams.GetAfXdpValues(ctx)
 	afXDPCreate := &af_xdp.AfXdpCreate{
 		HostIf:  link.Attrs().Name,
-		RxqSize: 8192,
-		TxqSize: 8192,
+		RxqSize: c.RxqSize,
+		TxqSize: c.TxqSize,
 		RxqNum:  rxqNum,
-		Mode:    af_xdp.AF_XDP_API_MODE_AUTO,
+		Mode:    c.Mode,
+		Flags:   c.Flags,
 		Prog:    "/bin/afxdp.o",
 	}
 

@@ -31,6 +31,7 @@ require (
 	go.fd.io/govpp v0.10.0-alpha.0.20240110141843-761adec77524
 	golang.org/x/text v0.14.0
 	google.golang.org/grpc v1.59.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -94,6 +95,5 @@ require (
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/kubelet v0.28.3 // indirect
 )
