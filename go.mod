@@ -13,7 +13,7 @@ require (
 	github.com/google/uuid v1.3.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.11.1-0.20231031152153-730abd666985
-	github.com/networkservicemesh/govpp v0.0.0-20231108193829-2484aa7cd5d9
+	github.com/networkservicemesh/govpp v0.0.0-20231216233431-9c82b2963820
 	github.com/networkservicemesh/sdk v0.5.1-0.20231212103212-1979cc1d932c
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20231212103724-46f217695e15
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20231212103852-8e2faf058288
@@ -21,14 +21,14 @@ require (
 	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spiffe/go-spiffe/v2 v2.0.0
 	github.com/stretchr/testify v1.8.4
 	github.com/thanhpk/randstr v1.0.4
 	github.com/vishvananda/netlink v1.2.1-beta.2.0.20220630165224-c591ada0fb2b
 	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
-	go.fd.io/govpp v0.8.0
-	golang.org/x/text v0.13.0
+	go.fd.io/govpp v0.9.0-alpha.0.20231212074705-4ae974bc6248
+	golang.org/x/text v0.14.0
 	google.golang.org/grpc v1.59.0
 )
 
@@ -43,7 +43,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/edwarnicke/log v1.0.0 // indirect
 	github.com/edwarnicke/serialize v1.0.7 // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
+	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/ftrvxmtrx/fd v0.0.0-20150925145434-c6d800382fff // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
