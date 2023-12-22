@@ -73,13 +73,15 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test bridge (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
-	f.Require().NoError(SetupBridge())
+	bridgeCancel, err := SetupBridge()
+	f.Require().NoError(err)
+	f.bridgeCancel = bridgeCancel
 
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Creating test vpp Server (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	f.vppServerConn, f.vppServerRoot, f.vppServerErrCh = f.createVpp(f.ctx, "vpp-server")
-	_, err := vppinit.LinkToSocket(f.ctx, f.vppServerConn, net.ParseIP(serverIP), vppinit.AfPacket)
+	_, err = vppinit.LinkToSocket(f.ctx, f.vppServerConn, net.ParseIP(serverIP), vppinit.AfPacket)
 	f.Require().NoError(err)
 
 	// ********************************************************************************
@@ -117,8 +119,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 	log.FromContext(f.ctx).Infof("Running system under test (SUT) (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
-	cmdStr := "forwarder"
-	f.sutErrCh = exechelper.Start(cmdStr,
+	f.sutErrCh = exechelper.Start(forwarderName,
 		exechelper.WithContext(f.ctx),
 		exechelper.WithEnvirons(append(os.Environ(), "NSM_REGISTRY_CLIENT_POLICIES=\"\"")...),
 		exechelper.WithStdout(os.Stdout),
@@ -221,6 +222,7 @@ func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppCon
 
 func (f *ForwarderTestSuite) TearDownSuite() {
 	f.cancel()
+	f.bridgeCancel()
 	for {
 		_, ok := <-f.sutErrCh
 		if !ok {
