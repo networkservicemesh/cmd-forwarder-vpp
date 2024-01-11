@@ -14,8 +14,8 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.11.1-0.20231031152153-730abd666985
 	github.com/networkservicemesh/govpp v0.0.0-20231225111845-22983cadafe7
-	github.com/networkservicemesh/sdk v0.5.1-0.20231226075604-9c02db4bfa70
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20231226080115-a67bbe49e236
+	github.com/networkservicemesh/sdk v0.5.1-0.20240111113458-792b7fb5104e
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20240111114041-996d3021ed14
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20231226075837-dc0b88acf9e5
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20231226080150-c1c744d6f759
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20240111092647-0739c251f992
@@ -83,10 +83,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.20.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.13.0 // indirect
-	golang.org/x/sys v0.14.1-0.20231113162313-11eadc05e9bf // indirect
+	golang.org/x/sys v0.16.0 // indirect
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20200609130330-bd2cb7843e1b // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231016165738-49dd2c1f3d0b // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231030173426-d783a09b4405 // indirect
