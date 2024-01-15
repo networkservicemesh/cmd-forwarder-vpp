@@ -19,7 +19,7 @@ require (
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20240111113759-cd0e91a5bd1e
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20240111114146-db218b7357a1
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20240111114255-6f452c26d413
-	github.com/networkservicemesh/vpphelper v0.0.0-20230901145133-a14aecebd1cb
+	github.com/networkservicemesh/vpphelper v0.0.0-20240115135903-e2b961f768b6
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
 	github.com/sirupsen/logrus v1.9.3
@@ -27,8 +27,8 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/thanhpk/randstr v1.0.4
 	github.com/vishvananda/netlink v1.2.1-beta.2.0.20220630165224-c591ada0fb2b
-	github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
-	go.fd.io/govpp v0.9.0-alpha.0.20231212074705-4ae974bc6248
+	github.com/vishvananda/netns v0.0.4
+	go.fd.io/govpp v0.10.0-alpha.0.20240110141843-761adec77524
 	golang.org/x/text v0.14.0
 	google.golang.org/grpc v1.59.0
 )
@@ -57,7 +57,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/lunixbochs/struc v0.0.0-20200521075829-a4cb8d33dbbe // indirect
+	github.com/lunixbochs/struc v0.0.0-20200707160740-784aaebc1d40 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/open-policy-agent/opa v0.44.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
