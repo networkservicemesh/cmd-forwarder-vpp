@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Cisco and/or its affiliates.
+// Copyright (c) 2022-2024 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -95,7 +95,7 @@ func WithVlanDomain2Device(domain2Device map[string]string) Option {
 	}
 }
 
-// WithStatsOptions sets metrics options
+// WithMetricsOptions sets metrics options
 func WithMetricsOptions(opts ...metrics.Option) Option {
 	return func(o *xconnOptions) {
 		o.metricsOpts = opts
