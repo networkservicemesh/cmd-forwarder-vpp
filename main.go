@@ -64,7 +64,7 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
 
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/vxlan"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/stats"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/metrics"
 
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/config"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/devicecfg"
@@ -156,7 +156,7 @@ func main() {
 
 	var vppConn vpphelper.Connection
 	var vppErrCh <-chan error
-	var statsOpts []stats.Option
+	var metricsOpts []metrics.Option
 	cleanupDoneCh := make(chan struct{})
 	cleanupOpts := []cleanup.Option{
 		cleanup.WithoutGRPCCall(),
@@ -168,7 +168,7 @@ func main() {
 		close(errCh)
 		vppErrCh = errCh
 		dir, _ := path.Split(cfg.VppAPISocket)
-		statsOpts = append(statsOpts, stats.WithSocket(path.Join(dir, "stats.sock")))
+		metricsOpts = append(metricsOpts, metrics.WithSocket(path.Join(dir, "stats.sock")))
 		cleanupOpts = append(cleanupOpts, cleanup.WithDoneChan(cleanupDoneCh))
 		log.FromContext(ctx).Info("external vpp is being used")
 
@@ -255,7 +255,7 @@ func main() {
 		xconnectns.WithMechanismPriority(cfg.MechanismPriority),
 		xconnectns.WithClientURL(&cfg.ConnectTo),
 		xconnectns.WithDialTimeout(cfg.DialTimeout),
-		xconnectns.WithStatsOptions(statsOpts...),
+		xconnectns.WithMetricsOptions(metricsOpts...),
 		xconnectns.WithCleanupOptions(cleanupOpts...),
 		xconnectns.WithVxlanOptions(vxlan.WithPort(cfg.VxlanPort)),
 		xconnectns.WithDialOptions(dialOptions...),
