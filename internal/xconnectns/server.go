@@ -1,6 +1,6 @@
 // Copyright (c) 2021-2022 Doc.ai and/or its affiliates.
 //
-// Copyright (c) 2022 Cisco and/or its affiliates.
+// Copyright (c) 2022-2024 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -82,7 +82,7 @@ func NewServer(
 		vppforwarder.WithVlanDomain2Device(xconnOpts.domain2Device),
 		vppforwarder.WithMechanismPriority(xconnOpts.mechanismPrioriyList),
 		vppforwarder.WithCleanupOptions(xconnOpts.cleanupOpts...),
-		vppforwarder.WithStatsOptions(xconnOpts.statsOpts...),
+		vppforwarder.WithStatsOptions(xconnOpts.metricsOpts...),
 		vppforwarder.WithVxlanOptions(xconnOpts.vxlanOpts...),
 		vppforwarder.WithDialOptions(xconnOpts.dialOpts...))
 	if sriovConfig == nil {

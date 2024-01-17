@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Cisco and/or its affiliates.
+// Copyright (c) 2022-2024 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -26,7 +26,7 @@ import (
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/mechanisms/vxlan"
-	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/stats"
+	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/metrics"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/cleanup"
 )
 
@@ -38,7 +38,7 @@ type xconnOptions struct {
 	dialTimeout                      time.Duration
 	domain2Device                    map[string]string
 	mechanismPrioriyList             []string
-	statsOpts                        []stats.Option
+	metricsOpts                      []metrics.Option
 	cleanupOpts                      []cleanup.Option
 	vxlanOpts                        []vxlan.Option
 	dialOpts                         []grpc.DialOption
@@ -95,10 +95,10 @@ func WithVlanDomain2Device(domain2Device map[string]string) Option {
 	}
 }
 
-// WithStatsOptions sets stats options
-func WithStatsOptions(opts ...stats.Option) Option {
+// WithMetricsOptions sets metrics options
+func WithMetricsOptions(opts ...metrics.Option) Option {
 	return func(o *xconnOptions) {
-		o.statsOpts = opts
+		o.metricsOpts = opts
 	}
 }
 
