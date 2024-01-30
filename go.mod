@@ -13,12 +13,12 @@ require (
 	github.com/google/uuid v1.3.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.11.2
-	github.com/networkservicemesh/govpp v0.0.0-20240115135805-9d7177f85ad9
+	github.com/networkservicemesh/govpp v0.0.0-20240130152300-43babf54855b
 	github.com/networkservicemesh/sdk v1.11.2
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20240118092816-e21bce91f8a2
 	github.com/networkservicemesh/sdk-kernel v1.11.2
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20240117141758-43f62c9df101
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20240117141838-8364b73cafbd
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20240130163336-17d8db6d4c55
 	github.com/networkservicemesh/vpphelper v0.0.0-20240115135903-e2b961f768b6
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
