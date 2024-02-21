@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"go.fd.io/govpp/api"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	"github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/kernel"
@@ -53,7 +54,7 @@ import (
 func NewServer(
 	ctx context.Context,
 	tokenGenerator token.GeneratorFunc,
-	vppConn vppforwarder.Connection,
+	vppConn api.Connection,
 	tunnelIP net.IP,
 	pciPool resourcepool.PCIPool,
 	resourcePool resourcepool.ResourcePool,
