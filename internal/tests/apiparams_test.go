@@ -70,7 +70,6 @@ func (c *SomeValuesType) DumpToFile(filename string) error {
 }
 
 func TestDefaults(t *testing.T) {
-
 	packetValues := vppinit.GetAfPacketValues(context.Background())
 	require.Equal(t, &vppinit.AfPacketParams{
 		Mode:             af_packet.AF_PACKET_API_MODE_ETHERNET,

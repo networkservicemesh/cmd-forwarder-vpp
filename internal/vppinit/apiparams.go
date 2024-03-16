@@ -31,13 +31,13 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 )
 
-// VPPInitParameters contains parameters for various AF types
-type VPPInitParameters struct {
+// Parameters contains parameters for various AF types
+type Parameters struct {
 	AfPacket *AfPacketParams `yaml:"AF_PACKET"`
 	AfXdp    *AfXDPParams    `yaml:"AF_XDP"`
 }
 
-func (c *VPPInitParameters) String() string {
+func (c *Parameters) String() string {
 	sb := &strings.Builder{}
 	_, _ = sb.WriteString("&{")
 	_, _ = sb.WriteString("AF_PACKET:{")
@@ -75,8 +75,8 @@ type AfXDPParams struct {
 	Flags   af_xdp.AfXdpFlag `yaml:"flags"`
 }
 
-func getDefaults() *VPPInitParameters {
-	return &VPPInitParameters{
+func getDefaults() *Parameters {
+	return &Parameters{
 		AfPacket: &AfPacketParams{
 			Mode:             af_packet.AF_PACKET_API_MODE_ETHERNET,
 			RxFrameSize:      10240,
@@ -106,7 +106,7 @@ func GetAfXdpValues(ctx context.Context) *AfXDPParams {
 	return getConfig(ctx).AfXdp
 }
 
-func getConfig(ctx context.Context) *VPPInitParameters {
+func getConfig(ctx context.Context) *Parameters {
 	cfg := getDefaults()
 	if _, err := os.Stat(confFilename); os.IsNotExist(err) {
 		log.FromContext(ctx).Infof("Configuration file: %q not found, using defaults(%+v)", confFilename, cfg)
@@ -121,7 +121,7 @@ func getConfig(ctx context.Context) *VPPInitParameters {
 	return cfg
 }
 
-func readConfig(configFile string, cfg *VPPInitParameters) error {
+func readConfig(configFile string, cfg *Parameters) error {
 	bytes, err := os.ReadFile(filepath.Clean(configFile))
 	if err != nil {
 		return errors.Wrapf(err, "error reading file: %v", configFile)

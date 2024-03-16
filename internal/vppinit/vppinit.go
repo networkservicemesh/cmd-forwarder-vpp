@@ -286,7 +286,7 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 }
 
 func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Link) (interface_types.InterfaceIndex, error) {
-	var c *AfPacketParams = GetAfPacketValues(ctx)
+	c := GetAfPacketValues(ctx)
 	var afPacketCreate *af_packet.AfPacketCreateV3 = &af_packet.AfPacketCreateV3{
 		Mode:             c.Mode,
 		HwAddr:           types.ToVppMacAddress(&link.Attrs().HardwareAddr),
@@ -322,7 +322,7 @@ func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link)
 	if err != nil {
 		return 0, err
 	}
-	var c *AfXDPParams = GetAfXdpValues(ctx)
+	c := GetAfXdpValues(ctx)
 	afXDPCreate := &af_xdp.AfXdpCreate{
 		HostIf:  link.Attrs().Name,
 		RxqSize: c.RxqSize,

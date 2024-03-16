@@ -2,7 +2,6 @@
 package imports
 
 import (
-	_ "bytes"
 	_ "context"
 	_ "crypto/tls"
 	_ "fmt"
