@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -56,18 +55,6 @@ func (c *ConfigYAML) String() string {
 	return sb.String()
 }
 
-// DumpToFile Dump the structure to a given file in yaml format
-func (c *ConfigYAML) DumpToFile(filename string) error {
-	contents, err := yaml.Marshal(c)
-	if err != nil {
-		return err
-	}
-	if err := os.MkdirAll(path.Dir(filename), 0o700); err != nil {
-		return err
-	}
-	return os.WriteFile(filename, append([]byte(fileStart), contents...), 0o600)
-}
-
 // AfPacketParams contains configuration parameters for AF_PACKET interface
 type AfPacketParams struct {
 	Mode             af_packet.AfPacketMode  `yaml:"mode"`
@@ -88,8 +75,7 @@ type AfXDPParams struct {
 	Flags   af_xdp.AfXdpFlag `yaml:"flags"`
 }
 
-// GetDefaults  Get default arguments used by create host interface APIs
-func GetDefaults() *ConfigYAML {
+func getDefaults() *ConfigYAML {
 	return &ConfigYAML{
 		AfPacket: &AfPacketParams{
 			Mode:             af_packet.AF_PACKET_API_MODE_ETHERNET,
@@ -121,25 +107,21 @@ func GetAfXdpValues(ctx context.Context) *AfXDPParams {
 }
 
 func getConfig(ctx context.Context) *ConfigYAML {
-	cfg := GetDefaults()
+	cfg := getDefaults()
 	if _, err := os.Stat(confFilename); os.IsNotExist(err) {
 		log.FromContext(ctx).Infof("Configuration file: %q not found, using defaults(%+v)", confFilename, cfg)
-		if err = cfg.DumpToFile(confFilename); err != nil {
-			log.FromContext(ctx).Warnf("Failed to expose used vppapi AF_ interface default values %+v", err)
-		}
 		return cfg
 	}
-	err := ReadConfig(confFilename, cfg)
+	err := readConfig(confFilename, cfg)
 	if err != nil {
 		log.FromContext(ctx).Warnf("Failed to get vppapi AF_ interface default values %+v", err)
-		return GetDefaults()
+		return getDefaults()
 	}
 	log.FromContext(ctx).WithField("ReadConfig", confFilename).Infof("unmarshalled Config: %s", cfg)
 	return cfg
 }
 
-// ReadConfig reads configuration from file
-func ReadConfig(configFile string, cfg *ConfigYAML) error {
+func readConfig(configFile string, cfg *ConfigYAML) error {
 	bytes, err := os.ReadFile(filepath.Clean(configFile))
 	if err != nil {
 		return errors.Wrapf(err, "error reading file: %v", configFile)

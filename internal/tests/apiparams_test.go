@@ -17,27 +17,21 @@
 package tests
 
 import (
-	"bytes"
 	"context"
 	"os"
 	"path"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v3"
 
 	"github.com/networkservicemesh/govpp/binapi/af_packet"
-	"github.com/networkservicemesh/govpp/binapi/af_xdp"
 
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 )
 
 const (
-	configFilePath    = "/var/lib/networkservicemesh/vppapi-hostint-args.yaml"
-	exampleFileName   = "example-config/example-hostint-args.yaml"
-	defaultFileName   = "example-config/default.yaml"
-	generatedFileName = "default-generated.yaml"
+	configFilePath = "/var/lib/networkservicemesh/vppapi-hostint-args.yaml"
 )
 
 type SomeValuesType struct {
@@ -75,49 +69,29 @@ func (c *SomeValuesType) DumpToFile(filename string) error {
 	return os.WriteFile(filename, contents, 0o600)
 }
 
-func TestReadConfigFile(t *testing.T) {
-	cfg := &vppinit.ConfigYAML{}
-	err := vppinit.ReadConfig(exampleFileName, cfg)
-	require.NoError(t, err)
-	require.Equal(t, &vppinit.ConfigYAML{
-		AfPacket: &vppinit.AfPacketParams{
-			Mode:             af_packet.AF_PACKET_API_MODE_ETHERNET,
-			Flags:            af_packet.AF_PACKET_API_FLAG_CKSUM_GSO,
-			RxFrameSize:      2048,
-			TxFrameSize:      10240,
-			RxFramesPerBlock: 32,
-			TxFramesPerBlock: 1024,
-			NumRxQueues:      1,
-			NumTxQueues:      1,
-		},
-		AfXdp: &vppinit.AfXDPParams{
-			Mode:    af_xdp.AF_XDP_API_MODE_COPY,
-			RxqSize: 8192,
-			TxqSize: 8192,
-			Flags:   af_xdp.AF_XDP_API_FLAGS_NO_SYSCALL_LOCK,
-		},
-	}, cfg)
-}
+func TestDefaults(t *testing.T) {
 
-func TestDumpDefaults(t *testing.T) {
-	cfg := vppinit.GetDefaults()
-	err := cfg.DumpToFile(generatedFileName)
-	require.NoError(t, err)
-	defer func() {
-		if errRem := os.RemoveAll(generatedFileName); errRem != nil {
-			t.Fatalf("no file generated or the generated file cannot removed")
-		}
-	}()
+	packetValues := vppinit.GetAfPacketValues(context.Background())
+	require.Equal(t, &vppinit.AfPacketParams{
+		Mode:             af_packet.AF_PACKET_API_MODE_ETHERNET,
+		Flags:            af_packet.AF_PACKET_API_FLAG_VERSION_2,
+		RxFrameSize:      10240,
+		TxFrameSize:      10240,
+		RxFramesPerBlock: 1024,
+		TxFramesPerBlock: 1024,
+		NumRxQueues:      1,
+		NumTxQueues:      0,
+	},
+		packetValues)
 
-	generated, err := os.ReadFile(filepath.Clean(generatedFileName))
-	require.NoError(t, err)
-	want, err := os.ReadFile(filepath.Clean(defaultFileName))
-	require.NoError(t, err)
-
-	if !bytes.Equal(generated, want) {
-		t.Fatalf("%s: have:\n%s\nwant:\n%s\n%+v", generatedFileName, generated,
-			want, cfg)
-	}
+	xdpValues := vppinit.GetAfXdpValues(context.Background())
+	require.Equal(t, &vppinit.AfXDPParams{
+		Mode:    0,
+		RxqSize: 8192,
+		TxqSize: 8192,
+		Flags:   0,
+	},
+		xdpValues)
 }
 
 func TestSomeValuesSet(t *testing.T) {

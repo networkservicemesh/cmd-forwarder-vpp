@@ -18,5 +18,4 @@ package vppinit
 
 const (
 	confFilename = "/var/lib/networkservicemesh/vppapi-hostint-args.yaml"
-	fileStart    = "---\n"
 )
