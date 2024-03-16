@@ -14,9 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package apiparams provides parsing factilty for configuration parameters
-// file for vpp init
-package apiparams
+package vppinit
 
 import (
 	"context"

@@ -30,7 +30,7 @@ import (
 	"github.com/networkservicemesh/govpp/binapi/af_packet"
 	"github.com/networkservicemesh/govpp/binapi/af_xdp"
 
-	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit/apiparams"
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 )
 
 const (
@@ -76,11 +76,11 @@ func (c *SomeValuesType) DumpToFile(filename string) error {
 }
 
 func TestReadConfigFile(t *testing.T) {
-	cfg := &apiparams.ConfigYAML{}
-	err := apiparams.ReadConfig(exampleFileName, cfg)
+	cfg := &vppinit.ConfigYAML{}
+	err := vppinit.ReadConfig(exampleFileName, cfg)
 	require.NoError(t, err)
-	require.Equal(t, &apiparams.ConfigYAML{
-		AfPacket: &apiparams.AfPacketParams{
+	require.Equal(t, &vppinit.ConfigYAML{
+		AfPacket: &vppinit.AfPacketParams{
 			Mode:             af_packet.AF_PACKET_API_MODE_ETHERNET,
 			Flags:            af_packet.AF_PACKET_API_FLAG_CKSUM_GSO,
 			RxFrameSize:      2048,
@@ -90,7 +90,7 @@ func TestReadConfigFile(t *testing.T) {
 			NumRxQueues:      1,
 			NumTxQueues:      1,
 		},
-		AfXdp: &apiparams.AfXDPParams{
+		AfXdp: &vppinit.AfXDPParams{
 			Mode:    af_xdp.AF_XDP_API_MODE_COPY,
 			RxqSize: 8192,
 			TxqSize: 8192,
@@ -100,7 +100,7 @@ func TestReadConfigFile(t *testing.T) {
 }
 
 func TestDumpDefaults(t *testing.T) {
-	cfg := apiparams.GetDefaults()
+	cfg := vppinit.GetDefaults()
 	err := cfg.DumpToFile(generatedFileName)
 	require.NoError(t, err)
 	defer func() {
@@ -129,8 +129,8 @@ func TestSomeValuesSet(t *testing.T) {
 		}
 	}()
 
-	packetValues := apiparams.GetAfPacketValues(context.Background())
-	require.Equal(t, &apiparams.AfPacketParams{
+	packetValues := vppinit.GetAfPacketValues(context.Background())
+	require.Equal(t, &vppinit.AfPacketParams{
 		Mode:             af_packet.AF_PACKET_API_MODE_ETHERNET,
 		Flags:            af_packet.AF_PACKET_API_FLAG_VERSION_2,
 		RxFrameSize:      20480,
@@ -142,8 +142,8 @@ func TestSomeValuesSet(t *testing.T) {
 	},
 		packetValues)
 
-	xdpValues := apiparams.GetAfXdpValues(context.Background())
-	require.Equal(t, &apiparams.AfXDPParams{
+	xdpValues := vppinit.GetAfXdpValues(context.Background())
+	require.Equal(t, &vppinit.AfXDPParams{
 		Mode:    0,
 		RxqSize: 16384,
 		TxqSize: 8192,
