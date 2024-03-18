@@ -94,6 +94,7 @@ func TestDefaults(t *testing.T) {
 }
 
 func TestSomeValuesSet(t *testing.T) {
+	_ = os.Setenv("NSM_VPP_INIT_PARAMS", configFilePath)
 	err := someValues.DumpToFile(configFilePath)
 	require.NoError(t, err)
 	defer func() {

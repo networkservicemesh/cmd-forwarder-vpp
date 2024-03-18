@@ -108,16 +108,23 @@ func GetAfXdpValues(ctx context.Context) *AfXDPParams {
 
 func getConfig(ctx context.Context) *Parameters {
 	cfg := getDefaults()
+	confFilename := os.Getenv("NSM_VPP_INIT_PARAMS")
+	logger := log.FromContext(ctx).WithField("ReadConfig", confFilename)
+	if confFilename == "" {
+		logger.Infof("Using default VPP init parameters %+v", cfg)
+		return cfg
+	}
 	if _, err := os.Stat(confFilename); os.IsNotExist(err) {
-		log.FromContext(ctx).Infof("Configuration file: %q not found, using defaults(%+v)", confFilename, cfg)
+		logger.Infof("Configuration file: %q not found, using default VPP init parameters (%+v)", confFilename, cfg)
 		return cfg
 	}
 	err := readConfig(confFilename, cfg)
 	if err != nil {
-		log.FromContext(ctx).Warnf("Failed to get vppapi AF_ interface default values %+v", err)
-		return getDefaults()
+		defaultCfg := getDefaults()
+		logger.Warnf("Failed to read VPP init parameters %+v Using: %+v", err, defaultCfg)
+		return defaultCfg
 	}
-	log.FromContext(ctx).WithField("ReadConfig", confFilename).Infof("unmarshalled Config: %s", cfg)
+	logger.Infof("Unmarshalled VPP init parameters: %s", cfg)
 	return cfg
 }
 
