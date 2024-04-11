@@ -18,7 +18,7 @@ require (
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20240405103606-fbb6411d2232
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20240405103539-cf3b1676a8b2
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20240405104034-4c48ca37f7ee
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20240405133609-903fd936802f
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20240411170841-6b6d4026f3b8
 	github.com/networkservicemesh/vpphelper v0.0.0-20240115135903-e2b961f768b6
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
