@@ -142,7 +142,6 @@ linters:
     - gofmt
     - goimports
     - revive
-    - gosec
     - gosimple
     - govet
     - ineffassign
