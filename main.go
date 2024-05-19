@@ -77,7 +77,7 @@ import (
 
 func main() {
 	go func() {
-		http.ListenAndServe("localhost:6060", nil)
+		_ = http.ListenAndServe("localhost:6060", nil)
 	}()
 	// ********************************************************************************
 	// setup context to catch signals
