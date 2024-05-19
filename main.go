@@ -70,9 +70,15 @@ import (
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/devicecfg"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/xconnectns"
+
+	"net/http"
+	_ "net/http/pprof"
 )
 
 func main() {
+	go func() {
+		http.ListenAndServe("localhost:6060", nil)
+	}()
 	// ********************************************************************************
 	// setup context to catch signals
 	// ********************************************************************************
