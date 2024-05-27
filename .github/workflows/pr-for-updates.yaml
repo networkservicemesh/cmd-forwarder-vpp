@@ -11,13 +11,13 @@ jobs:
       token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
 
   check-mergeability:
-    needs: [ auto-pull-request ]
+    needs: [auto-pull-request]
     uses: networkservicemesh/.github/.github/workflows/check-mergeability.yaml@main
     secrets:
       token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
 
   resolve_conflicts:
-    needs: [ check-mergeability ]
+    needs: [check-mergeability]
     if: ${{ always() && needs.check-mergeability.result == 'failure' && needs.check-mergeability.outputs.pr_branch_ref != '' }}
     uses: networkservicemesh/.github/.github/workflows/resolve-conflicts.yaml@main
     with:
