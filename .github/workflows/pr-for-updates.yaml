@@ -9,3 +9,18 @@ jobs:
     uses: networkservicemesh/.github/.github/workflows/pr-for-updates.yaml@main
     secrets:
       token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
+
+  check-mergeability:
+    needs: [ auto-pull-request ]
+    uses: networkservicemesh/.github/.github/workflows/check-mergeability.yaml@main
+    secrets:
+      token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
+
+  resolve_conflicts:
+    needs: [ check-mergeability ]
+    if: ${{ always() && needs.check-mergeability.result == 'failure' && needs.check-mergeability.outputs.pr_branch_ref != '' }}
+    uses: networkservicemesh/.github/.github/workflows/resolve-conflicts.yaml@main
+    with:
+      pr_branch_ref: ${{ needs.check-mergeability.outputs.pr_branch_ref }}
+    secrets:
+      token: ${{ secrets.NSM_BOT_GITHUB_TOKEN }}
