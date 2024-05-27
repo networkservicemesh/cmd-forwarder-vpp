@@ -5,6 +5,12 @@ on:
     branches:
       - update/**
 jobs:
+  print-debug-info:
+    name: Print debug info
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hmarr/debug-action@v2
+
   auto-pull-request:
     uses: networkservicemesh/.github/.github/workflows/pr-for-updates.yaml@main
     secrets:
