@@ -172,7 +172,7 @@ func main() {
 		cleanupOpts = append(cleanupOpts, cleanup.WithDoneChan(cleanupDoneCh))
 		log.FromContext(ctx).Info("external vpp is being used")
 
-		if err = cfg.VppInit.Decode("NONE"); err != nil {
+		if err = cfg.VppInit.Decode("AF_PACKET"); err != nil {
 			log.FromContext(ctx).Fatalf("VppInit.Decode error: %v", err)
 		}
 	} else { // If we don't have a VPPAPISocket, start VPP and use that
