@@ -31,6 +31,8 @@ docker build .
 * `NSM_DIAL_TIMEOUT`             - Timeout for the dial the next endpoint
 * `NSM_OPEN_TELEMETRY_ENDPOINT`  - OpenTelemetry Collector Endpoint
 * `NSM_METRICS_EXPORT_INTERVAL`  - interval between mertics exports
+* `NSM_PPROF_ENABLED`            - is pprof enabled (default: "false")
+* `NSM_PPROF_PORT`               - pprof port (default: "6060")
 * `NSM_TUNNEL_IP`                - IP to use for tunnels
 * `NSM_VXLAN_PORT`               - VXLAN port to use
 * `NSM_VPP_API_SOCKET`           - filename of socket to connect to existing VPP instance.
