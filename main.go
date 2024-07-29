@@ -150,6 +150,52 @@ func main() {
 	}
 
 	// ********************************************************************************
+	// Configure Prometheus
+	// ********************************************************************************
+	if opentelemetry.IsPrometheusEnabled() {
+		collectorAddress := cfg.OpenTelemetryEndpoint
+		spanExporter := opentelemetry.InitSpanExporter(ctx, collectorAddress)
+		metricExporter := opentelemetry.InitPrometheusMetricExporter(ctx)
+		o := opentelemetry.Init(ctx, spanExporter, metricExporter, cfg.Name)
+		defer func() {
+			if err = o.Close(); err != nil {
+				log.FromContext(ctx).Error(err.Error())
+			}
+		}()
+
+		metricsServer := opentelemetry.Server{
+			IP:            cfg.PrometheusIP,
+			Port:          int(cfg.PrometheusPort),
+			HeaderTimeout: cfg.PrometheusServerHeaderTimeout,
+		}
+
+		tlsConfig := &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		}
+		source, err := workloadapi.NewX509Source(ctx)
+		if err != nil {
+			log.FromContext(ctx).Fatalf("error getting x509 source: %v", err.Error())
+		}
+		tlsConfig.GetCertificate = tlsconfig.GetCertificate(source)
+		metricsServer.TLSConfig = tlsConfig
+
+		select {
+		case <-ctx.Done():
+			err = source.Close()
+			log.FromContext(ctx).Errorf("unable to close x509 source: %v", err.Error())
+		default:
+		}
+
+		go func() {
+			err := metricsServer.Start(ctx)
+			if err != nil {
+				log.FromContext(ctx).Error(err.Error())
+				cancel()
+			}
+		}()
+	}
+
+	// ********************************************************************************
 	log.FromContext(ctx).Infof("executing phase 2: run vpp and get a connection to it (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	now = time.Now()
