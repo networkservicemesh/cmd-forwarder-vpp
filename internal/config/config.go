@@ -36,19 +36,21 @@ import (
 
 // Config - configuration for cmd-forwarder-vpp
 type Config struct {
-	Name                   string            `default:"forwarder" desc:"Name of Endpoint"`
-	Labels                 map[string]string `default:"p2p:true" desc:"Labels related to this forwarder-vpp instance"`
-	NSName                 string            `default:"forwarder" desc:"Name of Network Service to Register with Registry"`
-	ConnectTo              url.URL           `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
-	ListenOn               url.URL           `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
-	MaxTokenLifetime       time.Duration     `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
-	RegistryClientPolicies []string          `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/client/.*.rego" desc:"paths to files and directories that contain registry client policies" split_words:"true"`
-	LogLevel               string            `default:"INFO" desc:"Log level" split_words:"true"`
-	DialTimeout            time.Duration     `default:"750ms" desc:"Timeout for the dial the next endpoint" split_words:"true"`
-	OpenTelemetryEndpoint  string            `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint" split_words:"true"`
-	MetricsExportInterval  time.Duration     `default:"10s" desc:"interval between mertics exports" split_words:"true"`
-	PprofEnabled           bool              `default:"false" desc:"is pprof enabled" split_words:"true"`
-	PprofListenOn          string            `default:"localhost:6060" desc:"pprof URL to ListenAndServe" split_words:"true"`
+	Name                          string            `default:"forwarder" desc:"Name of Endpoint"`
+	Labels                        map[string]string `default:"p2p:true" desc:"Labels related to this forwarder-vpp instance"`
+	NSName                        string            `default:"forwarder" desc:"Name of Network Service to Register with Registry"`
+	ConnectTo                     url.URL           `default:"unix:///connect.to.socket" desc:"url to connect to" split_words:"true"`
+	ListenOn                      url.URL           `default:"unix:///listen.on.socket" desc:"url to listen on" split_words:"true"`
+	MaxTokenLifetime              time.Duration     `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
+	RegistryClientPolicies        []string          `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/client/.*.rego" desc:"paths to files and directories that contain registry client policies" split_words:"true"`
+	LogLevel                      string            `default:"INFO" desc:"Log level" split_words:"true"`
+	DialTimeout                   time.Duration     `default:"750ms" desc:"Timeout for the dial the next endpoint" split_words:"true"`
+	OpenTelemetryEndpoint         string            `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint" split_words:"true"`
+	MetricsExportInterval         time.Duration     `default:"10s" desc:"interval between mertics exports" split_words:"true"`
+	PprofEnabled                  bool              `default:"false" desc:"is pprof enabled" split_words:"true"`
+	PprofListenOn                 string            `default:"localhost:6060" desc:"pprof URL to ListenAndServe" split_words:"true"`
+	PrometheusListenOn            string            `default:":8081" desc:"Prometheus URL to ListenAndServe" split_words:"true"`
+	PrometheusServerHeaderTimeout time.Duration     `default:"5s" desc:"Timeout for how long the Prometheus server waits for complete request headers from the client" split_words:"true"`
 
 	TunnelIP      net.IP       `desc:"IP to use for tunnels" split_words:"true"`
 	VxlanPort     uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
