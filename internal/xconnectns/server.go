@@ -83,7 +83,7 @@ func NewServer(
 		vppforwarder.WithVlanDomain2Device(xconnOpts.domain2Device),
 		vppforwarder.WithMechanismPriority(xconnOpts.mechanismPrioriyList),
 		vppforwarder.WithCleanupOptions(xconnOpts.cleanupOpts...),
-		vppforwarder.WithStatsOptions(xconnOpts.metricsOpts...),
+		vppforwarder.WithMetricsOptions(xconnOpts.metricsOpts...),
 		vppforwarder.WithVxlanOptions(xconnOpts.vxlanOpts...),
 		vppforwarder.WithDialOptions(xconnOpts.dialOpts...))
 	if sriovConfig == nil {
