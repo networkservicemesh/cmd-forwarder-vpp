@@ -1,3 +1,5 @@
+// Copyright (c) 2024 OpenInfra Foundation Europe
+//
 // Copyright (c) 2020-2023 Cisco and/or its affiliates.
 //
 // Copyright (c) 2024 Nordix Foundation.
@@ -177,7 +179,7 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 
 	// Disable Router Advertisement on IPv6 tunnels
 	if tunnelIP.To4() == nil {
-		err = disableIPv6RA(ctx, vppConn, swIfIndex)
+		err = disableIPv6RA(ctx, vppConn, swIfIndex, link.Attrs().Name)
 		if err != nil {
 			return nil, err
 		}
@@ -193,6 +195,7 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", swIfIndex).
+		WithField("hostIfName", link.Attrs().Name).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetFlags").Debug("completed")
 
@@ -221,6 +224,7 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 			}
 			log.FromContext(ctx).
 				WithField("swIfIndex", swIfIndex).
+				WithField("hostIfName", link.Attrs().Name).
 				WithField("prefix", addr.IPNet).
 				WithField("isAdd", true).
 				WithField("duration", time.Since(now)).
@@ -275,6 +279,7 @@ func LinkToSocket(ctx context.Context, vppConn api.Connection, tunnelIP net.IP, 
 		}
 		log.FromContext(ctx).
 			WithField("swIfIndex", swIfIndex).
+			WithField("hostIfName", link.Attrs().Name).
 			WithField("nh.address", types.FromVppIPAddressUnion(ipRouteAddDel.Route.Paths[0].Nh.Address, route.Gw.To4() == nil)).
 			WithField("prefix", ipRouteAddDel.Route.Prefix).
 			WithField("isAdd", true).
@@ -306,6 +311,7 @@ func createAfPacket(ctx context.Context, vppConn api.Connection, link netlink.Li
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", afPacketCreateRsp.SwIfIndex).
+		WithField("HostIfName", link.Attrs().Name).
 		WithField("mode", afPacketCreate.Mode).
 		WithField("hwaddr", afPacketCreate.HwAddr).
 		WithField("hostIfName", afPacketCreate.HostIfName).
@@ -357,6 +363,7 @@ func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link)
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+		WithField("HostIfName", link.Attrs().Name).
 		WithField("mode", interface_types.RX_MODE_API_ADAPTIVE).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetRxMode").Debug("completed")
@@ -369,12 +376,14 @@ func createAfXDP(ctx context.Context, vppConn api.Connection, link netlink.Link)
 	if err != nil {
 		log.FromContext(ctx).
 			WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+			WithField("HostIfName", link.Attrs().Name).
 			WithField("duration", time.Since(now)).
 			WithField("vppapi", "SwInterfaceSetMacAddress").Error(err)
 		return 0, err
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", afXDPCreateRsp.SwIfIndex).
+		WithField("HostIfName", link.Attrs().Name).
 		WithField("hwaddr", types.ToVppMacAddress(&link.Attrs().HardwareAddr)).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetMacAddress").Debug("completed")
@@ -500,6 +509,7 @@ func setMtu(ctx context.Context, vppConn api.Connection, link netlink.Link, swIf
 	}
 	log.FromContext(ctx).
 		WithField("swIfIndex", setMtu.SwIfIndex).
+		WithField("hostIfName", link.Attrs().Name).
 		WithField("MTU", setMtu.Mtu).
 		WithField("duration", time.Since(now)).
 		WithField("vppapi", "SwInterfaceSetMtu").Debug("completed")
@@ -575,7 +585,7 @@ func linkByIP(ctx context.Context, ipaddress net.IP) (netlink.Link, error) {
 	return nil, nil
 }
 
-func disableIPv6RA(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex) error {
+func disableIPv6RA(ctx context.Context, vppConn api.Connection, swIfIndex interface_types.InterfaceIndex, linkName string) error {
 	now := time.Now()
 	_, err := ip.NewServiceClient(vppConn).SwInterfaceIP6EnableDisable(ctx,
 		&ip.SwInterfaceIP6EnableDisable{
@@ -587,12 +597,14 @@ func disableIPv6RA(ctx context.Context, vppConn api.Connection, swIfIndex interf
 		log.FromContext(ctx).
 			WithField("duration", time.Since(now)).
 			WithField("swIfIndex", swIfIndex).
+			WithField("swIfName", linkName).
 			WithField("vppapi", "SwInterfaceIP6Enable").Error(err)
 		return err
 	}
 	log.FromContext(ctx).
 		WithField("duration", time.Since(now)).
 		WithField("swIfIndex", swIfIndex).
+		WithField("swIfName", linkName).
 		WithField("vppapi", "SwInterfaceIP6Enable").Debug("completed")
 
 	now = time.Now()
@@ -605,12 +617,14 @@ func disableIPv6RA(ctx context.Context, vppConn api.Connection, swIfIndex interf
 		log.FromContext(ctx).
 			WithField("duration", time.Since(now)).
 			WithField("swIfIndex", swIfIndex).
+			WithField("swIfName", linkName).
 			WithField("vppapi", "SwInterfaceIP6ndRaConfig").Error(err)
 		return err
 	}
 	log.FromContext(ctx).
 		WithField("duration", time.Since(now)).
 		WithField("swIfIndex", swIfIndex).
+		WithField("swIfName", linkName).
 		WithField("vppapi", "SwInterfaceIP6ndRaConfig").Debug("completed")
 
 	return nil
