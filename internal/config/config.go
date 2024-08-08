@@ -47,6 +47,8 @@ type Config struct {
 	DialTimeout            time.Duration     `default:"750ms" desc:"Timeout for the dial the next endpoint" split_words:"true"`
 	OpenTelemetryEndpoint  string            `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint" split_words:"true"`
 	MetricsExportInterval  time.Duration     `default:"10s" desc:"interval between mertics exports" split_words:"true"`
+	PprofEnabled           bool              `default:"false" desc:"is pprof enabled" split_words:"true"`
+	PprofPort              uint16            `default:"6060" desc:"pprof port" split_words:"true"`
 
 	TunnelIP      net.IP       `desc:"IP to use for tunnels" split_words:"true"`
 	VxlanPort     uint16       `default:"0" desc:"VXLAN port to use" split_words:"true"`
