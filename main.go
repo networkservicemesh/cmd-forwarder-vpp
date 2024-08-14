@@ -32,6 +32,7 @@ import (
 	"github.com/edwarnicke/debug"
 	"github.com/edwarnicke/genericsync"
 	"github.com/edwarnicke/grpcfd"
+	"github.com/networkservicemesh/sdk/pkg/tools/pprofutils"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffeid"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
@@ -59,7 +60,6 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	authmonitor "github.com/networkservicemesh/sdk/pkg/tools/monitorconnection/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
-	"github.com/networkservicemesh/sdk/pkg/tools/pprof"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
@@ -154,7 +154,7 @@ func main() {
 	// Configure pprof
 	// ********************************************************************************
 	if cfg.PprofEnabled {
-		go pprof.Init(ctx, cfg.PprofPort)
+		go pprofutils.ListenAndServe(ctx, cfg.PprofListenOn)
 	}
 
 	// ********************************************************************************
