@@ -60,6 +60,7 @@ import (
 	authmonitor "github.com/networkservicemesh/sdk/pkg/tools/monitorconnection/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/pprofutils"
+	"github.com/networkservicemesh/sdk/pkg/tools/prometheus"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
@@ -148,6 +149,13 @@ func main() {
 				log.FromContext(ctx).Error(err.Error())
 			}
 		}()
+	}
+
+	// ********************************************************************************
+	// Configure Prometheus
+	// ********************************************************************************
+	if prometheus.IsEnabled() {
+		go prometheus.ListenAndServe(ctx, cfg.PrometheusListenOn, cfg.PrometheusServerHeaderTimeout, cancel)
 	}
 
 	// ********************************************************************************

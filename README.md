@@ -20,34 +20,36 @@ docker build .
 
 ## Environment config
 
-* `NSM_NAME`                     - Name of Endpoint
-* `NSM_LABELS`                   - Labels related to this forwarder-vpp instance
-* `NSM_NSNAME`                   - Name of Network Service to Register with Registry
-* `NSM_CONNECT_TO`               - url to connect to
-* `NSM_LISTEN_ON`                - url to listen on
-* `NSM_MAX_TOKEN_LIFETIME`       - maximum lifetime of tokens
-* `NSM_REGISTRY_CLIENT_POLICIES` - paths to files and directories that contain registry client policies
-* `NSM_LOG_LEVEL`                - Log level
-* `NSM_DIAL_TIMEOUT`             - Timeout for the dial the next endpoint
-* `NSM_OPEN_TELEMETRY_ENDPOINT`  - OpenTelemetry Collector Endpoint
-* `NSM_METRICS_EXPORT_INTERVAL`  - interval between mertics exports
-* `NSM_PPROF_ENABLED`            - is pprof enabled (default: "false")
-* `NSM_PPROF_LISTEN_ON`          - pprof URL to ListenAndServe (default: "localhost:6060")
-* `NSM_TUNNEL_IP`                - IP to use for tunnels
-* `NSM_VXLAN_PORT`               - VXLAN port to use
-* `NSM_VPP_API_SOCKET`           - filename of socket to connect to existing VPP instance.
-* `NSM_VPP_INIT`                 - type of VPP initialization. Must be AF_XDP, AF_PACKET or NONE
-* `NSM_VPP_INIT_PARAMS`          - Configuration file path containing VPP API parameters for initialization
-* `NSM_RESOURCE_POLL_TIMEOUT`    - device plugin polling timeout
-* `NSM_DEVICE_PLUGIN_PATH`       - path to the device plugin directory
-* `NSM_POD_RESOURCES_PATH`       - path to the pod resources directory
-* `NSM_DEVICE_SELECTOR_FILE`     - config file for device name to label matching
-* `NSM_SRIOV_CONFIG_FILE`        - PCI resources config path
-* `NSM_PCI_DEVICES_PATH`         - path to the PCI devices directory
-* `NSM_PCI_DRIVERS_PATH`         - path to the PCI drivers directory
-* `NSM_CGROUP_PATH`              - path to the host cgroup directory
-* `NSM_VFIO_PATH`                - path to the host VFIO directory
-* `NSM_MECHANISM_PRIORITY`       - sets priorities for mechanisms
+* `NSM_NAME`                             - Name of Endpoint
+* `NSM_LABELS`                           - Labels related to this forwarder-vpp instance
+* `NSM_NSNAME`                           - Name of Network Service to Register with Registry
+* `NSM_CONNECT_TO`                       - url to connect to
+* `NSM_LISTEN_ON`                        - url to listen on
+* `NSM_MAX_TOKEN_LIFETIME`               - maximum lifetime of tokens
+* `NSM_REGISTRY_CLIENT_POLICIES`         - paths to files and directories that contain registry client policies
+* `NSM_LOG_LEVEL`                        - Log level
+* `NSM_DIAL_TIMEOUT`                     - Timeout for the dial the next endpoint
+* `NSM_OPEN_TELEMETRY_ENDPOINT`          - OpenTelemetry Collector Endpoint
+* `NSM_METRICS_EXPORT_INTERVAL`          - interval between mertics exports
+* `NSM_PPROF_ENABLED`                    - is pprof enabled (default: "false")
+* `NSM_PPROF_LISTEN_ON`                  - pprof URL to ListenAndServe (default: "localhost:6060")
+* `NSM_PROMETHEUS_LISTEN_ON`             - Prometheus URL to ListenAndServe (default: ":8081")
+* `NSM_PROMETHEUS_SERVER_HEADER_TIMEOUT` - sets the header timeout for the Prometheus metrics server (default: "5s")
+* `NSM_TUNNEL_IP`                        - IP to use for tunnels
+* `NSM_VXLAN_PORT`                       - VXLAN port to use
+* `NSM_VPP_API_SOCKET`                   - filename of socket to connect to existing VPP instance.
+* `NSM_VPP_INIT`                         - type of VPP initialization. Must be AF_XDP, AF_PACKET or NONE
+* `NSM_VPP_INIT_PARAMS`                  - Configuration file path containing VPP API parameters for initialization
+* `NSM_RESOURCE_POLL_TIMEOUT`            - device plugin polling timeout
+* `NSM_DEVICE_PLUGIN_PATH`               - path to the device plugin directory
+* `NSM_POD_RESOURCES_PATH`               - path to the pod resources directory
+* `NSM_DEVICE_SELECTOR_FILE`             - config file for device name to label matching
+* `NSM_SRIOV_CONFIG_FILE`                - PCI resources config path
+* `NSM_PCI_DEVICES_PATH`                 - path to the PCI devices directory
+* `NSM_PCI_DRIVERS_PATH`                 - path to the PCI drivers directory
+* `NSM_CGROUP_PATH`                      - path to the host cgroup directory
+* `NSM_VFIO_PATH`                        - path to the host VFIO directory
+* `NSM_MECHANISM_PRIORITY`               - sets priorities for mechanisms
 
 # Testing
 
