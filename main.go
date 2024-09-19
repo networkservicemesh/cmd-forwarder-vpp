@@ -135,6 +135,10 @@ func main() {
 	logrus.SetLevel(level)
 	log.EnableTracing(true)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Infof("completed phase 1: get config from environment")
+	logruslogger.SetupLevelChangeOnSignal(ctx, map[os.Signal]logrus.Level{
+		syscall.SIGUSR1: logrus.TraceLevel,
+		syscall.SIGUSR2: level,
+	})
 
 	// ********************************************************************************
 	// Configure Open Telemetry
