@@ -193,3 +193,6 @@ issues:
     - path: internal/vppinit/vppinit.go
       linters:
         - gocyclo
+    - path: main.go
+      linters:
+        - gocyclo
