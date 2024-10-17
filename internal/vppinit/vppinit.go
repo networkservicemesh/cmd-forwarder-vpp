@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Cisco and/or its affiliates.
+// Copyright (c) 2020-2024 Cisco and/or its affiliates.
 //
 // Copyright (c) 2024 Nordix Foundation.
 //
@@ -17,6 +17,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+//go:build linux
+// +build linux
 
 // Package vppinit contains initialization code for vpp
 package vppinit
