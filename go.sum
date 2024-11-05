@@ -139,12 +139,12 @@ github.com/networkservicemesh/sdk v0.5.1-0.20241105144227-370b7b5f046c h1:Qdv1Lq
 github.com/networkservicemesh/sdk v0.5.1-0.20241105144227-370b7b5f046c/go.mod h1:lV8RBwf6tHkNFwHLFkzh4Tb/XezMP5IHGx5lW04YjQE=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20241105145807-d2e270ca9224 h1:dSFCwbFKpZJjbDdxCacFxsRTscepjmDUD0kB/BiXa0s=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20241105145807-d2e270ca9224/go.mod h1:I/+5Lu+imUrGtAuegmaaiiEcQXVitrhO7ntHSMqTMVo=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20241028171658-6b5aa1e4372d h1:zOtAfYLyOgjwrACq/KlUbbwKuNNCObiI13haLZ1UX4o=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20241028171658-6b5aa1e4372d/go.mod h1:rV+PiPv7raW6na1qBGzUvwTlV19XkmAyupz6IodwmPI=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20241105145958-6965743994d5 h1:LjndrfG+oOTGtLkrmz4z29H1Ze5or6tOSVX9yQ9yir8=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20241105145958-6965743994d5/go.mod h1:2J8lOoC8wlQPeusiwFTCxxW/HNv74rQ6Igsxhj5j27g=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20241028172147-7f9943c7601d h1:V49GNcH1r70MzkKT9gP1jond3O36D8o/zIisONQYjq0=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20241028172147-7f9943c7601d/go.mod h1:MhtcgoM3RdQZJoPWVTDMPIFdnuNL9HlgNXOqAy+6cn8=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20241017234840-f8b5d51c3971 h1:hJx+1tsLZps9PzBvnu5Neloi10l9yIWowAR+7EOpY/s=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20241017234840-f8b5d51c3971/go.mod h1:M5yHODQ9tl1s1Sd+zGizoofzQkcznY4kUojW/HmYNmo=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20241105151152-bac4bf1f29cc h1:/61Pfmm18UqOsWp9f5KR3qIZRz4PIAAZUctELhp3kgU=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20241105151152-bac4bf1f29cc/go.mod h1:BxNG3TG4C/Xm8Z4uZHXVKYKkkOHghOJGB7LkPSqveMg=
 github.com/networkservicemesh/vpphelper v0.0.0-20240115135903-e2b961f768b6 h1:o+enN5yCikNXZN+hO+JjE+aLxBWq9+GMVF9GSQtpwMI=
 github.com/networkservicemesh/vpphelper v0.0.0-20240115135903-e2b961f768b6/go.mod h1:n6+8PnoDvWj6WMryfU3J8HOCusgysFjQ0kGLfrcsDEM=
 github.com/onsi/gomega v1.30.0 h1:hvMK7xYz4D3HapigLTeGdId/NcfQx1VHMJc60ew99+8=
