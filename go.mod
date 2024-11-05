@@ -14,8 +14,8 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.13.4-0.20240815101554-fdbfcd84fd0e
 	github.com/networkservicemesh/govpp v0.0.0-20240328101142-8a444680fbba
-	github.com/networkservicemesh/sdk v0.5.1-0.20241017235226-a17a4feafcc5
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20241023073817-a0a20fea26ff
+	github.com/networkservicemesh/sdk v0.5.1-0.20241105144227-370b7b5f046c
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20241105145807-d2e270ca9224
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20241028171658-6b5aa1e4372d
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20241028172147-7f9943c7601d
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20241017234840-f8b5d51c3971
@@ -54,7 +54,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.2.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0 // indirect
