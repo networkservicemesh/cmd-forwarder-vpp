@@ -337,9 +337,13 @@ func main() {
 
 	// TODO - cleaner shutdown across these channels
 	<-ctx.Done()
+	log.FromContext(ctx).Infof("Completed <-ctx.Done()")
 	<-srvErrCh
+	log.FromContext(ctx).Infof("Completed <-srvErrCh")
 	<-vppErrCh
+	log.FromContext(ctx).Infof("Completed <-vppErrCh")
 	<-cleanupDoneCh
+	log.FromContext(ctx).Infof("Completed <-cleanupDoneCh")
 }
 
 func setupDeviceMap(ctx context.Context, cfg *config.Config) map[string]string {
