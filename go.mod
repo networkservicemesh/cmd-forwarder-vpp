@@ -14,11 +14,11 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.13.4-0.20240815101554-fdbfcd84fd0e
 	github.com/networkservicemesh/govpp v0.0.0-20240328101142-8a444680fbba
-	github.com/networkservicemesh/sdk v0.5.1-0.20241016111326-380120667e60
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20241014115918-0aeda96e03d3
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20241016111547-40426fd555dd
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20241015100307-dee10328cb18
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20241016111917-8a4f5ce953d1
+	github.com/networkservicemesh/sdk v0.5.1-0.20241106141620-b53ccb0ebe20
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20241106142135-62183f1456e5
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20241106141842-3e1b97bc7989
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20241106142218-8424c23a982a
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20241106142209-3dbe273c826b
 	github.com/networkservicemesh/vpphelper v0.0.0-20240115135903-e2b961f768b6
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
@@ -54,7 +54,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.2.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0 // indirect
@@ -88,7 +88,7 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/net v0.21.0 // indirect
+	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20200609130330-bd2cb7843e1b // indirect
