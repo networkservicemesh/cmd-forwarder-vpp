@@ -143,11 +143,11 @@ func getKernelVer() ([2]int, error) {
 	if err != nil {
 		return [2]int{}, err
 	}
-	min, err := strconv.Atoi(ver[1])
+	minValue, err := strconv.Atoi(ver[1])
 	if err != nil {
 		return [2]int{}, err
 	}
-	return [2]int{maj, min}, nil
+	return [2]int{maj, minValue}, nil
 }
 
 // LinkToSocket - will link vpp via af_packet or af_xdp to the interface having the tunnelIP
