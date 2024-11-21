@@ -139,15 +139,15 @@ func getKernelVer() ([2]int, error) {
 		b = append(b, byte(v))
 	}
 	ver := strings.Split(string(b), ".")
-	maj, err := strconv.Atoi(ver[0])
+	major, err := strconv.Atoi(ver[0])
 	if err != nil {
 		return [2]int{}, err
 	}
-	minValue, err := strconv.Atoi(ver[1])
+	minor, err := strconv.Atoi(ver[1])
 	if err != nil {
 		return [2]int{}, err
 	}
-	return [2]int{maj, minValue}, nil
+	return [2]int{major, minor}, nil
 }
 
 // LinkToSocket - will link vpp via af_packet or af_xdp to the interface having the tunnelIP
