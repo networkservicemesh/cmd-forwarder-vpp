@@ -72,6 +72,8 @@ import (
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/devicecfg"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/xconnectns"
+
+	"go.fd.io/govpp/api"
 )
 
 func main() {
@@ -174,7 +176,7 @@ func main() {
 	// ********************************************************************************
 	now = time.Now()
 
-	var vppConn vpphelper.Connection
+	var vppConn api.Connection
 	var vppErrCh <-chan error
 	var metricsOpts []metrics.Option
 	cleanupDoneCh := make(chan struct{})
@@ -201,6 +203,8 @@ func main() {
 		close(cleanupDoneCh)
 		log.FromContext(ctx).Info("local vpp is being used")
 	}
+
+	vppConn = vppinit.NewSafeVPPConnection(vppConn, cfg.VPPMinOperationTimeout)
 
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 

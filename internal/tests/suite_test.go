@@ -25,9 +25,8 @@ import (
 	"github.com/spiffe/go-spiffe/v2/bundle/x509bundle"
 	"github.com/spiffe/go-spiffe/v2/svid/x509svid"
 	"github.com/stretchr/testify/suite"
+	"go.fd.io/govpp/api"
 	"google.golang.org/grpc"
-
-	"github.com/networkservicemesh/vpphelper"
 
 	"github.com/networkservicemesh/api/pkg/api/registry"
 
@@ -51,12 +50,12 @@ type ForwarderTestSuite struct {
 	x509bundle x509bundle.Source
 
 	// vppServer stuff
-	vppServerConn  vpphelper.Connection
+	vppServerConn  api.Connection
 	vppServerRoot  string
 	vppServerErrCh <-chan error
 
 	// vppClient stuff
-	vppClientConn  vpphelper.Connection
+	vppClientConn  api.Connection
 	vppClientRoot  string
 	vppClientErrCh <-chan error
 
