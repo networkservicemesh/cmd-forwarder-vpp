@@ -20,9 +20,10 @@ import (
 	"context"
 	"time"
 
+	"go.fd.io/govpp/api"
+
 	"github.com/networkservicemesh/sdk/pkg/tools/extend"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
-	"go.fd.io/govpp/api"
 )
 
 type safeVPPConnection struct {
@@ -30,6 +31,7 @@ type safeVPPConnection struct {
 	contextTimeout time.Duration
 }
 
+// NewSafeVPPConnection - creates a wrapper for vpp connection that uses extended context timeout for all operations
 func NewSafeVPPConnection(vppConn api.Connection, contextTimeout time.Duration) api.Connection {
 	return &safeVPPConnection{
 		Connection:     vppConn,
@@ -37,7 +39,7 @@ func NewSafeVPPConnection(vppConn api.Connection, contextTimeout time.Duration) 
 	}
 }
 
-func (c *safeVPPConnection) Invoke(ctx context.Context, req api.Message, reply api.Message) error {
+func (c *safeVPPConnection) Invoke(ctx context.Context, req, reply api.Message) error {
 	ctx, cancel := c.ToSafeContext(ctx)
 	err := c.Connection.Invoke(ctx, req, reply)
 	cancel()
