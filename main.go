@@ -36,10 +36,12 @@ import (
 	"github.com/spiffe/go-spiffe/v2/spiffeid"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
+	"go.fd.io/govpp/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
 	"github.com/networkservicemesh/vpphelper"
+	"github.com/networkservicemesh/vpphelper/extendtimeout"
 
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/deviceplugin"
@@ -174,7 +176,7 @@ func main() {
 	// ********************************************************************************
 	now = time.Now()
 
-	var vppConn vpphelper.Connection
+	var vppConn api.Connection
 	var vppErrCh <-chan error
 	var metricsOpts []metrics.Option
 	cleanupDoneCh := make(chan struct{})
@@ -202,6 +204,7 @@ func main() {
 		log.FromContext(ctx).Info("local vpp is being used")
 	}
 
+	vppConn = extendtimeout.NewConnection(vppConn, cfg.VPPMinOperationTimeout)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 
 	// ********************************************************************************

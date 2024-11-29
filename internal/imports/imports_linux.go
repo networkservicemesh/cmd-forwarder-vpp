@@ -92,6 +92,7 @@ import (
 	_ "github.com/networkservicemesh/sdk/pkg/tools/token"
 	_ "github.com/networkservicemesh/sdk/pkg/tools/tracing"
 	_ "github.com/networkservicemesh/vpphelper"
+	_ "github.com/networkservicemesh/vpphelper/extendtimeout"
 	_ "github.com/pkg/errors"
 	_ "github.com/safchain/ethtool"
 	_ "github.com/sirupsen/logrus"

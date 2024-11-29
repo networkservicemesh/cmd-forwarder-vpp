@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Cisco and/or its affiliates.
+// Copyright (c) 2020-2024 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -28,8 +28,6 @@ import (
 	"github.com/pkg/errors"
 	"go.fd.io/govpp/api"
 	"go.fd.io/govpp/binapi/vlib"
-
-	"github.com/networkservicemesh/vpphelper"
 
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/mechanisms/sendfd"
@@ -63,7 +61,7 @@ type memifVerifiableEndpoint struct {
 func newMemifVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
-	vppConn vpphelper.Connection,
+	vppConn api.Connection,
 ) verifiableEndpoint {
 	return &memifVerifiableEndpoint{
 		ctx:     ctx,
@@ -110,7 +108,7 @@ type memifVerifiableClient struct {
 	networkservice.NetworkServiceClient
 }
 
-func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface, vppConn vpphelper.Connection) verifiableClient {
+func newMemifVerifiableClient(ctx context.Context, sutCC grpc.ClientConnInterface, vppConn api.Connection) verifiableClient {
 	rv := &memifVerifiableClient{
 		ctx:     ctx,
 		vppConn: vppConn,
