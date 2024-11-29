@@ -40,6 +40,7 @@ docker build .
 * `NSM_VPP_API_SOCKET`                   - filename of socket to connect to existing VPP instance.
 * `NSM_VPP_INIT`                         - type of VPP initialization. Must be AF_XDP, AF_PACKET or NONE
 * `NSM_VPP_INIT_PARAMS`                  - Configuration file path containing VPP API parameters for initialization
+* `NSM_VPP_MIN_OPERATION_TIMEOUT`        - minimum timeout for every vpp operation
 * `NSM_RESOURCE_POLL_TIMEOUT`            - device plugin polling timeout
 * `NSM_DEVICE_PLUGIN_PATH`               - path to the device plugin directory
 * `NSM_POD_RESOURCES_PATH`               - path to the pod resources directory

@@ -41,6 +41,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/networkservicemesh/vpphelper"
+	"github.com/networkservicemesh/vpphelper/extendtimeout"
 
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/deviceplugin"
@@ -203,6 +204,7 @@ func main() {
 		log.FromContext(ctx).Info("local vpp is being used")
 	}
 
+	vppConn = extendtimeout.NewConnection(vppConn, cfg.VPPMinOperationTimeout)
 	log.FromContext(ctx).WithField("duration", time.Since(now)).Info("completed phase 2: run vpp and get a connection to it")
 
 	// ********************************************************************************
