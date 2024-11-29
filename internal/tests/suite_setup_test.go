@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Cisco and/or its affiliates.
+// Copyright (c) 2020-2024 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -32,6 +32,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
+	"go.fd.io/govpp/api"
 	"go.fd.io/govpp/binapi/vpe"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -204,7 +205,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	// ********************************************************************************
 }
 
-func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppConn vpphelper.Connection, vppRoot string, errCh <-chan error) {
+func (f *ForwarderTestSuite) createVpp(ctx context.Context, name string) (vppConn api.Connection, vppRoot string, errCh <-chan error) {
 	now := time.Now()
 	var err error
 	vppRoot, err = os.MkdirTemp("", fmt.Sprintf("%s-", name))

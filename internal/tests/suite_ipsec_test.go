@@ -24,9 +24,8 @@ import (
 	"context"
 	"net"
 
+	"go.fd.io/govpp/api"
 	"google.golang.org/grpc"
-
-	"github.com/networkservicemesh/vpphelper"
 
 	"github.com/networkservicemesh/api/pkg/api/networkservice"
 	ipsecapi "github.com/networkservicemesh/api/pkg/api/networkservice/mechanisms/ipsec"
@@ -47,14 +46,14 @@ import (
 
 type ipsecVerifiableEndpoint struct {
 	ctx     context.Context
-	vppConn vpphelper.Connection
+	vppConn api.Connection
 	endpoint.Endpoint
 }
 
 func newIpsecVerifiableEndpoint(ctx context.Context,
 	prefix1, prefix2 *net.IPNet,
 	tokenGenerator token.GeneratorFunc,
-	vppConn vpphelper.Connection) verifiableEndpoint {
+	vppConn api.Connection) verifiableEndpoint {
 	rv := &ipsecVerifiableEndpoint{
 		ctx:     ctx,
 		vppConn: vppConn,
@@ -94,14 +93,14 @@ func (v *ipsecVerifiableEndpoint) VerifyClose(_ *networkservice.Connection) erro
 
 type ipsecVerifiableClient struct {
 	ctx     context.Context
-	vppConn vpphelper.Connection
+	vppConn api.Connection
 	networkservice.NetworkServiceClient
 }
 
 func newIpsecVerifiableClient(
 	ctx context.Context,
 	sutCC grpc.ClientConnInterface,
-	vppConn vpphelper.Connection,
+	vppConn api.Connection,
 ) verifiableClient {
 	return &ipsecVerifiableClient{
 		ctx:     ctx,

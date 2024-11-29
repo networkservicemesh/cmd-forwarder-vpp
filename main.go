@@ -36,6 +36,7 @@ import (
 	"github.com/spiffe/go-spiffe/v2/spiffeid"
 	"github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
+	"go.fd.io/govpp/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
@@ -174,7 +175,7 @@ func main() {
 	// ********************************************************************************
 	now = time.Now()
 
-	var vppConn vpphelper.Connection
+	var vppConn api.Connection
 	var vppErrCh <-chan error
 	var metricsOpts []metrics.Option
 	cleanupDoneCh := make(chan struct{})
