@@ -19,7 +19,7 @@ require (
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20241204094203-bb7c671574d8
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20241204094617-41e8a65e4631
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20241106142209-3dbe273c826b
-	github.com/networkservicemesh/vpphelper v0.0.0-20241206101838-6f75d67089d5
+	github.com/networkservicemesh/vpphelper v0.0.0-20241209033247-bcb5c25a9f29
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
 	github.com/sirupsen/logrus v1.9.3
