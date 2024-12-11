@@ -161,7 +161,13 @@ func main() {
 	// Configure Prometheus
 	// ********************************************************************************
 	if prometheus.IsEnabled() {
-		go prometheus.ListenAndServe(ctx, cfg.PrometheusListenOn, cfg.PrometheusServerHeaderTimeout, cancel)
+		metricServer := prometheus.NewServer(
+			cfg.PrometheusListenOn,
+			prometheus.WithCustomCert(cfg.PrometheusCertFile, cfg.PrometheusKeyFile),
+			prometheus.WithCustomCA(cfg.PrometheusCAFile),
+			prometheus.WithHeaderTimeout(cfg.PrometheusServerHeaderTimeout),
+			prometheus.WithCertificateMonitoring(cfg.PrometheusMonitorCertificate))
+		go metricServer.ListenAndServe(ctx, cancel)
 	}
 
 	// ********************************************************************************
