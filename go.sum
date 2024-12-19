@@ -160,12 +160,12 @@ github.com/networkservicemesh/sdk v0.5.1-0.20241219162646-55b1f2b101fe h1:l8SBNe
 github.com/networkservicemesh/sdk v0.5.1-0.20241219162646-55b1f2b101fe/go.mod h1:4UxNmG1wYL5v93pZHIgIn0jTsvzn4x0QioQ/v48zuD8=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20241219163154-f7fd4c129994 h1:4MmZYlQ8nkvY42sshmSUN7N65m7sgiUUJmQSyU5/AmA=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20241219163154-f7fd4c129994/go.mod h1:EOfAwdmHb4b5uHgks/oiYhMUrI2B4mI1r0hkVciV8Hw=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20241209114436-f11880a573b5 h1:zKdZNUrqqzgVQsjDSyn0jC9gPt8wUawHGcALzMkdrqg=
-github.com/networkservicemesh/sdk-kernel v0.0.0-20241209114436-f11880a573b5/go.mod h1:EgyUpa4L2VOApojjMZLfkw4LCHb7J5p7jS3p5N8nJKA=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20241219162908-06872357cd66 h1:MSdSjDSoUYcKPi0rckHNXmXrmJO+Z59VqrOFGowOkY8=
+github.com/networkservicemesh/sdk-kernel v0.0.0-20241219162908-06872357cd66/go.mod h1:t4+KMxIV5OPjQXfTZFptdUt/rXV8MtwRDqppgR5SFmA=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20241209114948-8c6a188b6da8 h1:3m2dXhs4aKLMPmxvQCUfqelhIGoVsVycDlzPxsHKhRo=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20241209114948-8c6a188b6da8/go.mod h1:K7mpT5FZKNcRn0VXQ1ki1gwZTI2kvtlu3ff3Eabfn8g=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20241209101123-c9f54f74715a h1:Vru9GTcUKeMwykdXo/BDdpEQD3i07RAorc5jedx74Z0=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20241209101123-c9f54f74715a/go.mod h1:uMGmyEGAClelGORTw2DBeIsACK08c+hdy/qmMKzwiWQ=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20241219163229-38fe6a858f0d h1:t3S60+bAUotM6OqT/pw/oF0yruZmV/5ykL0GEgiQbUo=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20241219163229-38fe6a858f0d/go.mod h1:RwdpmjF5vzAeQfg0BPF5V+1ROHFUbnkSK+vp0bZM0YY=
 github.com/networkservicemesh/vpphelper v0.0.0-20241209033247-bcb5c25a9f29 h1:hqYoTeQ9mFOIoKUMBXg779SU2yJWrrapucKgoPNZ1co=
 github.com/networkservicemesh/vpphelper v0.0.0-20241209033247-bcb5c25a9f29/go.mod h1:Qc5x5poZk5cVzcHk4ZIL6+NMC95uoitsmmnl7X9V/Yw=
 github.com/onsi/gomega v1.33.1 h1:dsYjIxxSR755MDmKVsaFQTE22ChNBcuuTWgkUDSubOk=
