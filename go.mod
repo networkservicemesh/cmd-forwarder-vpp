@@ -19,7 +19,7 @@ require (
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20241227224026-3bba51753247
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20241227143415-9231b416bfd2
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20241227224413-166396795a3c
-	github.com/networkservicemesh/vpphelper v0.0.0-20241209033247-bcb5c25a9f29
+	github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
 	github.com/sirupsen/logrus v1.9.3
@@ -90,7 +90,7 @@ require (
 	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20200609130330-bd2cb7843e1b // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231016165738-49dd2c1f3d0b // indirect
