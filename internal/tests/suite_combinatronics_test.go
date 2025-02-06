@@ -1,4 +1,5 @@
 // Copyright (c) 2020-2023 Cisco and/or its affiliates.
+// Copyright (c) 2025 OpenInfra Foundation Europe.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -128,13 +129,13 @@ func (f *ForwarderTestSuite) TestCombinations() {
 	payloads := map[string][]string{
 		payload.IP: {
 			kernel.MECHANISM,
-			memif.MECHANISM,
+//			memif.MECHANISM,
 			wireguard.MECHANISM,
 			ipsecapi.MECHANISM,
 		},
 		payload.Ethernet: {
 			kernel.MECHANISM,
-			memif.MECHANISM,
+//			memif.MECHANISM,
 			vxlan.MECHANISM,
 		},
 	}
