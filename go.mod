@@ -12,12 +12,12 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/api v1.14.2-rc.1.0.20241209080353-bbb4cd5f8f00
+	github.com/networkservicemesh/api v1.14.3-rc.1
 	github.com/networkservicemesh/govpp v0.0.0-20250206125319-4d08cb0ae074
-	github.com/networkservicemesh/sdk v0.5.1-0.20241227223757-422abe9bfbdd
+	github.com/networkservicemesh/sdk v1.14.3-rc.1
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20241227224209-e9478b00a551
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20241227224026-3bba51753247
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20241227143415-9231b416bfd2
+	github.com/networkservicemesh/sdk-kernel v1.14.3-rc.1
+	github.com/networkservicemesh/sdk-sriov v1.14.3-rc.1
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20241227224413-166396795a3c
 	github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af
 	github.com/pkg/errors v0.9.1
