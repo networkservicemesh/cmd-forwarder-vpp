@@ -14,10 +14,10 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.14.2-rc.1.0.20241209080353-bbb4cd5f8f00
 	github.com/networkservicemesh/govpp v0.0.0-20250206125319-4d08cb0ae074
-	github.com/networkservicemesh/sdk v0.5.1-0.20250226083449-bfb5813a6d99
+	github.com/networkservicemesh/sdk v0.5.1-0.20250314104510-0e510aa2eebb
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20250313151131-4d8672372eef
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20250313151507-62387a21c3d2
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20250226084052-0e054b2892d0
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20250314104726-2eceee16f5e9
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20250314105203-7bcce0f6481c
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20250313152816-603833b96409
 	github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af
 	github.com/pkg/errors v0.9.1
