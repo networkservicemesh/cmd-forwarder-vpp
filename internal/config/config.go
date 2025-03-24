@@ -1,8 +1,8 @@
-// Copyright (c) 2020-2024 Cisco and/or its affiliates.
+// Copyright (c) 2025 Nordix and/or its affiliates.
 //
-// Copyright (c) 2021-2024 Doc.ai and/or its affiliates.
+// Copyright (c) 2020-2025 Cisco and/or its affiliates.
 //
-// Copyright (c) 2024 Nordix and/or its affiliates.
+// Copyright (c) 2021-2025 Doc.ai and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
