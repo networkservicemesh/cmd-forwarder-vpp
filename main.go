@@ -1,4 +1,6 @@
-// Copyright (c) 2020-2024 Cisco and/or its affiliates.
+// Copyright (c) 2025 Nordix Foundation.
+//
+// Copyright (c) 2020-2025 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
