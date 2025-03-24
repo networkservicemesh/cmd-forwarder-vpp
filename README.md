@@ -34,6 +34,10 @@ docker build .
 * `NSM_PPROF_ENABLED`                    - is pprof enabled (default: "false")
 * `NSM_PPROF_LISTEN_ON`                  - pprof URL to ListenAndServe (default: "localhost:6060")
 * `NSM_PROMETHEUS_LISTEN_ON`             - Prometheus URL to ListenAndServe (default: ":8081")
+* `NSM_PROMETHEUS_CERT_FILE`             - path to the certificate file for the Prometheus server
+* `NSM_PROMETHEUS_KEY_FILE`              - path to the key file for the Prometheus server
+* `NSM_PROMETHEUS_CA_FILE`               - path to the CA file for the Prometheus server
+* `NSM_PROMETHEUS_MONITOR_CERTIFICATE`   - defines whether the custom certificate for Prometheus should be monitored (default: "false")
 * `NSM_PROMETHEUS_SERVER_HEADER_TIMEOUT` - sets the header timeout for the Prometheus metrics server (default: "5s")
 * `NSM_TUNNEL_IP`                        - IP to use for tunnels
 * `NSM_VXLAN_PORT`                       - VXLAN port to use
