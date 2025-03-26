@@ -14,10 +14,10 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.14.2-rc.1.0.20241209080353-bbb4cd5f8f00
 	github.com/networkservicemesh/govpp v0.0.0-20250206125319-4d08cb0ae074
-	github.com/networkservicemesh/sdk v0.5.1-0.20250326080154-949530e2d130
+	github.com/networkservicemesh/sdk v0.5.1-0.20250326102733-7599103b13cb
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20250326080918-099f83cf0710
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20250326080408-d8d7c34912b2
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20250326080828-76eea022326b
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20250326102943-1665cde2ea1a
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20250326103247-5b640eeb0757
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20250326080734-12d20eddbcae
 	github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af
 	github.com/pkg/errors v0.9.1
@@ -49,7 +49,7 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/ftrvxmtrx/fd v0.0.0-20150925145434-c6d800382fff // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
+	github.com/go-jose/go-jose/v3 v3.0.4 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
