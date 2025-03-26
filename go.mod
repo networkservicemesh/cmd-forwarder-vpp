@@ -14,10 +14,10 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/api v1.14.2-rc.1.0.20241209080353-bbb4cd5f8f00
 	github.com/networkservicemesh/govpp v0.0.0-20250206125319-4d08cb0ae074
-	github.com/networkservicemesh/sdk v0.5.1-0.20250324141549-1039d22d7eeb
+	github.com/networkservicemesh/sdk v0.5.1-0.20250326080154-949530e2d130
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20250324144105-582f0f823d42
-	github.com/networkservicemesh/sdk-kernel v0.0.0-20250324144000-40818f46d346
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20250324150939-7e661bdfe675
+	github.com/networkservicemesh/sdk-kernel v0.0.0-20250326080408-d8d7c34912b2
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20250326080828-76eea022326b
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20250324150940-38844a65de6c
 	github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af
 	github.com/pkg/errors v0.9.1
@@ -54,7 +54,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0 // indirect
