@@ -101,3 +101,5 @@ require (
 	k8s.io/kubelet v0.32.0-alpha.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
+
+replace github.com/networkservicemesh/sdk => github.com/Nordix/nsm-sdk v0.5.1-0.20250526135425-66e6ddfebac5
