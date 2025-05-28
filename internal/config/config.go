@@ -50,6 +50,7 @@ type Config struct {
 	PprofEnabled                  bool              `default:"false" desc:"is pprof enabled" split_words:"true"`
 	PprofListenOn                 string            `default:"localhost:6060" desc:"pprof URL to ListenAndServe" split_words:"true"`
 	PrometheusListenOn            string            `default:":8081" desc:"Prometheus URL to ListenAndServe" split_words:"true"`
+	PrometheusTLSEnabled          string            `default:"true" desc:"is TLS enabled for Prometheus server, if set to 'true' it will use SPIFFE mTLS or TLS with custom certificate" split_words:"true"`
 	PrometheusCAFile              string            `default:"" desc:"Path to the CA file for the Prometheus server (by default the authentication will happen via TLS instead of mTLS)" split_words:"true"`
 	PrometheusKeyFile             string            `default:"" desc:"Path to the key file for the Prometheus server (by default it uses a SPIRE generated one)" split_words:"true"`
 	PrometheusCertFile            string            `default:"" desc:"Path to the certificate file for the Prometheus server (by default it uses a SPIRE generated one)" split_words:"true"`

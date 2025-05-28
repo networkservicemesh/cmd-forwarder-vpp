@@ -169,7 +169,7 @@ func main() {
 			prometheus.WithCustomCA(cfg.PrometheusCAFile),
 			prometheus.WithHeaderTimeout(cfg.PrometheusServerHeaderTimeout),
 			prometheus.WithCertificateMonitoring(cfg.PrometheusMonitorCertificate))
-		go metricServer.ListenAndServe(ctx, cancel)
+		go metricServer.ListenAndServe(ctx, cancel, cfg.PrometheusTLSEnabled == "true")
 	}
 
 	// ********************************************************************************
