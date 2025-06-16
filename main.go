@@ -168,7 +168,9 @@ func main() {
 			prometheus.WithCustomCert(cfg.PrometheusCertFile, cfg.PrometheusKeyFile),
 			prometheus.WithCustomCA(cfg.PrometheusCAFile),
 			prometheus.WithHeaderTimeout(cfg.PrometheusServerHeaderTimeout),
-			prometheus.WithCertificateMonitoring(cfg.PrometheusMonitorCertificate))
+			prometheus.WithCertificateMonitoring(cfg.PrometheusMonitorCertificate),
+			prometheus.WithMaxBindThreshold(cfg.PrometheusMaxBindThreshold),
+		)
 		go metricServer.ListenAndServe(ctx, cancel)
 	}
 
