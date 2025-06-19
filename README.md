@@ -39,6 +39,7 @@ docker build .
 * `NSM_PROMETHEUS_CA_FILE`               - path to the CA file for the Prometheus server
 * `NSM_PROMETHEUS_MONITOR_CERTIFICATE`   - defines whether the custom certificate for Prometheus should be monitored (default: "false")
 * `NSM_PROMETHEUS_SERVER_HEADER_TIMEOUT` - sets the header timeout for the Prometheus metrics server (default: "5s")
+* `NSM_PROMETHEUS_MAX_BIND_THRESHOLD`    - Timeout for how long the Prometheus server will try to bind to the same address before giving up (default: "120s")
 * `NSM_TUNNEL_IP`                        - IP to use for tunnels
 * `NSM_VXLAN_PORT`                       - VXLAN port to use
 * `NSM_VPP_API_SOCKET`                   - filename of socket to connect to existing VPP instance.

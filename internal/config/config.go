@@ -55,6 +55,7 @@ type Config struct {
 	PrometheusCertFile            string            `default:"" desc:"Path to the certificate file for the Prometheus server (by default it uses a SPIRE generated one)" split_words:"true"`
 	PrometheusMonitorCertificate  bool              `default:"false" desc:"defines whether the custom certificate for Prometheus should be watched for updates" split_words:"true"`
 	PrometheusServerHeaderTimeout time.Duration     `default:"5s" desc:"Timeout for how long the Prometheus server waits for complete request headers from the client" split_words:"true"`
+	PrometheusMaxBindThreshold    time.Duration     `default:"120s" desc:"Timeout for how long the Prometheus server will try to bind to the same address before giving up" split_words:"true"`
 
 	TunnelIP               net.IP        `desc:"IP to use for tunnels" split_words:"true"`
 	VxlanPort              uint16        `default:"0" desc:"VXLAN port to use" split_words:"true"`
