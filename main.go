@@ -79,6 +79,7 @@ import (
 	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/xconnectns"
 )
 
+//gocyclo:ignore
 func main() {
 	// ********************************************************************************
 	// setup context to catch signals
