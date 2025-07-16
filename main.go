@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Nordix Foundation.
+// Copyright (c) 2025 OpenInfra Foundation Europe and/or its affiliates.
 //
 // Copyright (c) 2020-2025 Cisco and/or its affiliates.
 //
@@ -40,6 +40,7 @@ import (
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
 	"go.fd.io/govpp/api"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/credentials"
 
 	"github.com/networkservicemesh/vpphelper"
@@ -259,12 +260,22 @@ func main() {
 	tlsServerConfig := tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())
 	tlsServerConfig.MinVersion = tls.VersionTLS12
 
+	// Set faster reconnect if nsmgr or registry has been unavailable. Otherwise gRPC might
+	// wait up to 2 minutes to attempt reconnect due to the default backoff algorithm.
+	grpcBackoffCfg := backoff.DefaultConfig
+	if grpcBackoffCfg.MaxDelay != cfg.DialMaxDelay {
+		grpcBackoffCfg.MaxDelay = cfg.DialMaxDelay
+	}
+
 	dialOptions := append(
 		tracing.WithTracingDial(),
 		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(
 			grpc.WaitForReady(true),
 			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, cfg.MaxTokenLifetime)))),
+		grpc.WithConnectParams(grpc.ConnectParams{
+			Backoff: grpcBackoffCfg,
+		}),
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(
 				credentials.NewTLS(tlsClientConfig))),

@@ -1,8 +1,8 @@
-// Copyright (c) 2025 Nordix and/or its affiliates.
-//
 // Copyright (c) 2020-2025 Cisco and/or its affiliates.
 //
 // Copyright (c) 2021-2025 Doc.ai and/or its affiliates.
+//
+// Copyright (c) 2025 OpenInfra Foundation Europe and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -44,7 +44,8 @@ type Config struct {
 	MaxTokenLifetime              time.Duration     `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
 	RegistryClientPolicies        []string          `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/client/.*.rego" desc:"paths to files and directories that contain registry client policies" split_words:"true"`
 	LogLevel                      string            `default:"INFO" desc:"Log level" split_words:"true"`
-	DialTimeout                   time.Duration     `default:"750ms" desc:"Timeout for the dial the next endpoint" split_words:"true"`
+	DialTimeout                   time.Duration     `default:"15s" desc:"Timeout for the dial the next endpoint" split_words:"true"`
+	DialMaxDelay                  time.Duration     `default:"5s" desc:"Upper bound on gRPC connection backoff delay" split_words:"true"`
 	OpenTelemetryEndpoint         string            `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint" split_words:"true"`
 	MetricsExportInterval         time.Duration     `default:"10s" desc:"interval between mertics exports" split_words:"true"`
 	PprofEnabled                  bool              `default:"false" desc:"is pprof enabled" split_words:"true"`
