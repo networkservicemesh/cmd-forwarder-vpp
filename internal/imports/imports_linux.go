@@ -115,6 +115,7 @@ import (
 	_ "golang.org/x/text/cases"
 	_ "golang.org/x/text/language"
 	_ "google.golang.org/grpc"
+	_ "google.golang.org/grpc/backoff"
 	_ "google.golang.org/grpc/credentials"
 	_ "google.golang.org/grpc/health/grpc_health_v1"
 	_ "gopkg.in/yaml.v3"
