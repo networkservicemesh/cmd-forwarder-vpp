@@ -29,7 +29,6 @@ docker build .
 * `NSM_REGISTRY_CLIENT_POLICIES`         - paths to files and directories that contain registry client policies
 * `NSM_LOG_LEVEL`                        - Log level
 * `NSM_DIAL_TIMEOUT`                     - Timeout for the dial the next endpoint
-* `NSM_DIAL_MAX_DELAY`                   - Upper bound on gRPC connection backoff delay
 * `NSM_OPEN_TELEMETRY_ENDPOINT`          - OpenTelemetry Collector Endpoint
 * `NSM_METRICS_EXPORT_INTERVAL`          - interval between mertics exports
 * `NSM_PPROF_ENABLED`                    - is pprof enabled (default: "false")
