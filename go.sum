@@ -146,14 +146,14 @@ github.com/networkservicemesh/govpp v0.0.0-20250206125319-4d08cb0ae074 h1:DVU87Y
 github.com/networkservicemesh/govpp v0.0.0-20250206125319-4d08cb0ae074/go.mod h1:AbNeEvThWZ7Gzd2HEF4GqO0TrCR2RGpj9fYdWbEfkqI=
 github.com/networkservicemesh/sdk v0.5.1-0.20251119123020-9b3c88332081 h1:opG7pv1mE7/jpXFhPlAl6YKqydxyZwV25JgEP2A30fI=
 github.com/networkservicemesh/sdk v0.5.1-0.20251119123020-9b3c88332081/go.mod h1:Zcjp4+UG4SynymbQ1A7JspaMVrK9Oqm9ArLxiPhlhFY=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20251119123842-2f8a12906707 h1:4aHAm/asuTXRFGzSBItbJJNBGI3MCJmiG6Lohzyl8Co=
+github.com/networkservicemesh/sdk-vpp v0.0.0-20251119123842-2f8a12906707/go.mod h1:CpyGIvPNHgycqC5xnmKMqIbQ5sy9GoxRB+RjsEtUTq0=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20251119123246-a0e68dfd1478 h1:hw4gKN1A6dJBYhQsWtafDOP6+0OAOsbIrGX9srDfoFc=
 github.com/networkservicemesh/sdk-kernel v0.0.0-20251119123246-a0e68dfd1478/go.mod h1:+3btCGBqmv06LfD7MaLsZleLB1w96LKF9mkRuqp5/fs=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20251119123626-26fe4a3f9d0d h1:Pd8YitKQE2bYLRZPSNR4YwmgUegBlGugQ0FUnICRlVg=
 github.com/networkservicemesh/sdk-sriov v0.0.0-20251119123626-26fe4a3f9d0d/go.mod h1:SoDctmg6eu82FE6OXhJk8uefnNDbwgjwY8vH+b8/ZmY=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20251119123541-c49f33b9bac9 h1:eQ1r/IFOWZAe9dX35kXlcLqIorJtVO2MAcLX91XdmiM=
 github.com/networkservicemesh/sdk-k8s v0.0.0-20251119123541-c49f33b9bac9/go.mod h1:l1pZUR1T0BLZLrNE62tcU7t2mHSRR3ym6CE49Lk949g=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20250716142057-91f48fc84548 h1:obpbCE/K7y7oqZprt2gSz4B2mIIbLQGxhYQUPyYxTbI=
-github.com/networkservicemesh/sdk-vpp v0.0.0-20250716142057-91f48fc84548/go.mod h1:FXf5qO5AhJ+sf6zQ5OdqXcPPMHQg/9BTg6UcZn6TeIc=
 github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af h1:xH1C+JjlmM+bFYWczOUaf/QSZAVe4yxGnnals0w1X70=
 github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af/go.mod h1:JviwOwtnUIiMG0FJ94rwWjd2wDjqa/vvmXsmxNHQVxY=
 github.com/onsi/gomega v1.33.1 h1:dsYjIxxSR755MDmKVsaFQTE22ChNBcuuTWgkUDSubOk=
