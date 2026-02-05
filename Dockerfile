@@ -6,6 +6,7 @@ ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 ENV GOBIN=/bin
 ARG BUILDARCH=amd64
+ARG BUILD_TAGS=""
 RUN rm -r /etc/vpp
 RUN go install github.com/go-delve/delve/cmd/dlv@v1.23.1
 RUN go install github.com/grpc-ecosystem/grpc-health-probe@v0.4.25
@@ -23,7 +24,7 @@ COPY ./internal/afxdp/afxdp.c ./internal/afxdp/
 RUN clang -O3 -g -Wextra -Wall -target bpf -I/usr/include/$(uname -m)-linux-gnu -I/usr/include -c -o /bin/afxdp.o ./internal/afxdp/afxdp.c
 RUN go build ./internal/imports
 COPY . .
-RUN go build -o /bin/forwarder .
+RUN go build -tags "$BUILD_TAGS" -o /bin/forwarder .
 
 FROM build AS test
 CMD go test -test.v ./...
