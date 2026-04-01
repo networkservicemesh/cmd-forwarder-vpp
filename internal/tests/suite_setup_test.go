@@ -1,5 +1,7 @@
 // Copyright (c) 2020-2024 Cisco and/or its affiliates.
 //
+// Copyright (c) 2026 OpenInfra Foundation Europe. All rights reserved.
+//
 // SPDX-License-Identifier: Apache-2.0
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,7 +70,7 @@ func (f *ForwarderTestSuite) SetupSuite() {
 	log.FromContext(f.ctx).Infof("Getting Config from Env (time since start: %s)", time.Since(starttime))
 	// ********************************************************************************
 	_ = os.Setenv("NSM_TUNNEL_IP", forwarderIP)
-	_ = os.Setenv("NSM_VPP_INIT", "AF_XDP")
+	_ = os.Setenv("NSM_VPP_INIT", "AF_PACKET")
 	f.Require().NoError(f.config.Process())
 
 	// ********************************************************************************
