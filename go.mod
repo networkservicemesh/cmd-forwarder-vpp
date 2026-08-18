@@ -19,7 +19,7 @@ require (
 	github.com/networkservicemesh/sdk v0.5.1-0.20260407081414-9ac672ca128d
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20260407081927-4c9127fccf3d
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20260817125358-4af24281a6a0
-	github.com/networkservicemesh/sdk-sriov v0.0.0-20260407082104-8dcf72c1303f
+	github.com/networkservicemesh/sdk-sriov v0.0.0-20260817132431-fefd46d691ab
 	github.com/networkservicemesh/sdk-vpp v0.0.0-20260817132406-1b56cf5c4134
 	github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af
 	github.com/pkg/errors v0.9.1
