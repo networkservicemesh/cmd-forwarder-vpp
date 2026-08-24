@@ -18,11 +18,11 @@ require (
 	github.com/networkservicemesh/sdk-k8s v0.0.0-20260824090201-b24d560c02ae
 	github.com/networkservicemesh/sdk-kernel v0.0.0-20260824090242-eac4345ad1d9
 	github.com/networkservicemesh/sdk-sriov v0.0.0-20260824095542-f70b6c9639e0
-	github.com/networkservicemesh/sdk-vpp v0.0.0-20260817132406-1b56cf5c4134
+	github.com/networkservicemesh/sdk-vpp v0.0.0-20260824100028-56e65ab01037
 	github.com/networkservicemesh/vpphelper v0.0.0-20250204173511-c366e1dc63af
 	github.com/pkg/errors v0.9.1
 	github.com/safchain/ethtool v0.3.0
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.9.4
 	github.com/spiffe/go-spiffe/v2 v2.6.0
 	github.com/stretchr/testify v1.11.1
 	github.com/thanhpk/randstr v1.0.4
@@ -41,7 +41,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/cilium/ebpf v0.10.0 // indirect
+	github.com/cilium/ebpf v0.22.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/edwarnicke/log v1.0.0 // indirect
 	github.com/edwarnicke/serialize v1.0.7 // indirect
