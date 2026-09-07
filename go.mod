@@ -28,7 +28,7 @@ require (
 	github.com/thanhpk/randstr v1.0.4
 	github.com/vishvananda/netlink v1.3.1-0.20240922070040-084abd93d350
 	github.com/vishvananda/netns v0.0.5
-	go.fd.io/govpp v0.13.0
+	go.fd.io/govpp v0.11.0
 	golang.org/x/text v0.39.0
 	google.golang.org/grpc v1.82.1
 	gopkg.in/yaml.v3 v3.0.1
