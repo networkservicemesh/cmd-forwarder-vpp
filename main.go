@@ -350,9 +350,13 @@ func main() {
 
 	// TODO - cleaner shutdown across these channels
 	<-ctx.Done()
+	log.FromContext(ctx).Info("Application context is done: received  OS signal")
 	<-srvErrCh
+	log.FromContext(ctx).Info("grpc server channel is closed")
 	<-vppErrCh
+	log.FromContext(ctx).Info("vpp channel is closed")
 	<-cleanupDoneCh
+	log.FromContext(ctx).Info("Cleanup channel is closed")
 }
 
 func setupDeviceMap(ctx context.Context, cfg *config.Config) map[string]string {
