@@ -1,5 +1,7 @@
 // Copyright (c) 2023-2024 Cisco and/or its affiliates.
 //
+// Copyright (c) 2026 Nordix Foundation.
+//
 // SPDX-License-Identifier: Apache-2.0
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -163,7 +165,7 @@ func Test_VppInit_AfPacket(t *testing.T) {
 		default:
 		}
 		if e := statsConn.GetInterfaceStats(stats); e != nil {
-			log.FromContext(ctx).Errorf("getting interface stats failed:", e)
+			log.FromContext(ctx).Errorf("getting interface stats failed: %v", e)
 			continue
 		}
 
